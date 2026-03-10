@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧪 Capital Energy — Test Harness</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0d1117;
+    }
+
+    /* ── Side Panel ─────────────────────────────────────── */
+    #panel {
+      width: 210px;
+      min-width: 210px;
+      height: 100vh;
+      background: #161b22;
+      border-right: 1px solid #30363d;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #panel-header {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid #30363d;
+      background: #0d1117;
+    }
+
+    #panel-header h1 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #58a6ff;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    #panel-header p {
+      font-size: 10px;
+      color: #8b949e;
+      margin-top: 3px;
+    }
+
+    .section {
+      padding: 12px 14px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: #8b949e;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Role buttons */
+    .role-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #c9d1d9;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 4px;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .role-btn:hover { background: #21262d; border-color: #30363d; }
+    .role-btn.active {
+      background: rgba(20,143,152,0.18);
+      border-color: rgba(20,143,152,0.5);
+      color: #1ec8d5;
+    }
+    .role-btn .badge {
+      font-size: 14px;
+      line-height: 1;
+    }
+    .role-btn .role-name { flex: 1; }
+    .role-btn .active-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #1ec8d5;
+      display: none;
+    }
+    .role-btn.active .active-dot { display: block; }
+
+    /* Rep dropdown */
+    .rep-select {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      color: #c9d1d9;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .rep-select:focus { outline: none; border-color: #1ec8d5; }
+
+    /* Info chips */
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      margin-bottom: 6px;
+      font-size: 11px;
+      color: #8b949e;
+    }
+    .info-chip strong { color: #e6edf3; font-weight: 600; }
+    .info-chip .ic-icon { font-size: 12px; }
+
+    /* Action buttons */
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background: #21262d;
+      color: #c9d1d9;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: 6px;
+      transition: all 0.15s;
+    }
+    .action-btn:hover { background: #2d333b; border-color: #8b949e; }
+    .action-btn.danger { border-color: rgba(248,81,73,0.4); color: #f85149; }
+    .action-btn.danger:hover { background: rgba(248,81,73,0.12); }
+    .action-btn.success { border-color: rgba(63,185,80,0.4); color: #3fb950; }
+    .action-btn.success:hover { background: rgba(63,185,80,0.10); }
+
+    /* Stats */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #8b949e;
+      padding: 3px 0;
+    }
+    .stat-row strong { color: #e6edf3; font-weight: 700; }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1ec8d5;
+      color: #0d1117;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 50px;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── iframe ─────────────────────────────────────────── */
+    #app-frame-wrap {
+      flex: 1;
+      position: relative;
+      background: #0d1117;
+    }
+
+    #app-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Loading overlay */
+    #frame-loading {
+      position: absolute;
+      inset: 0;
+      background: #0d1117;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #8b949e;
+      font-size: 13px;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    #frame-loading.hidden { opacity: 0; }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid #30363d;
+      border-top-color: #1ec8d5;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Mobile notice */
+    @media (max-width: 600px) {
+      #panel { width: 160px; min-width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Side Panel ──────────────────────────────────────── -->
+<div id="panel">
+
+  <div id="panel-header">
+    <h1>🧪 Test Mode</h1>
+    <p>Capital Energy PWA <span style="color:#1ec8d5;font-weight:700;">v55</span></p>
+    <p style="margin-top:5px;font-size:9px;color:#484f58">
+      Synced: <span id="synced-at" data-synced-at="not yet">not yet</span>
+    </p>
+  </div>
+
+  <!-- Role Switcher -->
+  <div class="section">
+    <div class="section-label">View As Role</div>
+    <button class="role-btn active" data-role="canvasser" onclick="switchRole('canvasser')">
+      <span class="badge">🚪</span>
+      <span class="role-name">Canvasser</span>
+      <span class="active-dot"></span>
+    </button>
+    <button class="role-btn" data-role="closer" onclick="switchRole('closer')">
+      <span class="badge">🤝</span>
+      <span class="role-name">Closer</span>
+      <span class="active-dot"></span>
+    </button>
+    <button class="role-btn" data-role="manager" onclick="switchRole('manager')">
+      <span class="badge">📊</span>
+      <span class="role-name">Manager</span>
+      <span class="active-dot"></span>
+    </button>
+    <button class="role-btn" data-role="master_admin" onclick="switchRole('master_admin')">
+      <span class="badge">👑</span>
+      <span class="role-name">Master Admin</span>
+      <span class="active-dot"></span>
+    </button>
+  </div>
+
+  <!-- Rep Selector -->
+  <div class="section">
+    <div class="section-label">Logged In As</div>
+    <select class="rep-select" id="rep-select" onchange="onRepChange()">
+      <option value="Alex Rivera">Alex Rivera</option>
+      <option value="Jordan Lee">Jordan Lee</option>
+      <option value="Sam Torres">Sam Torres</option>
+      <option value="Maya Patel">Maya Patel</option>
+      <option value="Chris Wu">Chris Wu</option>
+    </select>
+  </div>
+
+  <!-- Current Session Info -->
+  <div class="section">
+    <div class="section-label">Session Info</div>
+    <div class="info-chip">
+      <span class="ic-icon">👤</span>
+      <span id="info-name">Alex Rivera</span>
+    </div>
+    <div class="info-chip">
+      <span class="ic-icon">🏷️</span>
+      <span id="info-role">Canvasser</span>
+    </div>
+    <div class="info-chip">
+      <span class="ic-icon">🔑</span>
+      PIN: <strong>0000</strong>
+    </div>
+  </div>
+
+  <!-- Data Stats -->
+  <div class="section">
+    <div class="section-label">Seed Data</div>
+    <div class="stat-row"><span>Canvassers</span><strong>5</strong></div>
+    <div class="stat-row"><span>Closers</span><strong>3</strong></div>
+    <div class="stat-row"><span>Door entries</span><strong id="stat-entries">61</strong></div>
+    <div class="stat-row"><span>Appointments</span><strong id="stat-appts">18</strong></div>
+  </div>
+
+  <!-- Navigate -->
+  <div class="section">
+    <div class="section-label">Navigate To</div>
+    <button class="action-btn" onclick="navigateTo('home')">🏠 Home / Dashboard</button>
+    <button class="action-btn" onclick="navigateTo('calendar')">📅 Calendar</button>
+    <button class="action-btn" onclick="navigateTo('log')">📋 Log</button>
+    <button class="action-btn" onclick="navigateTo('map')">🗺️ Map</button>
+    <button class="action-btn" onclick="navigateTo('leaderboard')">🏆 Leaderboard</button>
+  </div>
+
+  <!-- Actions -->
+  <div class="section">
+    <div class="section-label">Actions</div>
+    <button class="action-btn success" onclick="reseedAndReload()">
+      🔄 Reset All Data
+    </button>
+    <button class="action-btn" onclick="openMasterAdmin()">
+      👑 Open Master Admin
+    </button>
+    <button class="action-btn" onclick="copyPIN()">
+      📋 Copy PIN (0000)
+    </button>
+    <button class="action-btn danger" onclick="clearAndReload()">
+      🗑️ Clear + First Run
+    </button>
+  </div>
+
+  <!-- Hints -->
+  <div class="section">
+    <div class="section-label">Hints</div>
+    <div style="font-size:10px;color:#8b949e;line-height:1.6;">
+      Master Admin: tap logo 7× → PIN 0000<br><br>
+      Reports: visible to Manager + Master Admin only<br><br>
+      Leaderboard: switch to Manager to see all reps
+    </div>
+  </div>
+
+</div>
+
+<!-- ── App iframe ──────────────────────────────────────── -->
+<div id="app-frame-wrap">
+  <div id="frame-loading">
+    <div class="spinner"></div>
+    <span>Loading app…</span>
+  </div>
+  <iframe id="app-frame" src="index.html" onload="onFrameLoad()"></iframe>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SEED DATA
+// ═══════════════════════════════════════════════════════════════
+
+const CANVASSERS = ['Alex Rivera', 'Jordan Lee', 'Sam Torres', 'Maya Patel', 'Chris Wu'];
+const CLOSERS    = ['Bob Johnson', 'Sarah Kim', 'Mike Davis'];
+
+const STREETS = [
+  '1420 N 7th Ave', '3245 W Indian School Rd', '8901 N 19th Ave',
+  '2100 E Camelback Rd', '5522 W Thunderbird Rd', '415 S Mill Ave',
+  '7890 E McDowell Rd', '1135 N Dobson Rd', '3309 S Price Rd',
+  '6200 W Bell Rd', '9040 N 83rd Ave', '2255 E Baseline Rd',
+  '780 N Alma School Rd', '4444 W Chandler Blvd', '11 E Broadway Rd',
+  '3100 N Hayden Rd', '820 S Country Club Dr', '5600 E Thomas Rd',
+  '2750 W Peoria Ave', '1650 N Dysart Rd', '300 E Elliot Rd',
+  '8800 W Glendale Ave', '4520 E Ray Rd', '6100 N 27th Ave',
+  '9955 W McDowell Rd', '340 S Val Vista Dr', '7200 E Shea Blvd',
+  '1810 W Bethany Home Rd', '5000 N Scottsdale Rd', '2660 W Baseline Rd'
+];
+
+const CITIES = ['Phoenix', 'Tempe', 'Scottsdale', 'Mesa', 'Chandler', 'Glendale', 'Peoria', 'Gilbert'];
+const STATES = ['AZ'];
+const UTILITIES = ['APS', 'SRP', 'TEP', 'UniSource'];
+const STATUSES  = ['not-home','not-home','not-home','not-home','not-interested','not-interested','go-back','go-back','dq','made-contact','made-contact','made-contact'];
+const APPT_RESULTS = ['Pending','Pending','Pending','Pending','Signed','Signed','Signed','Declined','No Show'];
+const SHADE   = ['full','partial','none'];
+const ROOF    = ['asphalt','asphalt','metal','tile'];
+const CREDITS = ['excellent','good','good','fair'];
+
+const FIRST_NAMES = ['James','Maria','David','Linda','Robert','Patricia','Michael','Jennifer','William','Barbara','Richard','Susan','Joseph','Jessica','Thomas','Sarah','Charles','Karen','Christopher','Lisa'];
+const LAST_NAMES  = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin'];
+
+let _idCtr = 1000;
+function uid() { return (Date.now() - 1700000000000 + _idCtr++).toString(36) + Math.random().toString(36).slice(2,6); }
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function rndFloat(base, spread) { return base + (Math.random() - 0.5) * spread; }
+
+// Phoenix area center
+const BASE_LAT = 33.4484;
+const BASE_LNG = -112.0740;
+
+function phoneFmt(n) {
+  const d = String(n).padStart(10,'0');
+  return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+}
+
+function msAgo(days, extraHours = 0) {
+  return Date.now() - days * 86400000 - extraHours * 3600000;
+}
+
+// ── Generate log entries ─────────────────────────────────
+function generateEntries() {
+  const entries = [];
+  const counts  = { 'Alex Rivera': 18, 'Jordan Lee': 12, 'Sam Torres': 9, 'Maya Patel': 15, 'Chris Wu': 7 };
+
+  CANVASSERS.forEach(rep => {
+    const n = counts[rep];
+    for (let i = 0; i < n; i++) {
+      const status    = rnd(STATUSES);
+      const firstName = rnd(FIRST_NAMES);
+      const lastName  = rnd(LAST_NAMES);
+      const street    = rnd(STREETS);
+      const city      = rnd(CITIES);
+      const isContact = status === 'made-contact';
+      const isGoBack  = status === 'go-back';
+
+      // Spread entries across last 30 days so all leaderboard ranges show data
+      const daysAgo = rndInt(0, 29);
+      const hrs     = rndInt(8, 20);
+
+      entries.push({
+        id:             uid(),
+        timestamp:      msAgo(daysAgo, 24 - hrs),
+        name:           isContact || isGoBack ? `${firstName} ${lastName}` : '',
+        address:        `${street}, ${city}, AZ ${rndInt(85001, 85099)}`,
+        phone:          isContact ? phoneFmt(rndInt(6020000000, 6029999999)) : '',
+        email:          isContact ? `${firstName.toLowerCase()}.${lastName.toLowerCase()}@email.com` : '',
+        bill:           isContact ? String(rndInt(80, 280)) : '',
+        followup:       isGoBack  ? new Date(Date.now() + rndInt(1, 7) * 86400000).toISOString().slice(0,10) : '',
+        status,
+        notes:          status === 'dq'         ? 'Renter, no ownership' :
+                        status === 'made-contact'? 'Very interested in solar. Good roof, partial shade.' :
+                        status === 'go-back'     ? 'Homeowner not available, asked to come back.' : '',
+        photo:          null,
+        ubPhoto:        null,
+        lat:            rndFloat(BASE_LAT, 0.18),
+        lng:            rndFloat(BASE_LNG, 0.22),
+        geocodePending: false,
+        repName:        rep,
+      });
+    }
+  });
+
+  // Sort newest first
+  entries.sort((a, b) => b.timestamp - a.timestamp);
+  return entries;
+}
+
+// ── Generate appointments ────────────────────────────────
+function generateAppointments() {
+  const appts = [];
+  const counts = { 'Bob Johnson': 7, 'Sarah Kim': 6, 'Mike Davis': 5 };
+  const canvReps = CANVASSERS;
+
+  CLOSERS.forEach(closer => {
+    const n = counts[closer];
+    for (let i = 0; i < n; i++) {
+      const firstName  = rnd(FIRST_NAMES);
+      const lastName   = rnd(LAST_NAMES);
+      const city       = rnd(CITIES);
+      const street     = rnd(STREETS);
+      const result     = rnd(APPT_RESULTS);
+      const daysAgo    = rndInt(0, 21);
+      // Spread appointments: ~60% in the future (next 14 days), ~40% past (last 7 days)
+      const apptOffset = Math.random() < 0.6 ? rndInt(0, 14) : rndInt(-7, 0);
+      const apptDate   = new Date(Date.now() + apptOffset * 86400000);
+      const canvasser  = rnd(canvReps);
+
+      appts.push({
+        id:             uid(),
+        createdAt:      msAgo(daysAgo, rndInt(2, 12)),
+        datetime:       apptDate.toISOString().slice(0,16),
+        closer,
+        firstName,
+        lastName,
+        email:          `${firstName.toLowerCase()}@email.com`,
+        phone:          phoneFmt(rndInt(4800000000, 6029999999)),
+        street,
+        city,
+        state:          'AZ',
+        zip:            String(rndInt(85001, 85099)),
+        utilityCompany: rnd(UTILITIES),
+        avgBill:        String(rndInt(90, 300)),
+        shade:          rnd(SHADE),
+        roof:           rnd(ROOF),
+        pitched:        Math.random() > 0.2 ? 'yes' : 'no',
+        credit:         rnd(CREDITS),
+        notes:          result === 'Signed' ? 'Great deal — 10.2kW system, APS territory.' :
+                        result === 'Declined' ? 'Changed mind, will reconsider in spring.' :
+                        result === 'No Show'  ? 'No answer, left voicemail.' : 'Following up this week.',
+        lat:            rndFloat(BASE_LAT, 0.18),
+        lng:            rndFloat(BASE_LNG, 0.22),
+        result,
+        ubPhoto:        null,
+        repName:        canvasser,
+      });
+    }
+  });
+
+  appts.sort((a, b) => b.createdAt - a.createdAt);
+  return appts;
+}
+
+// ── Admin / branding object ──────────────────────────────
+const ADMIN_OBJ = {
+  companyName: 'Capital Energy',
+  tagline:     'Solar Sales Hub',
+  repName:     'Alex Rivera',
+  repTitle:    'Solar Energy Consultant',
+  repPhone:    '(602) 555-0100',
+  repEmail:    'alex@capitalenergy.com',
+  gosoloUrl:   'https://phx.gosolo.io/',
+  gridUrl:     'https://procfu.com/widgets/mcapp/qWhbwtv797R7',
+  reviewUrl:   'https://g.page/r/capital-energy-review',
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+
+let _currentRole = 'canvasser';
+let _currentRep  = 'Alex Rivera';
+let _seeded      = false;
+
+const REP_OPTIONS = {
+  canvasser:    CANVASSERS,
+  closer:       CLOSERS,
+  manager:      ['All Reps', ...CANVASSERS, ...CLOSERS], // manager can impersonate any rep
+  master_admin: ['Master Admin'],
+};
+
+const ROLE_LABELS = {
+  canvasser:    'Canvasser',
+  closer:       'Closer',
+  manager:      'Manager',
+  master_admin: 'Master Admin',
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SEED
+// ═══════════════════════════════════════════════════════════════
+
+function seedAll() {
+  // Generate fresh data
+  const entries = generateEntries();
+  const appts   = generateAppointments();
+
+  localStorage.setItem('ce_log_entries',    JSON.stringify(entries));
+  localStorage.setItem('ce_appointments',   JSON.stringify(appts));
+  localStorage.setItem('ce_admin',          JSON.stringify(ADMIN_OBJ));
+  localStorage.setItem('ce_master_pin',     '0000');
+  localStorage.setItem('ce_data_migrated_v1', 'true');
+  localStorage.removeItem('ce_active_tab');
+  localStorage.removeItem('ce_theme_primary');
+
+  _seeded = true;
+
+  // Update stat display
+  document.getElementById('stat-entries').textContent = entries.length;
+  document.getElementById('stat-appts').textContent   = appts.length;
+}
+
+function applyRole(role, rep) {
+  localStorage.setItem('ce_user_role', role);
+  // "All Reps" means manager sees everyone — set name to empty so filter is bypassed
+  const effectiveName = (role === 'manager' && rep === 'All Reps') ? '' : rep;
+  localStorage.setItem('ce_user_name', effectiveName);
+
+  // Sync admin.repName too
+  try {
+    const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+    s.repName = effectiveName;
+    localStorage.setItem('ce_admin', JSON.stringify(s));
+  } catch(_) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UI ACTIONS
+// ═══════════════════════════════════════════════════════════════
+
+function switchRole(role) {
+  _currentRole = role;
+
+  // Update rep dropdown options
+  const sel = document.getElementById('rep-select');
+  sel.innerHTML = '';
+  REP_OPTIONS[role].forEach(rep => {
+    const opt = document.createElement('option');
+    opt.value = rep;
+    opt.textContent = rep;
+    sel.appendChild(opt);
+  });
+
+  _currentRep = REP_OPTIONS[role][0];
+  sel.value   = _currentRep;
+
+  // Highlight active role button
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.role === role);
+  });
+
+  // Update session info
+  document.getElementById('info-name').textContent = _currentRep;
+  document.getElementById('info-role').textContent = ROLE_LABELS[role];
+
+  // Apply to localStorage + reload iframe
+  applyRole(role, _currentRep);
+  reloadFrame();
+  showToast(`Switched to ${ROLE_LABELS[role]}: ${_currentRep}`);
+}
+
+function onRepChange() {
+  const sel   = document.getElementById('rep-select');
+  _currentRep = sel.value;
+  document.getElementById('info-name').textContent = _currentRep;
+
+  applyRole(_currentRole, _currentRep);
+  reloadFrame();
+  showToast(`Now viewing as: ${_currentRep}`);
+}
+
+function reseedAndReload() {
+  seedAll();
+  applyRole(_currentRole, _currentRep);
+  reloadFrame();
+  showToast('✅ Data reset — fresh seed loaded!');
+}
+
+function clearAndReload() {
+  Object.keys(localStorage).filter(k => k.startsWith('ce_')).forEach(k => localStorage.removeItem(k));
+  reloadFrame();
+  showToast('🗑️ Cleared — first-run modal will appear');
+}
+
+function openMasterAdmin() {
+  // Inject master admin access: set role, then fire 7-tap programmatically
+  applyRole('master_admin', 'Master Admin');
+  reloadFrame();
+  showToast('👑 Reloading as Master Admin (PIN: 0000)');
+}
+
+function copyPIN() {
+  navigator.clipboard.writeText('0000').then(() => {
+    showToast('📋 PIN "0000" copied to clipboard!');
+  }).catch(() => {
+    showToast('PIN is: 0000');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+
+function navigateTo(tabId) {
+  const frame = document.getElementById('app-frame');
+  try {
+    // Try to call activateTab directly on the iframe's window
+    const iWin = frame.contentWindow;
+    if (iWin && typeof iWin.activateTab === 'function') {
+      iWin.activateTab(tabId);
+      showToast(`Navigated to: ${tabId}`);
+      return;
+    }
+  } catch(_) {}
+  // Fallback: reload with hash hint (won't fully work but at least reloads)
+  showToast(`Could not navigate — try after app loads`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IFRAME
+// ═══════════════════════════════════════════════════════════════
+
+function reloadFrame() {
+  const loading = document.getElementById('frame-loading');
+  const frame   = document.getElementById('app-frame');
+  loading.classList.remove('hidden');
+  frame.src = 'index.html?' + Date.now(); // cache bust
+}
+
+function onFrameLoad() {
+  const loading = document.getElementById('frame-loading');
+  setTimeout(() => loading.classList.add('hidden'), 500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+
+let _toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════
+
+(function boot() {
+  // Always seed on page load so data is fresh
+  seedAll();
+
+  // Default: canvasser, Alex Rivera
+  applyRole('canvasser', 'Alex Rivera');
+  document.getElementById('info-name').textContent = 'Alex Rivera';
+  document.getElementById('info-role').textContent = 'Canvasser';
+})();
+</script>
+</body>
+</html>
