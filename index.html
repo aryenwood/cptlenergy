@@ -8673,6 +8673,77 @@
         <button class="admin-save-btn" id="admin-save-drop-call-btn" style="margin-top:4px">💾 Save Drop Call Numbers</button>
       </div>
 
+      <!-- v93: Branding (Logo & Icon) — Manager/Master Admin -->
+      <div class="admin-section" id="admin-branding-section">
+        <div class="admin-section-title">🎨 Branding</div>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload a custom logo and app icon for your team.</p>
+        <div class="admin-field">
+          <label class="admin-label">Company Logo</label>
+          <div id="admin-logo-preview" style="display:none;margin-bottom:8px">
+            <img id="admin-logo-preview-img" style="max-height:48px;border-radius:8px" alt="Logo preview" />
+            <button class="admin-save-btn" id="admin-logo-remove" style="padding:4px 10px;font-size:11px;margin:0">Remove</button>
+          </div>
+          <label class="form-file-label" for="admin-logo-file" style="cursor:pointer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Logo
+          </label>
+          <input type="file" id="admin-logo-file" accept="image/*" style="display:none" />
+        </div>
+        <div class="admin-field" style="margin-top:12px">
+          <label class="admin-label">App Icon</label>
+          <div id="admin-icon-preview" style="display:none;margin-bottom:8px">
+            <img id="admin-icon-preview-img" style="max-height:48px;border-radius:8px" alt="Icon preview" />
+            <button class="admin-save-btn" id="admin-icon-remove" style="padding:4px 10px;font-size:11px;margin:0">Remove</button>
+          </div>
+          <label class="form-file-label" for="admin-icon-file" style="cursor:pointer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Icon
+          </label>
+          <input type="file" id="admin-icon-file" accept="image/*" style="display:none" />
+        </div>
+      </div>
+
+      <!-- v93: Adder Sheets — Manager/Master Admin -->
+      <div class="admin-section" id="admin-adder-section">
+        <div class="admin-section-title">📊 Adder Sheets</div>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload state-specific adder sheets (image or PDF).</p>
+        <div class="admin-field">
+          <label class="admin-label">Arizona</label>
+          <div id="admin-adder-az-status" class="admin-upload-status"></div>
+          <label class="form-file-label" for="admin-adder-az-file" style="cursor:pointer">Upload AZ Sheet</label>
+          <input type="file" id="admin-adder-az-file" accept="image/*,.pdf" style="display:none" />
+        </div>
+        <div class="admin-field" style="margin-top:8px">
+          <label class="admin-label">California</label>
+          <div id="admin-adder-ca-status" class="admin-upload-status"></div>
+          <label class="form-file-label" for="admin-adder-ca-file" style="cursor:pointer">Upload CA Sheet</label>
+          <input type="file" id="admin-adder-ca-file" accept="image/*,.pdf" style="display:none" />
+        </div>
+        <div class="admin-field" style="margin-top:8px">
+          <label class="admin-label">Texas</label>
+          <div id="admin-adder-tx-status" class="admin-upload-status"></div>
+          <label class="form-file-label" for="admin-adder-tx-file" style="cursor:pointer">Upload TX Sheet</label>
+          <input type="file" id="admin-adder-tx-file" accept="image/*,.pdf" style="display:none" />
+        </div>
+      </div>
+
+      <!-- v93: Checklist Upload — Manager/Master Admin -->
+      <div class="admin-section" id="admin-checklist-section">
+        <div class="admin-section-title">✅ Custom Checklist</div>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload a custom post-install checklist PDF to replace the default interactive one.</p>
+        <div id="admin-checklist-status" class="admin-upload-status"></div>
+        <label class="form-file-label" for="admin-checklist-file" style="cursor:pointer">Upload Checklist PDF</label>
+        <input type="file" id="admin-checklist-file" accept=".pdf,image/*" style="display:none" />
+      </div>
+
+      <!-- v93: Quick Links Editor -->
+      <div class="admin-section" id="admin-ql-section">
+        <div class="admin-section-title">🔗 Quick Links</div>
+        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Customize dashboard quick-link labels, subtitles, and override URLs.</p>
+        <div id="admin-ql-list"></div>
+        <button class="admin-save-btn" id="admin-ql-save-btn" style="margin-top:10px">💾 Save Quick Links</button>
+      </div>
+
       <!-- Save -->
       <div class="admin-save-wrap">
         <button class="admin-save-btn" id="admin-save-btn">Save &amp; Close</button>
@@ -10053,7 +10124,20 @@ const DataStore = (() => {
   }
   function _write(key, val) {
     _cache[key] = val;  // Update cache immediately
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch(_) {}
+    try {
+      const json = JSON.stringify(val);
+      // v93: warn if localStorage is getting large (> 4MB used)
+      if (json.length > 500000) {
+        console.warn('[DataStore] Large write to ' + key + ': ' + (json.length / 1024).toFixed(0) + ' KB');
+      }
+      localStorage.setItem(key, json);
+    } catch(e) {
+      // QuotaExceededError — localStorage is full
+      if (e && (e.name === 'QuotaExceededError' || e.code === 22)) {
+        console.error('[DataStore] Storage quota exceeded on write to ' + key);
+        if (typeof showToast === 'function') showToast('Storage is full — some data may not be saved. Clear old entries in the CRM.');
+      }
+    }
     _appendSync(key.replace('ce_',''));
   }
   function _appendSync(entity) {
@@ -10140,7 +10224,7 @@ function activateTab(tabId) {
 
   if (tabId !== 'map') stopGpsWatch();
   if (tabId === 'dashboard')   { renderDashboard(); }
-  if (tabId === 'log')         { if (currentCrmPane === 'activity') renderLogList(); else if (currentCrmPane === 'appointments') renderApptCrmList(); else if (currentCrmPane === 'customers') renderCustomerList(); }
+  if (tabId === 'log')         { if (currentCrmPane === 'activity') renderLogList(); else if (currentCrmPane === 'appointments') renderApptCrmList(); else if (currentCrmPane === 'customers') renderCustomerList(); else if (currentCrmPane === 'followup') renderFollowUpQueue(); }
   if (tabId === 'admin')       loadAdminSettings();
   if (tabId === 'map')         setTimeout(() => { initMap(); applyMapViewUI(); }, 80);
   if (tabId === 'resources')   setTimeout(renderBookCovers, 80);
@@ -10163,13 +10247,15 @@ navItems.forEach(btn => {
 
 
 // ── Profile dropdown menu ────────────────────────────────────────────────
+// v93: added null guards throughout
 (function() {
   const menuBtn    = document.getElementById('profile-menu-btn');
   const dropdown   = document.getElementById('profile-dropdown');
   const pddAdmin   = document.getElementById('pdd-admin');
   const pddRes     = document.getElementById('pdd-resources');
+  if (!menuBtn || !dropdown) return;
 
-  function closeDropdown() { dropdown.style.display = 'none'; }
+  function closeDropdown() { if (dropdown) dropdown.style.display = 'none'; }
   function toggleDropdown(e) {
     e.stopPropagation();
     const isOpen = dropdown.style.display !== 'none';
@@ -10180,11 +10266,11 @@ navItems.forEach(btn => {
   document.addEventListener('click', closeDropdown);
   dropdown.addEventListener('click', e => e.stopPropagation());
 
-  pddAdmin.addEventListener('click', () => {
+  if (pddAdmin) pddAdmin.addEventListener('click', () => {
     closeDropdown();
     activateTab('admin');
   });
-  pddRes.addEventListener('click', () => {
+  if (pddRes) pddRes.addEventListener('click', () => {
     closeDropdown();
     activateTab('resources');
   });
@@ -10402,8 +10488,9 @@ function renderDashboard() {
   try { appointments = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
 
   // Role-based filtering: canvassers/closers see only their own data
-  const role   = localStorage.getItem('ce_user_role') || 'canvasser';
-  const myName = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+  // v93: use impersonation-aware helpers instead of raw localStorage
+  const role   = getActiveRole();
+  const myName = (getActiveName() || '').toLowerCase();
   if (myName && (role === 'canvasser' || role === 'closer')) {
     entries      = entries.filter(e => (e.repName || e.name || '').toLowerCase() === myName);
     appointments = appointments.filter(a => (a.repName || a.closer || '').toLowerCase() === myName);
@@ -10484,8 +10571,8 @@ function renderDashboard() {
 
   if (!recent.length) {
     recentEl.innerHTML = '<div class="recent-empty">No entries yet —<br>hit the Log tab to start tracking doors!</div>';
-    return;
-  }
+    // v93: Don't return early — gamification, upcoming appts, wall of wins, etc. still need to render
+  } else {
 
   // v76: use pulse-feed wrapper for animated slide-in
   recentEl.className = 'pulse-feed';
@@ -10520,6 +10607,7 @@ function renderDashboard() {
   recentEl.querySelectorAll('.recent-item').forEach(item => {
     item.addEventListener('click', () => activateTab('log'));
   });
+  } // end else (recent.length > 0)
 
   // Run gamification layer after every render — pass already-parsed data to avoid re-reading localStorage
   renderGameStats(entries, appointments);
@@ -10544,7 +10632,8 @@ document.getElementById('dash-upcoming-view-all')?.addEventListener('click', () 
 // ── Dashboard: Upcoming Appointments (closer + manager) ──────────────────────
 
 function renderDashUpcoming() {
-  const role    = localStorage.getItem('ce_user_role') || 'canvasser';
+  // v93: use impersonation-aware helpers
+  const role    = getActiveRole();
   const section = document.getElementById('dash-upcoming-section');
   const list    = document.getElementById('dash-upcoming-list');
   if (!section || !list) return;
@@ -10553,7 +10642,7 @@ function renderDashUpcoming() {
   if (role === 'canvasser') { section.style.display = 'none'; return; }
   section.style.display = '';
 
-  const myName = (localStorage.getItem('ce_user_name') || '').trim().toLowerCase();
+  const myName = (getActiveName() || '').trim().toLowerCase();
   const now    = Date.now();
   let appts    = loadAppointments()
     .filter(a => new Date(a.datetime).getTime() >= now);
@@ -10608,7 +10697,8 @@ function renderDashUpcoming() {
 // ── Dashboard: Manager Assign Closer Command Center ───────────────────────────
 
 function renderDashAssign() {
-  const role    = localStorage.getItem('ce_user_role') || 'canvasser';
+  // v93: use impersonation-aware helper
+  const role    = getActiveRole();
   const section = document.getElementById('dash-assign-section');
   const list    = document.getElementById('dash-assign-list');
   const subEl   = document.getElementById('dash-assign-subtitle');
@@ -11637,12 +11727,13 @@ let pinDropOpen    = false;
 // ── Geo-status UI helpers ────────────────────────────────────────────────
 function setAddrStatus(state, text) {
   // state: 'idle' | 'scanning' | 'found' | 'failed'
+  // v93: add null guards
   const dot  = document.getElementById('addr-status-dot');
   const txt  = document.getElementById('addr-status-text');
   const row  = document.getElementById('addr-status-row');
-  dot.className = 'addr-status-dot' + (state !== 'idle' ? ' ' + state : '');
-  txt.textContent = text || '';
-  row.style.display = (state === 'idle' && !text) ? 'none' : 'flex';
+  if (dot) dot.className = 'addr-status-dot' + (state !== 'idle' ? ' ' + state : '');
+  if (txt) txt.textContent = text || '';
+  if (row) row.style.display = (state === 'idle' && !text) ? 'none' : 'flex';
 }
 
 // ── Format Nominatim address object → clean one-liner ───────────────────
@@ -12482,13 +12573,14 @@ function _updateFqBadge() {
   try {
     const entries = DataStore.loadEntries();
     const appts   = DataStore.loadAppointments();
-    const role    = localStorage.getItem('ce_user_role') || 'canvasser';
-    const myName  = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+    // v93: use impersonation-aware helpers
+    const role    = getActiveRole();
+    const myName  = (getActiveName() || '').toLowerCase();
 
     // Go-backs for this rep (or all if manager)
     let goBacks = entries.filter(e => e.status === 'go-back');
     if (myName && role !== 'manager' && role !== 'master_admin') {
-      goBacks = goBacks.filter(e => (e.repName || e.name || '').toLowerCase() === myName);
+      goBacks = goBacks.filter(e => (e.repName || '').toLowerCase() === myName);
     }
 
     // Filter out ones already converted to an appointment (match by address proximity)
@@ -12509,8 +12601,9 @@ function _updateFqBadge() {
 function renderFollowUpQueue() {
   const entries = DataStore.loadEntries();
   const appts   = DataStore.loadAppointments();
-  const role    = localStorage.getItem('ce_user_role') || 'canvasser';
-  const myName  = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+  // v93: use impersonation-aware helpers
+  const role    = getActiveRole();
+  const myName  = (getActiveName() || '').toLowerCase();
 
   // Filter go-backs (role-scoped)
   let goBacks = entries.filter(e => e.status === 'go-back');
@@ -12702,6 +12795,7 @@ function openCustomerByApptId(apptId) {
 }
 
 let _custDetailTab = 'activity'; // active sub-tab: 'overview' | 'activity' | 'photos'
+let _custDetailCurrent = null;   // v93: track current customer for book prefill
 
 function openCustomerDetail(idx) {
   const customers = window._custListCache || [];
@@ -12714,6 +12808,7 @@ function openCustomerDetail(idx) {
   if (!overlay || !sheet || !inner) return;
 
   _custDetailTab = 'activity'; // always open on Activity
+  _custDetailCurrent = c;      // v93: track for book prefill
 
   // ── Derived stats ─────────────────────────────────────────────────────────
   const initials  = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
@@ -13045,11 +13140,11 @@ function _renderCustFiles(custId) {
       <div class="file-card" data-file-id="${f.id}" data-cust-id="${custId}">
         <div class="file-card-icon ${cls}">${emoji}</div>
         <div class="file-card-body">
-          <div class="file-card-name">${f.name}</div>
+          <div class="file-card-name">${escHtml(f.name)}</div>
           <div class="file-card-meta">
-            ${sizeStr ? `<span>${sizeStr}</span>` : ''}
-            ${dateStr ? `<span>${dateStr}</span>` : ''}
-            ${f.uploadedBy ? `<span>by ${f.uploadedBy}</span>` : ''}
+            ${sizeStr ? `<span>${escHtml(sizeStr)}</span>` : ''}
+            ${dateStr ? `<span>${escHtml(dateStr)}</span>` : ''}
+            ${f.uploadedBy ? `<span>by ${escHtml(f.uploadedBy)}</span>` : ''}
           </div>
         </div>
         ${canDelete ? `<button class="file-card-delete" data-delete-file="${f.id}" data-cust-id="${custId}" aria-label="Delete file">
@@ -13311,8 +13406,28 @@ function _initCrmListeners() {
   // Book button inside customer detail (delegated through sheet)
   document.getElementById('cust-detail-sheet')?.addEventListener('click', e => {
     if (!e.target.closest('#cust-d-book-btn')) return;
+    // v93: capture customer data before closing detail
+    const custData = _custDetailCurrent;
     closeCustomerDetail();
-    setTimeout(() => openBookingSheet(), 420);
+    setTimeout(() => {
+      openBookingSheet();
+      // Prefill from customer data if available
+      if (custData) {
+        const parts = (custData.name || '').split(/\s+/);
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+        setVal('b-first', parts[0] || '');
+        setVal('b-last', parts.slice(1).join(' ') || '');
+        // Use phone from latest log or appointment
+        const phone = custData.phone || (custData.logEntries[0]||{}).phone || '';
+        const digits = phone.replace(/\D/g,'');
+        if (digits.length >= 10) { setVal('b-area', digits.slice(-10,-7)); setVal('b-phone', digits.slice(-7,-4)+'-'+digits.slice(-4)); }
+        setVal('b-email', custData.email || (custData.logEntries[0]||{}).email || '');
+        setVal('b-street', custData.address || '');
+        // Avg bill from latest entry
+        const bill = (custData.logEntries[0]||{}).bill || '';
+        if (bill) setVal('b-avg-bill', bill);
+      }
+    }, 420);
   });
 
   // Swipe-down to close customer detail sheet
@@ -13645,26 +13760,28 @@ updateLogBadge();
 
     var list = document.createElement('div');
     list.className = 'addr-autocomplete-list';
+    // v93: use CSS variables for theme-aware autocomplete dropdown
     list.style.cssText = [
       'position:absolute','left:0','right:0','top:100%','z-index:99999',
-      'background:#0d1e2e','border:1.5px solid rgba(0,200,215,0.35)',
-      'border-radius:14px','overflow:hidden','box-shadow:0 8px 32px rgba(0,0,0,0.5)',
+      'background:var(--card-bg, #0d1e2e)','border:1.5px solid var(--border, rgba(0,200,215,0.35))',
+      'border-radius:14px','overflow:hidden','box-shadow:0 8px 32px rgba(0,0,0,0.25)',
       'margin-top:4px'
     ].join(';');
 
     results.forEach(function(r) {
       var item = document.createElement('button');
       item.type = 'button';
+      // v93: use CSS variables for theme-aware dropdown items
       item.style.cssText = [
         'display:flex','align-items:flex-start','gap:10px','width:100%','padding:11px 14px',
-        'background:none','border:none','border-bottom:1px solid rgba(255,255,255,0.06)',
+        'background:none','border:none','border-bottom:1px solid var(--border, rgba(255,255,255,0.06))',
         'cursor:pointer','text-align:left','-webkit-tap-highlight-color:transparent'
       ].join(';');
       item.innerHTML = [
-        '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:rgba(0,200,215,0.7);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+        '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--amber, rgba(0,200,215,0.7));fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
         '<div>',
-          '<div style="font-size:13px;font-weight:700;color:#fff;line-height:1.3">' + _escHtmlAddr(r.short || r.display) + '</div>',
-          '<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;line-height:1.3">' + _escHtmlAddr(r.city && r.state ? r.city + ', ' + r.state + (r.postcode ? ' ' + r.postcode : '') : '') + '</div>',
+          '<div style="font-size:13px;font-weight:700;color:var(--text-1, #fff);line-height:1.3">' + _escHtmlAddr(r.short || r.display) + '</div>',
+          '<div style="font-size:11px;color:var(--text-3, rgba(255,255,255,0.4));margin-top:2px;line-height:1.3">' + _escHtmlAddr(r.city && r.state ? r.city + ', ' + r.state + (r.postcode ? ' ' + r.postcode : '') : '') + '</div>',
         '</div>'
       ].join('');
       item.addEventListener('mousedown', function(e) {
@@ -13998,7 +14115,8 @@ function populateCloserDropdown() {
   // Managers/canvassers: show only team members with role=closer
   try {
     const team = JSON.parse(localStorage.getItem('ce_team') || '[]');
-    const closers = team.filter(m => (m.role || 'closer') === 'closer');
+    // v93: only include members with explicit role=closer (skip undefined/empty)
+    const closers = team.filter(m => m.role === 'closer');
     closers.forEach(m => {
       const opt = document.createElement('option');
       opt.value = m.name; opt.textContent = m.name;
@@ -14046,10 +14164,29 @@ document.querySelectorAll('#booking-form .radio-group').forEach(group => {
   });
 });
 
-// ── Bill file label ───────────────────────────────────────────────────────
+// ── Bill file label + preview ─────────────────────────────────────────────
+// v93: actually read the file and show preview so ubPhoto gets saved on submit
 document.getElementById('b-bill-file').addEventListener('change', function() {
   const lbl = document.getElementById('b-bill-file-label');
-  lbl.textContent = this.files[0] ? this.files[0].name : 'Upload bill (photo or PDF)';
+  const preview = document.getElementById('b-bill-preview');
+  const file = this.files[0];
+  if (!file) {
+    lbl.textContent = 'Upload bill (photo or PDF)';
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+    return;
+  }
+  lbl.textContent = file.name;
+  // Read image files into preview so the submit handler can capture the data URL
+  if (file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // PDF or other — can't preview, but mark it
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+  }
 });
 
 // ── Booking form submit ────────────────────────────────────────────────────
@@ -14067,6 +14204,16 @@ bookingForm.addEventListener('submit', e => {
     }
   });
   if (firstInvalid) { firstInvalid.focus(); return; }
+
+  // v93: validate required radio groups
+  const requiredRadios = ['b-shade','b-roof','b-pitched','b-credit'];
+  for (const rName of requiredRadios) {
+    if (!document.querySelector(`input[name="${rName}"]:checked`)) {
+      const group = document.querySelector(`.radio-group input[name="${rName}"]`)?.closest('.radio-group');
+      if (group) { group.style.outline = '2px solid rgba(239,68,68,0.6)'; group.style.borderRadius = '8px'; setTimeout(() => { group.style.outline = ''; }, 2000); if (!firstInvalid) { group.scrollIntoView({ behavior:'smooth', block:'center' }); firstInvalid = group; } }
+    }
+  }
+  if (firstInvalid) return;
 
   // Block submit when no real closer is assigned
   const closerVal = document.getElementById('b-closer').value;
@@ -14216,14 +14363,17 @@ let calSelectedDate = null; // 'YYYY-MM-DD' string
 let calFilter = 'all';      // active type filter: 'all' | 'appts' | 'gobacks'
 
 function calDateStr(y, m, d) {
-  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  // v93: normalize month boundaries (e.g. month -1 → Dec of previous year)
+  const dt = new Date(y, m, d);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
 }
 
 // Role-filtered appointments for the calendar, with optional status filter
 function loadCalAppointments() {
   const all    = loadAppointments();
-  const role   = localStorage.getItem('ce_user_role') || 'canvasser';
-  const myName = (localStorage.getItem('ce_user_name') || '').trim().toLowerCase();
+  // v93: use impersonation-aware helpers
+  const role   = getActiveRole();
+  const myName = (getActiveName() || '').trim().toLowerCase();
 
   let filtered;
   if (!myName || role === 'manager' || role === 'master_admin') {
@@ -14586,12 +14736,12 @@ function migrateDataV1() {
   const userName = localStorage.getItem('ce_user_name') || '';
   if (!userName) { localStorage.setItem('ce_data_migrated_v1', 'true'); return; }
 
-  // Backfill log entries
+  // Backfill log entries — v93: use DataStore to keep cache in sync
   try {
-    const entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]');
+    const entries = DataStore.loadEntries();
     let changed = false;
     entries.forEach(e => { if (!e.repName) { e.repName = userName; changed = true; } });
-    if (changed) localStorage.setItem('ce_log_entries', JSON.stringify(entries));
+    if (changed) DataStore.saveEntries(entries);
   } catch(_) {}
 
   localStorage.setItem('ce_data_migrated_v1', 'true');
@@ -15123,7 +15273,7 @@ document.getElementById('ma-logo-upload').addEventListener('change', e => {
     const dataUrl = ev.target.result;
     localStorage.setItem('ce_logo', dataUrl);
     const headerLogoImg = document.getElementById('header-logo');
-    if (headerLogoImg) headerLogoImg.querySelector('img').src = dataUrl;
+    if (headerLogoImg) { const img = headerLogoImg.querySelector('img'); if (img) img.src = dataUrl; }
   };
   reader.readAsDataURL(file);
 });
@@ -16203,14 +16353,16 @@ function loadAdminSettings() {
     const logoImg = document.getElementById('admin-logo-img');
     if (logoImg) logoImg.src = logo;
     const headerLogoImg = document.getElementById('header-logo');
-    if (headerLogoImg) headerLogoImg.querySelector('img').src = logo;
+    if (headerLogoImg) { const img = headerLogoImg.querySelector('img'); if (img) img.src = logo; }
   }
 
   renderTeamList();
 }
 
 function saveAdminSettings() {
-  const s = {
+  // v93: merge into existing ce_admin instead of replacing — preserves logos, adder sheets, checklist, etc.
+  const existing = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+  const updates = {
     companyName: document.getElementById('admin-company-name').value.trim() || ADMIN_DEFAULTS.companyName,
     tagline:     document.getElementById('admin-tagline').value.trim()       || ADMIN_DEFAULTS.tagline,
     gosoloUrl:   document.getElementById('admin-gosolo-url').value.trim()    || ADMIN_DEFAULTS.gosoloUrl,
@@ -16221,6 +16373,7 @@ function saveAdminSettings() {
     repEmail:    document.getElementById('admin-rep-email').value.trim(),
     reviewUrl:   document.getElementById('admin-review-url').value.trim(),
   };
+  const s = Object.assign(existing, updates);
   localStorage.setItem('ce_admin', JSON.stringify(s));
 
   // Save name + role from new fields
@@ -16276,8 +16429,14 @@ function renderTeamList() {
 
   // Show/hide team section based on role
   const role = localStorage.getItem('ce_user_role') || 'canvasser';
+  const isMgr = (role === 'manager' || role === 'master_admin');
   const teamSection = document.getElementById('admin-team-section');
-  if (teamSection) teamSection.style.display = (role === 'manager' || role === 'master_admin') ? '' : 'none';
+  if (teamSection) teamSection.style.display = isMgr ? '' : 'none';
+  // v93: Show/hide branding, adder, checklist, quick links sections for manager only
+  ['admin-branding-section','admin-adder-section','admin-checklist-section','admin-ql-section'].forEach(id => {
+    const sec = document.getElementById(id);
+    if (sec) sec.style.display = isMgr ? '' : 'none';
+  });
 }
 
 // Remove handler — works on both sub-lists
@@ -16723,9 +16882,12 @@ function _bcardRefreshStaticView(d) {
   }
   if (socialRow) socialRow.style.display = (hasIG || hasLI) ? 'flex' : 'none';
 
-  // v76: review CTA (show for everyone seeing the card)
+  // v76: review CTA — v93: only show if review URL is configured
   const reviewCta = document.getElementById('bcard-review-cta');
-  if (reviewCta) reviewCta.style.display = '';
+  if (reviewCta) {
+    const adminData = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+    reviewCta.style.display = adminData.reviewUrl ? '' : 'none';
+  }
 }
 
 function openBcard() {
@@ -18967,7 +19129,8 @@ function otdSnapBill() {
   var entries = DataStore.loadEntries();
   entries.unshift(entry); DataStore.saveEntries(entries);
   _otdEntryIdForSnap = entry.id;
-  _otdSessionDoors++; _otdSessionContact++; _otdUpdateCounters();
+  // v93: only increment contact counter if status is a contact type
+  _otdSessionDoors++; if (entry.status === 'made-contact' || entry.status === 'go-back') _otdSessionContact++; _otdUpdateCounters();
 
   var inp = document.createElement('input');
   inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
@@ -19429,11 +19592,18 @@ function closeRepProfile() {
 
 function _shareRepProfile(repName) {
   try {
+    // v93: compute totalDoors and tier from actual data instead of referencing undefined vars
+    const entries = DataStore.loadEntries();
+    const totalDoors = entries.filter(e => (e.repName || '').toLowerCase() === (repName || '').toLowerCase()).length;
+    const tierThresholds = [50, 100, 250, 500, 1000];
+    const tierNames = ['Rookie', 'Pro', 'Elite', 'Master', 'Legend', 'GOAT'];
+    const tierIdx = tierThresholds.filter(t => totalDoors >= t).length;
+    const tier = tierNames[tierIdx] || 'Rookie';
     if (navigator.share) {
-      navigator.share({ title: repName + ' — Capital Energy Rep Card', text: 'Check out ' + repName + '\'s performance on Capital Energy!' });
+      navigator.share({ title: repName + ' — Capital Energy Rep Card', text: 'Check out ' + repName + '\'s performance on Capital Energy! ' + totalDoors + ' doors knocked, rank: ' + tier });
     } else {
       navigator.clipboard?.writeText(repName + ' on Capital Energy: ' + totalDoors + ' doors, rank ' + tier);
-      alert('Profile link copied!');
+      showToast('Profile link copied!');
     }
   } catch(_) {}
 }
