@@ -696,7 +696,7 @@
       height: 100dvh;
       /* Lock pull-to-refresh and all overscroll bounce at root */
       overscroll-behavior: none;
-      touch-action: manipulation;
+      touch-action: pan-y;
     }
     body {
       min-height: -webkit-fill-available;
@@ -709,7 +709,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overscroll-behavior: none;
-      touch-action: manipulation;
+      touch-action: pan-y;
     }
 
     /* Gradient mesh — soft ambient glow */
@@ -6525,42 +6525,78 @@
     margin-top: 8px; margin-bottom: 16px;
   }
 
-  /* ── Big center record button — floats in center of OTD screen ── */
+  /* ── Giant center record button — Siro-inspired ── */
   .otd-record-wrap {
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px 0 0;
-    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; gap: 16px;
   }
   .otd-record-btn {
-    width: 96px; height: 96px; border-radius: 50%; border: none; cursor: pointer;
+    width: 140px; height: 140px; border-radius: 50%; border: none; cursor: pointer;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 4px; flex-shrink: 0;
-    background: rgba(255,255,255,0.1); border: 2.5px solid rgba(255,255,255,0.18);
-    transition: transform .15s var(--spring), background .2s, border-color .2s;
+    gap: 6px; flex-shrink: 0;
+    background: rgba(255,255,255,0.06); border: 3px solid rgba(255,255,255,0.15);
+    transition: transform .18s var(--spring), background .25s, border-color .25s, box-shadow .25s;
     -webkit-tap-highlight-color: transparent; position: relative; z-index: 1;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 0 60px rgba(0,200,215,0.08), 0 8px 32px rgba(0,0,0,0.4);
   }
-  .otd-record-btn:active { transform: scale(0.90); }
-  .otd-record-btn svg { width: 30px; height: 30px; stroke: rgba(255,255,255,0.85); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .otd-record-btn-lbl { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; text-transform: uppercase; }
+  .otd-record-btn:active { transform: scale(0.92); }
+  .otd-record-btn svg { width: 40px; height: 40px; stroke: rgba(255,255,255,0.85); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .otd-record-btn-lbl { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.45); letter-spacing: 0.08em; text-transform: uppercase; }
+  .otd-record-hint {
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.3);
+    letter-spacing: 0.02em;
+  }
   /* Recording state */
   .otd-record-btn--recording {
     background: #b91c1c; border-color: #ef4444;
-    box-shadow: 0 0 0 0 rgba(239,68,68,0.7), 0 4px 24px rgba(185,28,28,0.5);
+    box-shadow: 0 0 0 0 rgba(239,68,68,0.7), 0 0 60px rgba(239,68,68,0.25), 0 8px 32px rgba(185,28,28,0.5);
     animation: otd-rec-ring 1.2s ease infinite;
   }
   .otd-record-btn--recording svg { stroke: #fff; }
-  .otd-record-btn--recording .otd-record-btn-lbl { color: rgba(255,255,255,0.8); }
+  .otd-record-btn--recording .otd-record-btn-lbl { color: rgba(255,255,255,0.9); }
   @keyframes otd-rec-ring {
-    0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.65), 0 4px 24px rgba(185,28,28,0.5); }
-    70%  { box-shadow: 0 0 0 14px rgba(239,68,68,0), 0 4px 24px rgba(185,28,28,0.5); }
-    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), 0 4px 24px rgba(185,28,28,0.5); }
+    0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.65), 0 0 60px rgba(239,68,68,0.25), 0 8px 32px rgba(185,28,28,0.5); }
+    70%  { box-shadow: 0 0 0 18px rgba(239,68,68,0), 0 0 60px rgba(239,68,68,0.25), 0 8px 32px rgba(185,28,28,0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), 0 0 60px rgba(239,68,68,0.25), 0 8px 32px rgba(185,28,28,0.5); }
   }
   /* Saved state */
-  .otd-record-btn--saved { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.4); }
+  .otd-record-btn--saved { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.4); box-shadow: 0 0 40px rgba(34,197,94,0.15), 0 8px 32px rgba(0,0,0,0.3); }
   .otd-record-btn--saved svg { stroke: #4ade80; }
   /* Timer label inside button */
-  .otd-record-timer { font-size: 14px; font-weight: 800; color: #fff; font-family: var(--font-display); letter-spacing: -0.01em; }
+  .otd-record-timer { font-size: 18px; font-weight: 800; color: #fff; font-family: var(--font-display); letter-spacing: -0.01em; }
+
+  /* ── Dispo drawer — swipe-up from bottom ── */
+  #otd-dispo-drawer {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 9210;
+    background: #0d1e2e; border-radius: 24px 24px 0 0;
+    box-shadow: 0 -12px 48px rgba(0,0,0,0.7);
+    transform: translateY(calc(100% - 48px));
+    transition: transform .35s cubic-bezier(.34,1.2,.64,1);
+    max-height: 75vh;
+    display: flex; flex-direction: column;
+    touch-action: none;
+  }
+  #otd-dispo-drawer.otd-drawer-open {
+    transform: translateY(0);
+  }
+  .otd-drawer-peek {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 16px 8px; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .otd-drawer-handle {
+    width: 40px; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.2); margin-bottom: 6px;
+  }
+  .otd-drawer-hint {
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .otd-drawer-content {
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 0 14px calc(env(safe-area-inset-bottom, 0px) + 16px);
+    overscroll-behavior: contain;
+  }
 
   /* ─ Voice btn legacy compat ─ */
   .otd-cam-btn--voice { display: none; } /* voice moved to center record btn */
@@ -9628,10 +9664,10 @@
       style="margin-top:8px">
   </div>
 
-  <!-- Scrollable body -->
+  <!-- Scrollable body — clean, record-first layout -->
   <div class="otd-body">
 
-    <!-- Hidden counter row (data IDs kept for JS compat; display moved to header) -->
+    <!-- Hidden counter row (data IDs kept for JS compat) -->
     <div class="otd-counter-row" style="display:none">
       <div><div class="otd-counter-label">Doors Today</div><div class="otd-counter-val" id="otd-door-count-old">0</div></div>
       <div><div class="otd-counter-label">Contacts</div><div class="otd-counter-val" id="otd-contact-count-old">0</div></div>
@@ -9643,8 +9679,30 @@
       ✅ Saved — ready for next door!
     </div>
 
-    <!-- Quick Dispo -->
-    <div>
+    <!-- Giant center record button -->
+    <div class="otd-record-wrap">
+      <button class="otd-record-btn" id="otd-record-btn" onclick="otdToggleVoice()">
+        <svg id="otd-record-icon" viewBox="0 0 24 24">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+        <span class="otd-record-btn-lbl" id="otd-voice-label">Record</span>
+        <span id="otd-voice-emoji" style="display:none">🎙️</span>
+      </button>
+      <span class="otd-record-hint">Tap to Record</span>
+    </div>
+
+  </div><!-- /otd-body -->
+
+  <!-- Dispo drawer — swipe up from bottom -->
+  <div id="otd-dispo-drawer">
+    <div class="otd-drawer-peek" id="otd-drawer-peek" onclick="otdToggleDrawer()">
+      <div class="otd-drawer-handle"></div>
+      <div class="otd-drawer-hint">Swipe up to dispo</div>
+    </div>
+    <div class="otd-drawer-content">
       <div class="otd-section-label">What happened at this door?</div>
       <div class="otd-dispo-grid">
         <button class="otd-dispo-btn otd-dispo-btn--not-home" data-status="not-home" onclick="otdSelectStatus(this)">
@@ -9668,51 +9726,35 @@
           <span class="otd-dispo-label">Made Contact<br><span style="font-size:11px;font-weight:600;opacity:0.7">Collect homeowner info</span></span>
         </button>
       </div>
-    </div>
 
-    <!-- HO Info card (shown when Made Contact) -->
-    <div class="otd-info-card" id="otd-info-card">
-      <div class="otd-section-label" style="margin-bottom:0">Homeowner Info</div>
-      <input id="otd-ho-name"  class="otd-info-input" type="text"  placeholder="Full name" autocomplete="off">
-      <input id="otd-ho-phone" class="otd-info-input" type="tel"   placeholder="Phone number" autocomplete="off">
-      <input id="otd-ho-email" class="otd-info-input" type="email" placeholder="Email (optional)" autocomplete="off">
-      <input id="otd-ho-bill"  class="otd-info-input" type="text"  placeholder="Avg monthly bill" autocomplete="off">
-      <textarea id="otd-ho-notes" class="otd-info-input" rows="2" placeholder="Notes…"></textarea>
-      <!-- Full form + Book Appt actions (Made Contact only) -->
-      <div id="otd-action-row" style="display:none">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
-          <button class="otd-cam-btn otd-cam-btn--form" onclick="otdFillForm()" style="flex-direction:row;gap:8px;padding:14px 12px">
-            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            <span style="font-size:12px;font-weight:800">Full Form</span>
-          </button>
-          <button class="otd-cam-btn otd-cam-btn--book" onclick="otdBookAppt()" style="flex-direction:row;gap:8px;padding:14px 12px">
-            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fbbf24;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <span style="font-size:12px;font-weight:800">Book Appt</span>
-          </button>
+      <!-- HO Info card (shown when Made Contact) -->
+      <div class="otd-info-card" id="otd-info-card">
+        <div class="otd-section-label" style="margin-bottom:0">Homeowner Info</div>
+        <input id="otd-ho-name"  class="otd-info-input" type="text"  placeholder="Full name" autocomplete="off">
+        <input id="otd-ho-phone" class="otd-info-input" type="tel"   placeholder="Phone number" autocomplete="off">
+        <input id="otd-ho-email" class="otd-info-input" type="email" placeholder="Email (optional)" autocomplete="off">
+        <input id="otd-ho-bill"  class="otd-info-input" type="text"  placeholder="Avg monthly bill" autocomplete="off">
+        <textarea id="otd-ho-notes" class="otd-info-input" rows="2" placeholder="Notes…"></textarea>
+        <div id="otd-action-row" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+            <button class="otd-cam-btn otd-cam-btn--form" onclick="otdFillForm()" style="flex-direction:row;gap:8px;padding:14px 12px">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <span style="font-size:12px;font-weight:800">Full Form</span>
+            </button>
+            <button class="otd-cam-btn otd-cam-btn--book" onclick="otdBookAppt()" style="flex-direction:row;gap:8px;padding:14px 12px">
+              <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fbbf24;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span style="font-size:12px;font-weight:800">Book Appt</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Quick save (non-contact statuses) -->
-    <button id="otd-quick-save-btn" onclick="otdQuickSave()">
-      ⚡ Save &amp; Next Door
-    </button>
-
-    <!-- Big center record button -->
-    <div class="otd-record-wrap">
-      <button class="otd-record-btn" id="otd-record-btn" onclick="otdToggleVoice()">
-        <svg id="otd-record-icon" viewBox="0 0 24 24">
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-          <line x1="12" y1="19" x2="12" y2="23"/>
-          <line x1="8" y1="23" x2="16" y2="23"/>
-        </svg>
-        <span class="otd-record-btn-lbl" id="otd-voice-label">Record</span>
-        <span id="otd-voice-emoji" style="display:none">🎙️</span>
+      <!-- Quick save (hidden, triggered by non-contact dispo auto-save) -->
+      <button id="otd-quick-save-btn" onclick="otdQuickSave()" style="display:none">
+        ⚡ Save &amp; Next Door
       </button>
     </div>
-
-  </div><!-- /otd-body -->
+  </div>
 
   <!-- Floating capture bar -->
   <div class="otd-capture-bar">
@@ -15073,8 +15115,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v89\n` +
-      `SW cache:      capital-energy-v89\n` +
+      `App version:   capital-energy-v90\n` +
+      `SW cache:      capital-energy-v90\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -18564,6 +18606,81 @@ var _otdVoiceBlob      = null;
 var _otdEntryIdForSnap = null;
 var _otdSessionDoors   = 0;   // doors knocked this session
 var _otdSessionContact = 0;   // contacts made this session
+var _otdDrawerOpen     = false;
+var _otdDrawerY0       = null; // touch start Y for swipe
+
+/* ─── Dispo Drawer — toggle, swipe, open/close ─── */
+function otdToggleDrawer() {
+  _otdDrawerOpen ? otdCloseDrawer() : otdOpenDrawer();
+}
+
+function otdOpenDrawer() {
+  var d = document.getElementById('otd-dispo-drawer');
+  if (!d) return;
+  d.classList.add('otd-drawer-open');
+  _otdDrawerOpen = true;
+  var hint = d.querySelector('.otd-drawer-hint');
+  if (hint) hint.textContent = 'Swipe down to close';
+}
+
+function otdCloseDrawer() {
+  var d = document.getElementById('otd-dispo-drawer');
+  if (!d) return;
+  d.classList.remove('otd-drawer-open');
+  _otdDrawerOpen = false;
+  var hint = d.querySelector('.otd-drawer-hint');
+  if (hint) hint.textContent = 'Swipe up to dispo';
+}
+
+/* ─── Swipe gesture on drawer ─── */
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var drawer = document.getElementById('otd-dispo-drawer');
+    if (!drawer) return;
+
+    var startY = 0, currentY = 0, dragging = false, canSwipeClose = false;
+    var THRESHOLD = 60; // px to trigger open/close
+
+    drawer.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      dragging = true;
+      // Only allow swipe-to-close when content is at the top (not mid-scroll)
+      var content = drawer.querySelector('.otd-drawer-content');
+      canSwipeClose = !content || content.scrollTop <= 2;
+    }, { passive: true });
+
+    drawer.addEventListener('touchmove', function(e) {
+      if (!dragging) return;
+      currentY = e.touches[0].clientY;
+      var dy = currentY - startY;
+
+      if (_otdDrawerOpen && canSwipeClose && dy > 10) {
+        // Open state: drag down to close (only if content at top)
+        drawer.style.transition = 'none';
+        drawer.style.transform = 'translateY(' + dy + 'px)';
+      } else if (!_otdDrawerOpen && dy < -10) {
+        // Peek state: drag up to open
+        drawer.style.transition = 'none';
+        drawer.style.transform = 'translateY(calc(100% - 48px + ' + dy + 'px))';
+      }
+    }, { passive: true });
+
+    drawer.addEventListener('touchend', function(e) {
+      if (!dragging) return;
+      dragging = false;
+      drawer.style.transition = '';
+      drawer.style.transform = '';
+      var dy = currentY - startY;
+
+      if (_otdDrawerOpen && canSwipeClose && dy > THRESHOLD) {
+        otdCloseDrawer();
+      } else if (!_otdDrawerOpen && dy < -THRESHOLD) {
+        otdOpenDrawer();
+      }
+    }, { passive: true });
+  });
+})();
 
 /* ─── Dashboard toggle card tap ─── */
 function otdToggleTap() {
@@ -18628,6 +18745,8 @@ function closeOTD() {
   clearInterval(_otdVoiceTimer); _otdVoiceTimer = null;
   // Close OTD booking sheet if open
   if (typeof otdCloseBookingSheet === 'function') otdCloseBookingSheet();
+  // Close dispo drawer
+  if (typeof otdCloseDrawer === 'function') otdCloseDrawer();
   // Deactivate toggle card
   var card = document.getElementById('otd-toggle-card');
   if (card) {
@@ -18667,6 +18786,8 @@ function _resetOTDUI() {
   if (recBtn) recBtn.classList.remove('otd-record-btn--recording', 'otd-record-btn--saved');
   if (recIcon) recIcon.innerHTML = '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>';
   if (vLabel) vLabel.textContent = 'Record';
+  // Close dispo drawer
+  if (typeof otdCloseDrawer === 'function') otdCloseDrawer();
   // Also close interaction sheet if open
   _otdCloseInteractionSheet && _otdCloseInteractionSheet();
 }
@@ -18777,11 +18898,19 @@ function otdSelectStatus(btn) {
   if (card) card.classList.toggle('otd-visible', isContact);
   var ar = document.getElementById('otd-action-row');
   if (ar) ar.style.display = isContact ? 'block' : 'none';
-  var qsb = document.getElementById('otd-quick-save-btn');
-  if (qsb) qsb.style.display = isContact ? 'none' : 'block';
 
   var banner = document.getElementById('otd-saved-banner');
   if (banner) banner.classList.remove('otd-visible');
+
+  if (isContact) {
+    // Keep drawer open, scroll to HO info
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    // Non-contact dispo: auto-save, close drawer, show banner
+    var entry = _otdBuildEntry();
+    _otdSaveEntry(entry);
+    otdCloseDrawer();
+  }
 }
 
 /* ─── Build entry object ─── */
@@ -18875,6 +19004,8 @@ function _otdSaveEntry(entry) {
 /* ─── Book Appointment from OTD ─── */
 function otdBookAppt() {
   if (!_otdStatus) _otdStatus = 'made-contact';
+  // Close drawer before opening booking sheet
+  otdCloseDrawer();
   // Save the HO entry first
   var entry = _otdBuildEntry();
   var entries = DataStore.loadEntries();
@@ -19038,6 +19169,7 @@ function otdQuickSave() {
 /* ─── Full form ─── */
 function otdFillForm() {
   if (!_otdStatus) _otdStatus = 'made-contact';
+  otdCloseDrawer();
   var entry = _otdBuildEntry();
   var entries = DataStore.loadEntries();
   entries.unshift(entry); DataStore.saveEntries(entries);
