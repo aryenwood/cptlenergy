@@ -6014,7 +6014,7 @@
   #offline-banner {
     display: none;
     position: fixed;
-    bottom: 88px; /* sit just above the bottom nav */
+    bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px);
     left: 50%;
     transform: translateX(-50%) translateY(0);
     z-index: 9200;
@@ -6102,6 +6102,7 @@
     text-align: center; display: flex; flex-direction: column; gap: 18px;
     border: 1px solid var(--g-border-hi);
     box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+    position: relative; z-index: 1;
   }
   .onboard-step { display: flex; flex-direction: column; gap: 10px; }
   .onboard-step.onboard-hidden { display: none; }
@@ -6111,9 +6112,11 @@
   #onboard-dots  { display: flex; justify-content: center; gap: 6px; }
   .onboard-dot   { width: 8px; height: 8px; border-radius: 50%; background: var(--g-border); transition: background 0.2s; }
   .onboard-dot.active { background: var(--amber); }
-  #onboard-btn-row { display: flex; gap: 10px; }
-  #onboard-skip { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--g-border); background: var(--g1); color: var(--text-2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  #onboard-next { flex: 2; padding: 12px; border-radius: 12px; border: none; background: var(--amber); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  #onboard-btn-row { display: flex; gap: 10px; position: relative; z-index: 2; }
+  #onboard-skip { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--g-border); background: var(--g1); color: var(--text-2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  #onboard-next { flex: 2; padding: 12px; border-radius: 12px; border: none; background: var(--amber); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  #onboard-skip:active { opacity: 0.7; }
+  #onboard-next:active { opacity: 0.85; transform: scale(0.97); }
 
   /* F6: SMS Handoff sheet */
   #handoff-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none; transition: opacity .25s; }
@@ -6471,6 +6474,52 @@
     color: #fbbf24; border-color: rgba(251,191,36,0.35);
     box-shadow: 0 4px 16px rgba(245,158,11,0.2);
     padding: 14px 16px;
+  }
+
+  /* ── OTD inline booking sheet ── */
+  #otd-booking-sheet {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9250;
+    background: #0d1e2e; border-radius: 24px 24px 0 0;
+    padding: 0 18px calc(env(safe-area-inset-bottom, 0px) + 100px);
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.6);
+    transform: translateY(100%); transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  #otd-booking-sheet.otd-sheet-open { display: block; transform: translateY(0); }
+  #otd-booking-sheet .otd-int-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 14px auto 14px; }
+  #otd-booking-sheet .otd-book-title {
+    font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px;
+    font-family: var(--font-display); display: flex; align-items: center; gap: 8px;
+  }
+  #otd-booking-sheet .otd-book-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 16px; }
+  #otd-booking-sheet .otd-book-field { margin-bottom: 10px; }
+  #otd-booking-sheet .otd-book-label {
+    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px;
+  }
+  #otd-booking-sheet .otd-book-input {
+    width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.12);
+    color: #fff; font-size: 14px; font-weight: 600; font-family: var(--font-body);
+    outline: none; transition: border-color .2s;
+  }
+  #otd-booking-sheet .otd-book-input:focus { border-color: rgba(0,200,215,0.5); }
+  #otd-booking-sheet .otd-book-input::placeholder { color: rgba(255,255,255,0.25); }
+  #otd-booking-sheet select.otd-book-input { -webkit-appearance: none; appearance: none; }
+  #otd-booking-sheet .otd-book-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #otd-booking-sheet .otd-book-submit {
+    width: 100%; padding: 15px; border-radius: 14px; border: none; cursor: pointer;
+    font-size: 15px; font-weight: 800; font-family: var(--font-display);
+    background: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+    color: #fff; box-shadow: 0 4px 20px rgba(245,158,11,0.35);
+    transition: transform .14s var(--spring); margin-top: 14px;
+  }
+  #otd-booking-sheet .otd-book-submit:active { transform: scale(0.96); }
+  #otd-booking-sheet .otd-book-cancel {
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6);
+    font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+    margin-top: 8px; margin-bottom: 16px;
   }
 
   /* ── Big center record button ── */
@@ -9704,6 +9753,63 @@
     <div style="font-size:14px;font-weight:700;margin-bottom:12px;text-align:center;color:#fff">📞 Drop Call</div>
     <div id="otd-dropcall-list" style="display:flex;flex-direction:column;gap:8px"></div>
     <button onclick="otdCloseDropCall()" style="margin-top:14px;width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:rgba(255,255,255,0.6);font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
+  </div>
+
+  <!-- OTD inline booking sheet -->
+  <div id="otd-booking-sheet">
+    <div class="otd-int-handle"></div>
+    <div class="otd-book-title">📅 Book Appointment</div>
+    <div class="otd-book-sub">Schedule a closer visit for this homeowner</div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Date & Time *</div>
+      <input class="otd-book-input" type="datetime-local" id="otd-b-datetime" required />
+    </div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Assigned Closer *</div>
+      <select class="otd-book-input" id="otd-b-closer" required>
+        <option value="">Select a closer…</option>
+      </select>
+    </div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Customer Name *</div>
+      <div class="otd-book-row">
+        <input class="otd-book-input" type="text" id="otd-b-first" placeholder="First" />
+        <input class="otd-book-input" type="text" id="otd-b-last" placeholder="Last" />
+      </div>
+    </div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Email</div>
+      <input class="otd-book-input" type="email" id="otd-b-email" placeholder="email@example.com" />
+    </div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Phone *</div>
+      <div class="otd-book-row">
+        <input class="otd-book-input" type="tel" id="otd-b-area" placeholder="555" maxlength="3" style="max-width:100px" />
+        <input class="otd-book-input" type="tel" id="otd-b-phone" placeholder="123-4567" />
+      </div>
+    </div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Address</div>
+      <input class="otd-book-input" type="text" id="otd-b-street" placeholder="Street address" style="margin-bottom:8px" />
+      <div class="otd-book-row">
+        <input class="otd-book-input" type="text" id="otd-b-city" placeholder="City" />
+        <input class="otd-book-input" type="text" id="otd-b-zip" placeholder="Zip" maxlength="5" />
+      </div>
+    </div>
+
+    <div class="otd-book-field">
+      <div class="otd-book-label">Avg Monthly Bill</div>
+      <input class="otd-book-input" type="text" id="otd-b-bill" placeholder="$200" />
+    </div>
+
+    <button class="otd-book-submit" id="otd-book-submit-btn">📅 Book Appointment</button>
+    <button class="otd-book-cancel" onclick="otdCloseBookingSheet()">Cancel</button>
   </div>
 
 </div><!-- /#otd-overlay -->
@@ -14950,8 +15056,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v87\n` +
-      `SW cache:      capital-energy-v87\n` +
+      `App version:   capital-energy-v88\n` +
+      `SW cache:      capital-energy-v88\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -16943,7 +17049,7 @@ function showToast(msg, duration) {
     toast = document.createElement('div');
     toast.id = 'ce-toast';
     toast.style.cssText = [
-      'position:fixed','bottom:calc(env(safe-area-inset-bottom,0px) + 80px)','left:50%',
+      'position:fixed','bottom:calc(72px + env(safe-area-inset-bottom,0px) + 16px)','left:50%',
       'transform:translateX(-50%) translateY(20px)','opacity:0',
       'background:rgba(20,30,40,0.92)','color:#e8f4f6',
       'padding:11px 20px','border-radius:50px',
@@ -18503,6 +18609,8 @@ function closeOTD() {
     try { _otdVoiceRec.stop(); } catch(_) {}
   }
   clearInterval(_otdVoiceTimer); _otdVoiceTimer = null;
+  // Close OTD booking sheet if open
+  if (typeof otdCloseBookingSheet === 'function') otdCloseBookingSheet();
   // Deactivate toggle card
   var card = document.getElementById('otd-toggle-card');
   if (card) {
@@ -18755,10 +18863,11 @@ function otdBookAppt() {
   var entries = DataStore.loadEntries();
   entries.unshift(entry); DataStore.saveEntries(entries);
   _otdSessionDoors++; if (entry.status === 'made-contact') _otdSessionContact++;
-  // Pre-fill booking form with collected HO info
+  // Pre-fill OTD inline booking form with collected HO info
   var name  = (document.getElementById('otd-ho-name')  || {}).value || '';
   var phone = (document.getElementById('otd-ho-phone') || {}).value || '';
   var email = (document.getElementById('otd-ho-email') || {}).value || '';
+  var bill  = (document.getElementById('otd-ho-bill')  || {}).value || '';
   var parts = name.trim().split(/\s+/);
   var firstName = parts[0] || '';
   var lastName  = parts.slice(1).join(' ') || '';
@@ -18767,23 +18876,140 @@ function otdBookAppt() {
   var areaCode = phoneDigits.length >= 10 ? phoneDigits.slice(-10,-7) : '';
   var lineNum  = phoneDigits.length >= 7  ? phoneDigits.slice(-7) : phoneDigits;
   var lineFormatted = lineNum.length === 7 ? lineNum.slice(0,3) + '-' + lineNum.slice(3) : lineNum;
-  // Populate booking form
+  // Populate OTD inline booking form
   var setVal = function(id, val) { var el = document.getElementById(id); if (el && val) el.value = val; };
-  setVal('b-first', firstName);
-  setVal('b-last',  lastName);
-  setVal('b-email', email);
-  setVal('b-area',  areaCode);
-  setVal('b-phone', lineFormatted);
+  setVal('otd-b-first', firstName);
+  setVal('otd-b-last',  lastName);
+  setVal('otd-b-email', email);
+  setVal('otd-b-area',  areaCode);
+  setVal('otd-b-phone', lineFormatted);
+  setVal('otd-b-bill',  bill);
   // Pre-fill address from GPS / current address
   if (_otdAddr) {
     var addrParts = _otdAddr.split(',').map(function(s){ return s.trim(); });
-    setVal('b-street', addrParts[0] || _otdAddr);
-    if (addrParts[1]) setVal('b-city', addrParts[1]);
+    setVal('otd-b-street', addrParts[0] || _otdAddr);
+    if (addrParts[1]) setVal('otd-b-city', addrParts[1]);
   }
-  // Close OTD, open booking sheet
-  closeOTD();
-  setTimeout(function() { openBookingSheet(); }, 300);
+  // Default datetime to next hour
+  var now = new Date();
+  now.setMinutes(0, 0, 0);
+  now.setHours(now.getHours() + 1);
+  var pad = function(n) { return String(n).padStart(2, '0'); };
+  var dtEl = document.getElementById('otd-b-datetime');
+  if (dtEl) dtEl.value = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':00';
+  // Populate closer dropdown
+  _otdPopulateCloser();
+  // Open inline booking sheet (stays in OTD)
+  otdOpenBookingSheet();
 }
+
+/* ─── OTD inline booking sheet open/close ─── */
+function otdOpenBookingSheet() {
+  var sheet = document.getElementById('otd-booking-sheet');
+  if (sheet) {
+    sheet.style.display = 'block';
+    requestAnimationFrame(function() { sheet.classList.add('otd-sheet-open'); });
+  }
+}
+function otdCloseBookingSheet() {
+  var sheet = document.getElementById('otd-booking-sheet');
+  if (sheet) {
+    sheet.classList.remove('otd-sheet-open');
+    setTimeout(function() { sheet.style.display = 'none'; }, 350);
+  }
+  // Clear form fields
+  ['otd-b-datetime','otd-b-first','otd-b-last','otd-b-email','otd-b-area','otd-b-phone','otd-b-street','otd-b-city','otd-b-zip','otd-b-bill'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  var closer = document.getElementById('otd-b-closer');
+  if (closer) closer.selectedIndex = 0;
+}
+
+/* ─── Populate closer dropdown for OTD booking ─── */
+function _otdPopulateCloser() {
+  var sel = document.getElementById('otd-b-closer');
+  if (!sel) return;
+  while (sel.options.length > 1) sel.remove(1);
+  var role  = localStorage.getItem('ce_user_role') || 'canvasser';
+  var uname = (localStorage.getItem('ce_user_name') || '').trim();
+  if (role === 'closer' && uname) {
+    var opt = document.createElement('option');
+    opt.value = uname; opt.textContent = uname;
+    sel.appendChild(opt); sel.value = uname; sel.disabled = true;
+    return;
+  }
+  sel.disabled = false;
+  try {
+    var team = JSON.parse(localStorage.getItem('ce_team') || '[]');
+    team.filter(function(m) { return (m.role || 'closer') === 'closer'; }).forEach(function(m) {
+      var opt = document.createElement('option');
+      opt.value = m.name; opt.textContent = m.name;
+      sel.appendChild(opt);
+    });
+  } catch(_) {}
+  if (sel.options.length === 1) {
+    var opt = document.createElement('option');
+    opt.value = '__manual__'; opt.textContent = 'No closers added yet…';
+    sel.appendChild(opt);
+  }
+}
+
+/* ─── OTD booking form submit ─── */
+;(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('otd-book-submit-btn');
+    if (btn) btn.addEventListener('click', function() {
+      var dt = document.getElementById('otd-b-datetime');
+      var first = document.getElementById('otd-b-first');
+      if (!dt || !dt.value) { if (dt) { dt.style.borderColor = 'rgba(239,68,68,0.6)'; setTimeout(function(){ dt.style.borderColor = ''; }, 2000); dt.focus(); } return; }
+      if (!first || !first.value.trim()) { if (first) { first.style.borderColor = 'rgba(239,68,68,0.6)'; setTimeout(function(){ first.style.borderColor = ''; }, 2000); first.focus(); } return; }
+
+      var appt = {
+        id:        Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+        createdAt: Date.now(),
+        datetime:  dt.value,
+        closer:    (document.getElementById('otd-b-closer') || {}).value || '',
+        firstName: first.value.trim(),
+        lastName:  (document.getElementById('otd-b-last') || {}).value.trim(),
+        email:     (document.getElementById('otd-b-email') || {}).value.trim(),
+        phone:     '(' + ((document.getElementById('otd-b-area') || {}).value || '').trim() + ') ' + ((document.getElementById('otd-b-phone') || {}).value || '').trim(),
+        street:    (document.getElementById('otd-b-street') || {}).value.trim(),
+        city:      (document.getElementById('otd-b-city') || {}).value.trim(),
+        zip:       (document.getElementById('otd-b-zip') || {}).value.trim(),
+        avgBill:   (document.getElementById('otd-b-bill') || {}).value || '',
+        lat:       _otdLat,
+        lng:       _otdLng,
+        result:    'Pending',
+        repName:   localStorage.getItem('ce_user_name') || '',
+      };
+
+      var appts = loadAppointments();
+      appts.unshift(appt);
+      saveAppointments(appts);
+
+      // Close booking sheet, stay in OTD
+      otdCloseBookingSheet();
+
+      // Celebration!
+      launchConfetti('🎯 Appointment Booked! Let\'s close it!');
+
+      // Update counters and show saved banner
+      _otdUpdateCounters();
+      var banner = document.getElementById('otd-saved-banner');
+      if (banner) {
+        banner.textContent = '🎯 Appointment booked! Next door →';
+        banner.classList.add('otd-visible');
+      }
+      var body = document.querySelector('.otd-body');
+      if (body) body.scrollTop = 0;
+      setTimeout(function() {
+        _resetOTDUI();
+        if (banner) banner.textContent = '✅ Saved — ready for next door!';
+      }, 2000);
+    });
+  });
+})();
 
 /* ─── Quick save (non-contact statuses) ─── */
 function otdQuickSave() {
