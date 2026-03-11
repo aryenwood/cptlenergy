@@ -103,6 +103,19 @@
       /* ── Xbox neon glow tokens ── */
       --neon-glow:    0 0 12px rgba(20,143,152,0.20), 0 0 40px rgba(20,143,152,0.08);
       --neon-border:  rgba(20,143,152,0.22);
+
+      /* ── v76 Extended Palette ── */
+      --purple:           #8b5cf6;
+      --purple-bright:    #a78bfa;
+      --purple-dim:       #6d28d9;
+      --purple-glow:      rgba(139,92,246,0.12);
+      --rank-rookie:      #64748b;
+      --rank-pro:         #22c55e;
+      --rank-elite:       #f59e0b;
+      --rank-legend:      #a855f7;
+      --pulse-ring:       rgba(20,143,152,0.20);
+      --hero-gradient:    linear-gradient(135deg, rgba(20,143,152,0.18) 0%, rgba(139,92,246,0.08) 100%);
+      --slide-up:         cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @media (prefers-color-scheme: dark) {
@@ -128,6 +141,10 @@
         /* Neon boost in dark mode */
         --neon-glow:   0 0 20px rgba(0,200,215,0.40), 0 0 60px rgba(0,200,215,0.14);
         --neon-border: rgba(0,229,255,0.30);
+        /* v76 dark overrides */
+        --purple-glow:   rgba(167,139,250,0.16);
+        --rank-legend:   #c084fc;
+        --hero-gradient: linear-gradient(135deg, rgba(0,229,255,0.10) 0%, rgba(167,139,250,0.08) 100%);
       }
     }
 
@@ -153,6 +170,10 @@
       --text-3:      #7ab0c4;
       --neon-glow:   0 0 20px rgba(0,200,215,0.40), 0 0 60px rgba(0,200,215,0.14);
       --neon-border: rgba(0,229,255,0.30);
+      /* v76 dark overrides */
+      --purple-glow:   rgba(167,139,250,0.16);
+      --rank-legend:   #c084fc;
+      --hero-gradient: linear-gradient(135deg, rgba(0,229,255,0.10) 0%, rgba(167,139,250,0.08) 100%);
     }
 
     /* ── Dark mode — component overrides ────────────────────────────────── */
@@ -1427,6 +1448,9 @@
 
     .stat-card--green .stat-value { color: #4ade80; }
     .stat-card--amber .stat-value { color: #00c8d7; }
+    .stat-card--purple { border-color: rgba(139,92,246,0.25); background: rgba(139,92,246,0.06); }
+    .stat-card--purple::after { background: linear-gradient(90deg, transparent, rgba(139,92,246,0.18), transparent); }
+    .stat-card--purple .stat-value { color: var(--purple); }
 
     /* Tesla live-data: subtle scale-pop when a number lands */
     @keyframes statPop {
@@ -5357,6 +5381,22 @@
     }
 
 
+    /* ── v76: Purple Show Rate stat card (dark mode) ──────────────────── */
+    html.dark-mode .stat-card--purple {
+      background: linear-gradient(180deg, rgba(60,20,100,0.55) 0%, rgba(6,13,24,0.96) 100%);
+      border-color: rgba(139,92,246,0.45);
+      box-shadow: 0 1px 0 rgba(139,92,246,0.15) inset, 0 0 32px rgba(139,92,246,0.12), 0 4px 24px rgba(0,0,0,0.55);
+    }
+    html.dark-mode .stat-card--purple .stat-value { color: var(--purple-bright); }
+    @media (prefers-color-scheme: dark) {
+      .stat-card--purple {
+        background: linear-gradient(180deg, rgba(60,20,100,0.55) 0%, rgba(6,13,24,0.96) 100%);
+        border-color: rgba(139,92,246,0.45);
+        box-shadow: 0 1px 0 rgba(139,92,246,0.15) inset, 0 0 32px rgba(139,92,246,0.12), 0 4px 24px rgba(0,0,0,0.55);
+      }
+      .stat-card--purple .stat-value { color: var(--purple-bright); }
+    }
+
     /* ── Header calendar button ──────────────────────────────────────── */
     #header-cal-btn {
       width: 36px; height: 36px;
@@ -6426,6 +6466,277 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* ═══════════════════════════════════════════════════════════════════
+     v76 — Rank Badges, Follow-Up Queue, Wall of Wins, Baseball Card,
+           Activity Pulse, Business Card Enhancements, Hero Dashboard
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* ── v76 Rank Badges ── */
+  .rank-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; white-space: nowrap;
+    font-family: var(--font-display);
+  }
+  .rank-badge--rookie { background: rgba(100,116,139,0.18); color: var(--rank-rookie); border: 1px solid rgba(100,116,139,0.28); }
+  .rank-badge--pro    { background: rgba(34,197,94,0.14);   color: var(--rank-pro);    border: 1px solid rgba(34,197,94,0.28); }
+  .rank-badge--elite  { background: rgba(245,158,11,0.16);  color: var(--rank-elite);  border: 1px solid rgba(245,158,11,0.30); }
+  .rank-badge--legend {
+    background: var(--purple-glow); color: var(--rank-legend);
+    border: 1px solid rgba(168,85,247,0.30);
+    box-shadow: 0 0 14px rgba(168,85,247,0.20);
+  }
+
+  /* ── v76 Stat value pop animation ── */
+  .stat-value--pop { animation: stat-pop 0.45s var(--spring); }
+  @keyframes stat-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.10); color: var(--amber); }
+    100% { transform: scale(1); }
+  }
+
+  /* ── v76 Activity Pulse Feed ── */
+  .pulse-feed { display: flex; flex-direction: column; gap: 6px; }
+  .pulse-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: var(--r-md);
+    background: var(--surface); border: 1px solid var(--g-border);
+    font-size: 13px; color: var(--text-2);
+    animation: pulse-slide-in 0.30s var(--slide-up);
+  }
+  @keyframes pulse-slide-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .pulse-item-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    background: var(--amber); box-shadow: 0 0 8px var(--amber);
+    animation: pulse-dot-glow 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot-glow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.8); }
+  }
+  .pulse-item-dot--green  { background: var(--c-green); box-shadow: 0 0 8px var(--c-green); }
+  .pulse-item-dot--amber  { background: var(--amber);   box-shadow: 0 0 8px var(--amber); }
+  .pulse-item-dot--purple { background: var(--purple);  box-shadow: 0 0 8px var(--purple); }
+
+  /* ── v76 Dashboard Rank Row ── */
+  #dash-rank-row {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 16px 12px; flex-wrap: nowrap;
+  }
+  #dash-rank-progress {
+    flex: 1; height: 5px; background: rgba(255,255,255,0.08);
+    border-radius: 3px; overflow: hidden; min-width: 40px;
+  }
+  #dash-rank-progress-bar {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--amber));
+    transition: width 0.8s var(--slide-up);
+  }
+
+  /* ── v76 Follow-Up Queue ── */
+  .fq-header { padding: 16px 0 8px; }
+  .fq-title   { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); }
+  .fq-subtitle { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+  .fq-section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+    text-transform: uppercase; color: var(--text-3); padding: 16px 0 8px;
+  }
+  .fq-card {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 14px 16px; border-radius: var(--r-md);
+    background: var(--surface); border: 1px solid var(--g-border);
+    margin-bottom: 8px; cursor: pointer; transition: var(--card-trans);
+  }
+  .fq-card:active { transform: var(--hover-lift); }
+  .fq-card--overdue  { border-color: rgba(239,68,68,0.35);  background: rgba(239,68,68,0.06); }
+  .fq-card--today    { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.06); }
+  .fq-card--upcoming { border-color: rgba(20,143,152,0.25); background: rgba(20,143,152,0.04); }
+  .fq-card-main  { flex: 1; min-width: 0; }
+  .fq-card-name  { font-size: 15px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fq-card-meta  { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .fq-card-notes { font-size: 12px; color: var(--text-secondary); margin-top: 4px; font-style: italic; }
+  .fq-card-date  { font-size: 12px; font-weight: 600; }
+  .fq-badge      { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; padding: 0 4px; margin-left: 4px; vertical-align: middle; line-height: 1; }
+  .fq-card--overdue  .fq-card-date { color: var(--c-red); }
+  .fq-card--today    .fq-card-date { color: var(--rank-elite); }
+  .fq-card--upcoming .fq-card-date { color: var(--amber); }
+  .fq-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .fq-btn {
+    flex: 1; height: 36px; border-radius: 10px; border: none;
+    font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    background: var(--g2); color: var(--text-2);
+    -webkit-tap-highlight-color: transparent; transition: opacity 0.15s ease;
+    text-decoration: none;
+  }
+  .fq-btn:active { opacity: 0.75; }
+  .fq-btn--sms  { background: rgba(34,197,94,0.18);  color: var(--c-green); }
+  .fq-btn--call { background: rgba(20,143,152,0.14); color: var(--amber); }
+  .fq-empty {
+    text-align: center; padding: 48px 24px;
+    font-size: 14px; color: var(--text-3); line-height: 1.6;
+  }
+
+  /* ── v76 Wall of Wins ── */
+  .wow-card {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: var(--r-md);
+    background: var(--surface); border: 1px solid var(--g-border);
+    margin-bottom: 8px; animation: pulse-slide-in 0.25s var(--slide-up);
+  }
+  .wow-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(20,143,152,0.18); border: 1.5px solid var(--amber);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800; color: var(--amber); flex-shrink: 0;
+  }
+  .wow-avatar--legend { background: var(--purple-glow); border-color: var(--purple-bright); color: var(--purple-bright); }
+  .wow-body  { flex: 1; min-width: 0; }
+  .wow-who   { font-size: 14px; font-weight: 700; color: var(--text); }
+  .wow-what  { font-size: 13px; color: var(--text-2); margin-top: 2px; line-height: 1.4; }
+  .wow-when  { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+  .wow-input-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .wow-input {
+    flex: 1; height: 44px; border-radius: 12px;
+    background: var(--g1); border: 1px solid var(--g-border);
+    padding: 0 14px; font-size: 14px; color: var(--text);
+    font-family: var(--font-body); outline: none;
+  }
+  .wow-input:focus { border-color: var(--amber); }
+  .wow-post-btn {
+    height: 44px; padding: 0 18px; border-radius: 12px; border: none;
+    background: var(--amber); color: #000; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wow-empty { text-align:center; color:var(--text-3); font-size:13px; padding:28px 0; }
+
+  /* ── v76 Rep Baseball Card Profile Sheet ── */
+  #rep-profile-overlay {
+    position: fixed; inset: 0; z-index: 9150;
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  #rep-profile-overlay.open { opacity: 1; pointer-events: auto; }
+  #rep-profile-sheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: var(--g1); border-radius: 24px 24px 0 0;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px);
+    transform: translateY(100%);
+    transition: transform 0.38s var(--slide-up);
+  }
+  #rep-profile-overlay.open #rep-profile-sheet { transform: translateY(0); }
+  .rps-handle { width: 36px; height: 4px; background: var(--g-border); border-radius: 2px; margin: 12px auto 0; }
+  .rps-close {
+    position: absolute; top: 16px; right: 18px; width: 32px; height: 32px;
+    border-radius: 50%; background: var(--g2); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-2); font-size: 16px; z-index: 2;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rps-hero {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 28px 20px 20px;
+    background: var(--hero-gradient);
+    border-bottom: 1px solid var(--g-border);
+    text-align: center;
+  }
+  .rps-avatar-ring {
+    width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+    border: 2.5px solid var(--amber);
+    box-shadow: 0 0 20px rgba(20,143,152,0.30);
+    overflow: hidden; background: var(--g2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800; font-family: var(--font-display); color: var(--amber);
+  }
+  .rps-avatar-ring img { width: 100%; height: 100%; object-fit: cover; }
+  .rps-name  { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); }
+  .rps-role  { font-size: 12px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+  .rps-stats-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--g-border);
+    border-top: 1px solid var(--g-border); border-bottom: 1px solid var(--g-border);
+  }
+  .rps-stat { background: var(--surface); padding: 14px 12px; text-align: center; }
+  .rps-stat-val { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--text); }
+  .rps-stat-lbl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; line-height: 1.3; }
+  .rps-body { padding: 16px 20px 0; }
+  .rps-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-3); margin: 16px 0 8px; }
+  .rps-alltime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 4px; }
+  .rps-alltime-card { background: var(--g1); border-radius: 12px; padding: 12px; text-align: center; }
+  .rps-alltime-val { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); }
+  .rps-alltime-lbl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  .rps-recent-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--g-border);
+    font-size: 13px; color: var(--text-2);
+  }
+  .rps-share-btn {
+    width: 100%; height: 50px; border-radius: 14px; border: none; margin-top: 20px;
+    background: var(--amber); color: #000; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rps-share-btn:active { opacity: 0.85; }
+
+  /* ── v76 Business Card Enhancements ── */
+  .bcard-tagline {
+    font-size: 12px; color: rgba(255,255,255,0.65); font-style: italic;
+    margin-bottom: 6px; position: relative; z-index: 1; line-height: 1.4;
+  }
+  .bcard-views-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px;
+    background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.22);
+    font-size: 11px; color: rgba(255,255,255,0.75); font-weight: 600;
+    position: relative; z-index: 1; margin-bottom: 6px;
+    cursor: default;
+  }
+  .bcard-review-cta {
+    width: 100%; height: 40px; border-radius: 12px; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.20); color: #fff;
+    font-size: 13px; font-weight: 700; margin-top: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    position: relative; z-index: 1;
+    -webkit-tap-highlight-color: transparent; transition: opacity 0.15s;
+    font-family: var(--font-body);
+  }
+  .bcard-review-cta:active { opacity: 0.80; }
+  .bcard-social-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 10px; position: relative; z-index: 1;
+  }
+  .bcard-social-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.16);
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent; transition: opacity 0.15s;
+  }
+  .bcard-social-btn:active { opacity: 0.75; }
+  .bcard-social-btn svg { width: 14px; height: 14px; stroke: rgba(255,255,255,0.85); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ===== v76 Show Rate Leaderboard ===== */
+  .lb-show-rate-header { display:flex; align-items:baseline; gap:8px; padding:14px 0 8px; border-top:1px solid var(--border); margin-top:4px; }
+  .lb-show-rate-title  { font-size:13px; font-weight:700; color:var(--text); }
+  .lb-show-rate-hint   { font-size:11px; color:var(--text-secondary); }
+  .lb-show-rate-row    { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .lb-show-rate-row.is-you .lb-sr-name { color:var(--primary); font-weight:700; }
+  .lb-sr-name    { font-size:13px; font-weight:600; min-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .lb-sr-bar-wrap{ flex:2; height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; }
+  .lb-sr-bar     { height:100%; border-radius:4px; transition:width 0.6s var(--slide-up); }
+  .lb-sr-bar--green { background:linear-gradient(90deg,#22c55e,#4ade80); }
+  .lb-sr-bar--amber { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+  .lb-sr-bar--red   { background:linear-gradient(90deg,#ef4444,#f87171); }
+  .lb-sr-pct   { font-size:13px; font-weight:700; min-width:36px; text-align:right; color:var(--text); }
+  .lb-sr-detail{ font-size:11px; color:var(--text-secondary); min-width:30px; text-align:right; }
+  .lb-show-rate-empty { text-align:center; color:var(--text-secondary); font-size:13px; padding:20px 0; }
+
   </style>
 </head>
 
@@ -6536,6 +6847,15 @@
           <span class="streak-label">day streak</span>
           <span class="streak-milestone" id="streak-milestone" style="display:none"></span>
         </div>
+      </div>
+
+      <!-- v76: Rank badge row -->
+      <div id="dash-rank-row" style="display:none">
+        <span id="dash-rank-badge" class="rank-badge rank-badge--rookie">🌱 Rookie</span>
+        <div id="dash-rank-progress">
+          <div id="dash-rank-progress-bar" style="width:0%"></div>
+        </div>
+        <span id="dash-rank-score" style="font-size:11px;color:var(--text-secondary);white-space:nowrap">0 pts</span>
       </div>
 
       <!-- Log Door CTA — with daily goal progress -->
@@ -6732,6 +7052,14 @@
           <span class="stat-xp" id="xp-rate" style="display:none;margin-top:4px"></span>
         </div>
 
+        <!-- v76: Show Rate — closer + manager only -->
+        <div class="stat-card stat-card--purple" id="stat-card-show-rate" style="display:none">
+          <span class="stat-live-dot"></span>
+          <div class="stat-label">Show Rate</div>
+          <div class="stat-value" id="stat-show-rate">—</div>
+          <span class="stat-xp" id="xp-show-rate" style="display:none;margin-top:4px"></span>
+        </div>
+
       </div><!-- /.dash-stats-grid -->
 
       <!-- Recent door activity -->
@@ -6753,6 +7081,24 @@
         <div id="dash-upcoming-list"></div>
       </div>
 
+      <!-- ── v76: Wall of Wins ─────────────────────────────────────────────── -->
+      <div id="dash-wow-section">
+        <div class="dash-section-label" style="margin-top:28px">
+          <span class="dash-section-title">🏆 Wall of Wins</span>
+          <button class="dash-section-action" id="dash-wow-clear" style="color:var(--text-secondary)">Clear</button>
+        </div>
+        <!-- Manual win post (manager + closer) -->
+        <div id="dash-wow-input" style="display:none;margin-bottom:12px">
+          <div class="wow-input-row">
+            <input type="text" class="wow-input" id="wow-input-text" placeholder="Share a win with the team…" maxlength="120" autocomplete="off" />
+            <button class="wow-post-btn" id="wow-post-btn">Post</button>
+          </div>
+        </div>
+        <div id="dash-wow-feed">
+          <div class="wow-empty">No wins posted yet — close a deal and it'll show here! 🔥</div>
+        </div>
+      </div>
+
     </section>
 
     <!-- CRM -->
@@ -6763,6 +7109,7 @@
         <button class="crm-subtab crm-subtab--active" id="crm-tab-activity" data-pane="activity">Activity</button>
         <button class="crm-subtab" id="crm-tab-customers" data-pane="customers">Customers</button>
         <button class="crm-subtab" id="crm-tab-appointments" data-pane="appointments">Appts</button>
+        <button class="crm-subtab" id="crm-tab-followup" data-pane="followup">Follow-Up <span id="fq-badge" class="fq-badge" style="display:none">0</span></button>
       </div>
 
       <!-- ── Activity Pane ── -->
@@ -6847,6 +7194,28 @@
 
       </div><!-- /crm-pane-customers -->
 
+      <!-- ── v76: Follow-Up Queue Pane ── -->
+      <div id="crm-pane-followup" class="crm-pane--hidden">
+        <div class="fq-header">
+          <div class="fq-title">🔁 Follow-Up Queue</div>
+          <div class="fq-subtitle" id="fq-subtitle">Go-back doors needing follow-up</div>
+        </div>
+
+        <div class="fq-section-label" id="fq-label-overdue" style="display:none">🔴 Overdue (3+ days)</div>
+        <div id="fq-list-overdue"></div>
+
+        <div class="fq-section-label" id="fq-label-today" style="display:none">🟡 Today</div>
+        <div id="fq-list-today"></div>
+
+        <div class="fq-section-label" id="fq-label-upcoming" style="display:none">🟢 This Week</div>
+        <div id="fq-list-upcoming"></div>
+
+        <div id="fq-empty" class="fq-empty" style="display:none">
+          <div style="font-size:32px;margin-bottom:8px">✅</div>
+          <div style="font-weight:700;font-size:16px;margin-bottom:4px">Queue clear!</div>
+          <div style="font-size:13px;color:var(--text-secondary)">No go-backs pending follow-up.</div>
+        </div>
+      </div><!-- /crm-pane-followup -->
 
     </section>
 
@@ -8258,6 +8627,15 @@
       <!-- Achievements render here — separate from lb-boards flex row -->
       <div id="lb-achievements-wrap" style="padding: 0 16px;"></div>
 
+      <!-- v76: Show Rate panel (closer + manager only) -->
+      <div id="lb-show-rate-panel" style="display:none;padding:0 16px 8px;">
+        <div class="lb-show-rate-header">
+          <span class="lb-show-rate-title">📅 Appointment Show Rate</span>
+          <span class="lb-show-rate-hint">Dispositioned appts only</span>
+        </div>
+        <div id="lb-show-rate-rows"></div>
+      </div>
+
       <!-- v72: Momentum / Trend panel -->
       <div id="lb-momentum-panel" style="display:none"></div>
 
@@ -8719,13 +9097,23 @@
         <div id="bcard-rep-name" class="bcard-static">Your Name</div>
         <div id="bcard-rep-title" class="bcard-static">Solar Energy Consultant</div>
         <div id="bcard-company" class="bcard-static">Capital Energy</div>
+        <!-- v76: tagline -->
+        <div id="bcard-tagline" class="bcard-tagline bcard-static" style="display:none"></div>
+        <!-- v76: views badge -->
+        <div id="bcard-views-badge" class="bcard-views-badge bcard-static" style="display:none">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="bcard-views-num">0</span> views
+        </div>
 
         <!-- Edit inputs (hidden until edit mode) -->
         <input id="bcard-edit-name"    class="bcard-field-edit name-edit  bcard-edit-input" placeholder="Your name" />
         <input id="bcard-edit-title"   class="bcard-field-edit title-edit bcard-edit-input" placeholder="Your title" />
         <input id="bcard-edit-company" class="bcard-field-edit title-edit bcard-edit-input" placeholder="Company" />
+        <input id="bcard-edit-tagline" class="bcard-field-edit title-edit bcard-edit-input" placeholder="Tagline (e.g. ☀️ Go Solar, Pay Less)" />
         <input id="bcard-edit-phone"   class="bcard-field-edit title-edit bcard-edit-input" placeholder="Phone" type="tel" />
         <input id="bcard-edit-email"   class="bcard-field-edit title-edit bcard-edit-input" placeholder="Email" type="email" />
+        <input id="bcard-edit-ig"      class="bcard-field-edit title-edit bcard-edit-input" placeholder="Instagram username (no @)" />
+        <input id="bcard-edit-li"      class="bcard-field-edit title-edit bcard-edit-input" placeholder="LinkedIn URL or username" />
 
         <!-- Divider -->
         <div class="bcard-divider bcard-static"></div>
@@ -8739,6 +9127,19 @@
           <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           <span id="bcard-email-val"></span>
         </div>
+
+        <!-- v76: Social links row -->
+        <div id="bcard-social-row" class="bcard-social-row bcard-static" style="display:none">
+          <button id="bcard-ig-btn" class="bcard-social-btn" title="Instagram" style="display:none">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </button>
+          <button id="bcard-li-btn" class="bcard-social-btn" title="LinkedIn" style="display:none">
+            <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </button>
+        </div>
+
+        <!-- v76: Review CTA -->
+        <button id="bcard-review-cta" class="bcard-review-cta bcard-static" style="display:none" onclick="closeBcard();setTimeout(openReviewMenu,200)">⭐ Leave Me a Review</button>
       </div>
 
       <!-- QR code -->
@@ -8833,6 +9234,14 @@
       placeholder="Leave a coaching note for this rep…"></textarea>
     <button class="btn-primary" style="width:100%;margin-bottom:8px" onclick="submitCoachingNote()">Add Note</button>
   </div>
+</div>
+
+<!-- ── v76: Rep Baseball Card Profile Sheet ──────────────────────────── -->
+<div id="rep-profile-overlay" onclick="closeRepProfile()"></div>
+<div id="rep-profile-sheet" role="dialog" aria-modal="true" aria-label="Rep Profile">
+  <div class="rps-handle"></div>
+  <button class="rps-close" onclick="closeRepProfile()" aria-label="Close">✕</button>
+  <div id="rep-profile-inner"><!-- populated by openRepProfile() --></div>
 </div>
 
 <!-- ── On The Doors Mode overlay ─────────────────────────────────────── -->
@@ -9327,7 +9736,13 @@
 // Swap internals for fetch() calls when real backend is ready.
 // ══════════════════════════════════════════════════════════════════════════
 const DataStore = (() => {
-  const KEYS = { entries:'ce_log_entries', appointments:'ce_appointments', team:'ce_team' };
+  const KEYS = {
+    entries:      'ce_log_entries',
+    appointments: 'ce_appointments',
+    team:         'ce_team',
+    wins:         'ce_wins',        // v76: Wall of Wins
+    cardViews:    'ce_card_views',  // v76: business card view counter
+  };
   function _read(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
     catch(_) { return fallback; }
@@ -9363,6 +9778,20 @@ const DataStore = (() => {
     saveTeam(t)          { _write(KEYS.team, t); },
     drainSyncQueue()     { localStorage.removeItem('ce_sync_queue'); _updateBadge(); },
     updateSyncBadge()    { _updateBadge(); },
+    // v76: Wall of Wins
+    loadWins()           { return _read(KEYS.wins, []); },
+    saveWins(arr)        { _write(KEYS.wins, arr); },
+    // v76: Business Card view counter (raw localStorage — no sync queue needed)
+    getCardViews() {
+      try { return parseInt(localStorage.getItem(KEYS.cardViews) || '0', 10); } catch(_) { return 0; }
+    },
+    incrementCardViews() {
+      try {
+        const n = this.getCardViews() + 1;
+        localStorage.setItem(KEYS.cardViews, String(n));
+        return n;
+      } catch(_) { return 0; }
+    },
   };
 })();
 
@@ -9695,6 +10124,30 @@ function renderDashboard() {
   countTo(document.getElementById('stat-sales'),    madeContact.length);
   countTo(document.getElementById('stat-rate'),     rate, { suffix: '%' });
 
+  // v76: Show rate card — closer + manager only
+  const showRateCard = document.getElementById('stat-card-show-rate');
+  const showRateEl   = document.getElementById('stat-show-rate');
+  const showRateXp   = document.getElementById('xp-show-rate');
+  if (showRateCard) {
+    const showsRole = (role === 'closer' || role === 'manager');
+    showRateCard.style.display = showsRole ? '' : 'none';
+    if (showsRole && showRateEl) {
+      const sr = computeShowRate(dashRange);
+      if (sr === null) {
+        showRateEl.textContent = '—';
+        if (showRateXp) { showRateXp.textContent = '📅 No data yet'; showRateXp.className = 'stat-xp stat-xp--teal'; showRateXp.style.display = ''; }
+      } else {
+        countTo(showRateEl, sr, { suffix: '%' });
+        if (showRateXp) {
+          if (sr >= 90)      { showRateXp.textContent = '👑 Elite Shows';   showRateXp.className = 'stat-xp stat-xp--purple'; showRateXp.style.display = ''; }
+          else if (sr >= 75) { showRateXp.textContent = '🚀 Strong Shows';  showRateXp.className = 'stat-xp stat-xp--good';   showRateXp.style.display = ''; }
+          else if (sr >= 60) { showRateXp.textContent = '🔥 Decent Shows';  showRateXp.className = 'stat-xp stat-xp--hot';    showRateXp.style.display = ''; }
+          else               { showRateXp.textContent = '📉 Improve Shows'; showRateXp.className = 'stat-xp';                  showRateXp.style.display = ''; }
+        }
+      }
+    }
+  }
+
   // Funnel
   const fDoors    = rangeEntries.length;
   const fAnswered = rangeEntries.filter(e => !['not-home','no-answer'].includes(e.status)).length;
@@ -9722,7 +10175,9 @@ function renderDashboard() {
     return;
   }
 
-  recentEl.innerHTML = recent.map(e => {
+  // v76: use pulse-feed wrapper for animated slide-in
+  recentEl.className = 'pulse-feed';
+  recentEl.innerHTML = recent.map((e, idx) => {
     const STATUS_ABBR = { 'not-home':'NH','not-interested':'NI','dq':'DQ','go-back':'GB','made-contact':'MC' };
     const meta     = STATUS_META[e.status] || { label: e.status || '—', cls: 'chip-no-answer' };
     const dispName = e.name || e.address || 'No address';
@@ -9733,9 +10188,11 @@ function renderDashboard() {
     const avatar   = e.photo
       ? `<img src="${escHtml(e.photo)}" alt="${avatarText}" />`
       : avatarText;
+    const dotCls = e.status === 'made-contact' ? 'pulse-item-dot--green' : e.status === 'go-back' ? 'pulse-item-dot--amber' : '';
 
     return `
-      <div class="recent-item" data-id="${escHtml(e.id)}" data-status="${escHtml(e.status || '')}">
+      <div class="recent-item pulse-item" style="animation-delay:${idx * 40}ms" data-id="${escHtml(e.id)}" data-status="${escHtml(e.status || '')}">
+        <div class="pulse-item-dot ${dotCls}"></div>
         <div class="recent-avatar" data-status="${escHtml(e.status || '')}"${isAbbr ? ' data-abbr="true"' : ''}>${avatar}</div>
         <div class="recent-info">
           <div class="recent-name">${escHtml(dispName)}</div>
@@ -9760,7 +10217,10 @@ function renderDashboard() {
   // Manager assign-closer command center
   renderDashAssign();
   renderActivityFeed();
+  renderWallOfWins();
   DataStore.updateSyncBadge();
+  // v76: update follow-up queue badge on every dashboard refresh
+  _updateFqBadge();
 }
 
 document.getElementById('dash-view-all').addEventListener('click', () => activateTab('log'));
@@ -10083,6 +10543,33 @@ function renderGameStats(passedEntries, passedAppts) {
     [5,  '📈 Solid Rate',  'stat-xp--teal'],
     [1,  '📊 Getting Data','stat-xp--teal'],
   ]);
+
+  // v76: Rank badge row — compute rank from ALL-TIME data (not range-filtered)
+  try {
+    const role2   = localStorage.getItem('ce_user_role') || 'canvasser';
+    const myName2 = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+    const allEntries2 = passedEntries ?? (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries')||'[]'); } catch(_){return [];} })();
+    const allAppts2   = passedAppts   ?? (() => { try { return JSON.parse(localStorage.getItem('ce_appointments')||'[]'); } catch(_){return [];} })();
+    const myE2 = myName2 ? allEntries2.filter(e => (e.repName||e.name||'').toLowerCase()===myName2) : allEntries2;
+    const myA2 = myName2 ? allAppts2.filter(a   => (a.closer||a.repName||'').toLowerCase()===myName2) : allAppts2;
+    const allDoors2    = myE2.length;
+    const allContacts2 = myE2.filter(e => ['go-back','made-contact'].includes(e.status)).length;
+    const allSigned2   = myA2.filter(a => (a.result||'').toLowerCase()==='signed').length;
+    const score2       = allDoors2 + (allContacts2 * 3) + (allSigned2 * 10);
+    const rankData2    = _computeRepRank ? _computeRepRank(score2) : null;
+    if (rankData2) {
+      const rankRow  = document.getElementById('dash-rank-row');
+      const rankBadge = document.getElementById('dash-rank-badge');
+      const rankBar   = document.getElementById('dash-rank-progress-bar');
+      const rankScore = document.getElementById('dash-rank-score');
+      if (rankRow)   rankRow.style.display = '';
+      if (rankBadge) { rankBadge.className = 'rank-badge ' + rankData2.cls; rankBadge.textContent = rankData2.emoji + ' ' + rankData2.tier; }
+      const nextPts  = rankData2.tier==='Legend'?score2:rankData2.tier==='Elite'?500:rankData2.tier==='Pro'?200:75;
+      const pct2     = rankData2.tier==='Legend'?100:Math.min(100,Math.round(score2/nextPts*100));
+      if (rankBar)   rankBar.style.width = pct2 + '%';
+      if (rankScore) rankScore.textContent = score2 + ' pts';
+    }
+  } catch(_) {}
 }
 
 // ── Confetti burst + win toast ────────────────────────────────────────────────
@@ -11503,7 +11990,7 @@ function switchCrmPane(pane) {
   currentCrmPane = pane;
 
   // All pane IDs and their tab button IDs
-  const panes = ['activity', 'appointments', 'customers'];
+  const panes = ['activity', 'appointments', 'customers', 'followup'];
   panes.forEach(p => {
     const paneEl = document.getElementById(`crm-pane-${p}`);
     const tabEl  = document.getElementById(`crm-tab-${p}`);
@@ -11511,9 +11998,10 @@ function switchCrmPane(pane) {
     if (tabEl)  tabEl.classList.toggle('crm-subtab--active', p === pane);
   });
 
-  if (pane === 'activity')      renderLogList();
+  if (pane === 'activity')          renderLogList();
   else if (pane === 'appointments') renderApptCrmList();
   else if (pane === 'customers')    renderCustomerList();
+  else if (pane === 'followup')     renderFollowUpQueue();
 }
 
 // ── CRM: load appointments with role-based filter ────────────────────────
@@ -11583,6 +12071,109 @@ function renderApptCrmList() {
       <span class="appt-result-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${result}</span>
     </div>`;
   }).join('');
+}
+
+// ── v76: Follow-Up Queue ─────────────────────────────────────────────────
+
+function _updateFqBadge() {
+  try {
+    const entries = DataStore.loadEntries();
+    const appts   = DataStore.loadAppointments();
+    const role    = localStorage.getItem('ce_user_role') || 'canvasser';
+    const myName  = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+
+    // Go-backs for this rep (or all if manager)
+    let goBacks = entries.filter(e => e.status === 'go-back');
+    if (myName && role !== 'manager' && role !== 'master_admin') {
+      goBacks = goBacks.filter(e => (e.repName || e.name || '').toLowerCase() === myName);
+    }
+
+    // Filter out ones already converted to an appointment (match by address proximity)
+    const apptAddrs = new Set(appts.map(a => (a.street || '').toLowerCase().replace(/\s+/g,'').slice(0,15)));
+    const pending = goBacks.filter(e => {
+      const addr = (e.address || e.street || '').toLowerCase().replace(/\s+/g,'').slice(0,15);
+      return !apptAddrs.has(addr);
+    });
+
+    const badge = document.getElementById('fq-badge');
+    if (badge) {
+      if (pending.length > 0) { badge.textContent = pending.length; badge.style.display = ''; }
+      else { badge.style.display = 'none'; }
+    }
+  } catch(_) {}
+}
+
+function renderFollowUpQueue() {
+  const entries = DataStore.loadEntries();
+  const appts   = DataStore.loadAppointments();
+  const role    = localStorage.getItem('ce_user_role') || 'canvasser';
+  const myName  = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+
+  // Filter go-backs (role-scoped)
+  let goBacks = entries.filter(e => e.status === 'go-back');
+  if (myName && role !== 'manager' && role !== 'master_admin') {
+    goBacks = goBacks.filter(e => (e.repName || e.name || '').toLowerCase() === myName);
+  }
+
+  // Filter out ones already converted to an appointment
+  const apptAddrs = new Set(appts.map(a => (a.street || '').toLowerCase().replace(/\s+/g,'').slice(0,15)));
+  const pending = goBacks.filter(e => {
+    const addr = (e.address || e.street || '').toLowerCase().replace(/\s+/g,'').slice(0,15);
+    return !apptAddrs.has(addr);
+  });
+
+  // Bucketize: overdue (3+ days old), today (0-1 day old), upcoming (1-3 days old)
+  const now   = Date.now();
+  const DAY   = 864e5;
+  const overdue  = pending.filter(e => (now - e.timestamp) >= 3 * DAY).sort((a,b) => a.timestamp - b.timestamp);
+  const today    = pending.filter(e => (now - e.timestamp) >= DAY    && (now - e.timestamp) < 3 * DAY).sort((a,b) => a.timestamp - b.timestamp);
+  const upcoming = pending.filter(e => (now - e.timestamp) < DAY).sort((a,b) => a.timestamp - b.timestamp);
+
+  const subtitle = document.getElementById('fq-subtitle');
+  if (subtitle) subtitle.textContent = pending.length === 1 ? '1 go-back needs follow-up' : `${pending.length} go-backs need follow-up`;
+
+  function buildCard(e) {
+    const daysAgo = Math.floor((now - e.timestamp) / DAY);
+    const timeStr = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo}d ago`;
+    const phone   = e.phone || '';
+    const addr    = e.address || e.street || '';
+    const name    = e.repName || e.name || 'Unknown Rep';
+    const notes   = e.notes ? `<div class="fq-card-notes">${escHtml(e.notes.slice(0,80))}${e.notes.length>80?'…':''}</div>` : '';
+    return `
+      <div class="fq-card fq-card--${daysAgo >= 3 ? 'overdue' : daysAgo >= 1 ? 'today' : 'upcoming'}">
+        <div class="fq-card-main">
+          <div class="fq-card-name">${escHtml(addr || 'Unknown Address')}</div>
+          <div class="fq-card-meta">${escHtml(name)} · ${timeStr}</div>
+          ${notes}
+        </div>
+        <div class="fq-actions">
+          ${phone ? `<a href="sms:${phone.replace(/\D/g,'')}" class="fq-btn fq-btn--sms">💬 SMS</a><a href="tel:${phone.replace(/\D/g,'')}" class="fq-btn fq-btn--call">📞 Call</a>` : ''}
+        </div>
+      </div>`;
+  }
+
+  const showSection = (labelId, listId, items) => {
+    const lbl = document.getElementById(labelId);
+    const lst = document.getElementById(listId);
+    if (!lbl || !lst) return;
+    if (items.length > 0) {
+      lbl.style.display = '';
+      lst.innerHTML = items.map(buildCard).join('');
+    } else {
+      lbl.style.display = 'none';
+      lst.innerHTML = '';
+    }
+  };
+
+  showSection('fq-label-overdue',  'fq-list-overdue',  overdue);
+  showSection('fq-label-today',    'fq-list-today',    today);
+  showSection('fq-label-upcoming', 'fq-list-upcoming', upcoming);
+
+  const emptyEl = document.getElementById('fq-empty');
+  if (emptyEl) emptyEl.style.display = pending.length === 0 ? '' : 'none';
+
+  // Update badge
+  _updateFqBadge();
 }
 
 // ── CRM: Customers ───────────────────────────────────────────────────────
@@ -13502,8 +14093,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v75\n` +
-      `SW cache:      capital-energy-v75\n` +
+      `App version:   capital-energy-v76\n` +
+      `SW cache:      capital-energy-v76\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -13908,6 +14499,46 @@ function computeCloserStats(range) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1]);
 }
 
+// v76: Show rate — per-closer % of dispositioned appts that were NOT "No Show"
+// Returns array of [name, { showRate, showed, total }] sorted by showRate desc
+function computeShowRateStats(range) {
+  let appts = [];
+  try { appts = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  const cutoff = Date.now() - getLBRangeMs(range);
+  const rangeAppts = appts.filter(a => {
+    const ts = new Date(a.datetime || a.createdAt || 0).getTime();
+    return ts >= cutoff;
+  });
+  // Only count dispositioned appts (result !== 'Pending' && result truthy)
+  const dispositioned = rangeAppts.filter(a => a.result && a.result !== 'Pending');
+  const byCloser = {};
+  dispositioned.forEach(a => {
+    const name = a.closer || 'Unknown';
+    if (!byCloser[name]) byCloser[name] = { showed: 0, total: 0 };
+    byCloser[name].total++;
+    if (a.result !== 'No Show') byCloser[name].showed++;
+  });
+  return Object.entries(byCloser)
+    .map(([name, d]) => [name, { ...d, showRate: d.total ? Math.round(d.showed / d.total * 100) : 0 }])
+    .sort((a, b) => b[1].showRate - a[1].showRate);
+}
+
+// v76: Overall show rate (all closers combined) for current user / range
+function computeShowRate(range) {
+  const role   = localStorage.getItem('ce_user_role') || 'canvasser';
+  const myName = (localStorage.getItem('ce_user_name') || '').toLowerCase();
+  let appts = [];
+  try { appts = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  if (myName && (role === 'canvasser' || role === 'closer')) {
+    appts = appts.filter(a => (a.closer || '').toLowerCase() === myName);
+  }
+  const cutoff  = getLBRangeMs(range || 'week');
+  const rangeA  = appts.filter(a => new Date(a.datetime || a.createdAt || 0).getTime() >= Date.now() - cutoff);
+  const dispo   = rangeA.filter(a => a.result && a.result !== 'Pending');
+  const showed  = dispo.filter(a => a.result !== 'No Show').length;
+  return dispo.length ? Math.round(showed / dispo.length * 100) : null; // null = no data
+}
+
 // Count-up animation for leaderboard numbers
 function countUp(el, target, duration) {
   if (!el) return;
@@ -13998,6 +14629,17 @@ function renderLBBoard(container, stats, youName, unit) {
     const target = parseInt(el.dataset.target, 10) || 0;
     // Stagger each element slightly for a wave effect
     setTimeout(() => countUp(el, target, 800), i * 60);
+  });
+
+  // v76: Tap rep name/avatar → open Baseball Card profile
+  const allNames = stats.map(([n]) => n);
+  container.querySelectorAll('.lb-podium-spot').forEach((spot, pi) => {
+    const name = podiumOrder[pi]?.[0];
+    if (name) { spot.style.cursor = 'pointer'; spot.addEventListener('click', () => openRepProfile(name)); }
+  });
+  container.querySelectorAll('.lb-row').forEach((row, ri) => {
+    const name = rest[ri]?.[0];
+    if (name) { row.style.cursor = 'pointer'; row.addEventListener('click', () => openRepProfile(name)); }
   });
 }
 
@@ -14152,6 +14794,30 @@ function renderLeaderboard() {
 
   renderLBBoard(document.getElementById('lb-canvasser-rows'), canvStats, youName, 'doors');
   renderLBBoard(document.getElementById('lb-closer-rows'),   closerStats, youName, 'signed');
+
+  // v76: Show rate stats under closer board (visible to closer + manager)
+  const srPanel = document.getElementById('lb-show-rate-panel');
+  if (srPanel) srPanel.style.display = (role === 'closer' || role === 'manager') ? 'block' : 'none';
+  const showRateStats = computeShowRateStats(_lbRange);
+  const srContainer = document.getElementById('lb-show-rate-rows');
+  if (srContainer) {
+    if (!showRateStats.length) {
+      srContainer.innerHTML = '<div class="lb-show-rate-empty">No dispositioned appointments yet</div>';
+    } else {
+      srContainer.innerHTML = showRateStats.map(([name, d]) => {
+        const isYou  = name.toLowerCase() === (youName || '').toLowerCase();
+        const barPct = d.showRate;
+        const barCls = d.showRate >= 80 ? 'lb-sr-bar--green' : d.showRate >= 60 ? 'lb-sr-bar--amber' : 'lb-sr-bar--red';
+        return `
+          <div class="lb-show-rate-row${isYou ? ' is-you' : ''}">
+            <div class="lb-sr-name">${escHtml(name)}${isYou ? '<span class="lb-you-tag">YOU</span>' : ''}</div>
+            <div class="lb-sr-bar-wrap"><div class="lb-sr-bar ${barCls}" style="width:${barPct}%"></div></div>
+            <div class="lb-sr-pct">${d.showRate}%</div>
+            <div class="lb-sr-detail">${d.showed}/${d.total}</div>
+          </div>`;
+      }).join('');
+    }
+  }
 
   // Render achievements in dedicated container (outside lb-boards flex row)
   const achWrap = document.getElementById('lb-achievements-wrap');
@@ -15109,6 +15775,9 @@ function _bcardCurrentData() {
     company: s.companyName || 'Capital Energy',
     phone:   s.repPhone    || '',
     email:   s.repEmail    || '',
+    tagline: s.repTagline  || '',   // v76
+    ig:      s.repIg       || '',   // v76
+    li:      s.repLi       || '',   // v76
   };
 }
 
@@ -15135,6 +15804,31 @@ function _bcardRefreshStaticView(d) {
   else { phoneRow.style.display = 'none'; }
   if (d.email) { document.getElementById('bcard-email-val').textContent = d.email; emailRow.style.display = 'flex'; }
   else { emailRow.style.display = 'none'; }
+
+  // v76: tagline
+  const taglineEl = document.getElementById('bcard-tagline');
+  if (taglineEl) { taglineEl.textContent = d.tagline || ''; taglineEl.style.display = d.tagline ? '' : 'none'; }
+
+  // v76: social links
+  const socialRow = document.getElementById('bcard-social-row');
+  const igBtn     = document.getElementById('bcard-ig-btn');
+  const liBtn     = document.getElementById('bcard-li-btn');
+  const hasIG = !!(d.ig);
+  const hasLI = !!(d.li);
+  if (igBtn) {
+    igBtn.style.display = hasIG ? 'flex' : 'none';
+    igBtn.onclick = () => window.open('https://instagram.com/' + encodeURIComponent(d.ig.replace('@','')), '_blank');
+  }
+  if (liBtn) {
+    liBtn.style.display = hasLI ? 'flex' : 'none';
+    const liUrl = d.li.startsWith('http') ? d.li : 'https://linkedin.com/in/' + encodeURIComponent(d.li);
+    liBtn.onclick = () => window.open(liUrl, '_blank');
+  }
+  if (socialRow) socialRow.style.display = (hasIG || hasLI) ? 'flex' : 'none';
+
+  // v76: review CTA (show for everyone seeing the card)
+  const reviewCta = document.getElementById('bcard-review-cta');
+  if (reviewCta) reviewCta.style.display = '';
 }
 
 function openBcard() {
@@ -15147,6 +15841,18 @@ function openBcard() {
   document.getElementById('bcard-edit-company').value = d.company;
   document.getElementById('bcard-edit-phone').value   = d.phone;
   document.getElementById('bcard-edit-email').value   = d.email;
+  const editTagline = document.getElementById('bcard-edit-tagline');
+  const editIg      = document.getElementById('bcard-edit-ig');
+  const editLi      = document.getElementById('bcard-edit-li');
+  if (editTagline) editTagline.value = d.tagline || '';
+  if (editIg)      editIg.value      = d.ig      || '';
+  if (editLi)      editLi.value      = d.li      || '';
+
+  // v76: increment + display view counter
+  const views    = DataStore.incrementCardViews();
+  const viewsEl  = document.getElementById('bcard-views-badge');
+  const viewsNum = document.getElementById('bcard-views-num');
+  if (viewsEl && viewsNum) { viewsNum.textContent = views; viewsEl.style.display = 'inline-flex'; }
 
   // Ensure we start in view mode
   document.getElementById('bcard-card').classList.remove('edit-mode');
@@ -15194,18 +15900,24 @@ function _bcardSaveEdits() {
   const company = document.getElementById('bcard-edit-company').value.trim();
   const phone   = document.getElementById('bcard-edit-phone').value.trim();
   const email   = document.getElementById('bcard-edit-email').value.trim();
+  const tagline = (document.getElementById('bcard-edit-tagline')?.value || '').trim();
+  const ig      = (document.getElementById('bcard-edit-ig')?.value || '').trim();
+  const li      = (document.getElementById('bcard-edit-li')?.value || '').trim();
 
   // Persist to admin settings
   const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
   if (name)    s.repName     = name;
   if (title)   s.repTitle    = title;
   if (company) s.companyName = company;
-  s.repPhone = phone;
-  s.repEmail = email;
+  s.repPhone   = phone;
+  s.repEmail   = email;
+  s.repTagline = tagline; // v76
+  s.repIg      = ig;      // v76
+  s.repLi      = li;      // v76
   localStorage.setItem('ce_admin', JSON.stringify(s));
 
   // Refresh static view
-  const d = { name: name || s.repName, title, company, phone, email };
+  const d = { name: name || s.repName, title, company, phone, email, tagline, ig, li };
   _bcardRefreshStaticView(d);
 
   // Regenerate QR with new data
@@ -16110,6 +16822,13 @@ function openResultSheet(apptId) {
       // 🎮 Gamification — deal signed!
       if (btn.dataset.result === 'Signed') {
         launchConfetti('🏆 DEAL SIGNED! You\'re a closer!');
+        // v76: auto-post to Wall of Wins
+        try {
+          const sAppt  = loadAppointments().find(a => a.id === editingApptId);
+          const sName  = localStorage.getItem('ce_user_name') || sAppt?.closer || 'Closer';
+          const custN  = sAppt ? [sAppt.firstName, sAppt.lastName].filter(Boolean).join(' ') : 'a customer';
+          postWinRaw(sName, `just SIGNED a deal with ${custN}! 🏆🎉`);
+        } catch(_) {}
         setTimeout(() => {
           activateTab('resources');
           setTimeout(() => window.showResPane && window.showResPane('checklist'), 150);
@@ -16525,6 +17244,14 @@ function openDispoSheet() {
             // 🎮 Gamification — biggest win: deal signed!
             if (btn.dataset.result === 'Signed') {
               launchConfetti('🏆 DEAL SIGNED! You\'re a closer!');
+              // v76: auto-post to Wall of Wins
+              try {
+                const dAppts = loadAppointments();
+                const dAppt  = dAppts.find(a => a.id === dispoApptId);
+                const dName  = localStorage.getItem('ce_user_name') || dAppt?.closer || 'Closer';
+                const dCust  = dAppt ? [dAppt.firstName, dAppt.lastName].filter(Boolean).join(' ') : 'a customer';
+                postWinRaw(dName, `just SIGNED a deal with ${dCust}! 🏆🎉`);
+              } catch(_) {}
               setTimeout(() => {
                 activateTab('resources');
                 setTimeout(() => window.showResPane && window.showResPane('checklist'), 150);
@@ -17239,6 +17966,197 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+// ── v76: Wall of Wins ────────────────────────────────────────────────────
+
+function postWinRaw(who, what) {
+  try {
+    const wins = DataStore.loadWins();
+    wins.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), who: who || 'Team', what: what || '', when: Date.now() });
+    if (wins.length > 50) wins.length = 50; // keep last 50 wins
+    DataStore.saveWins(wins);
+    renderWallOfWins();
+  } catch(_) {}
+}
+
+function postWin(message) {
+  const name = localStorage.getItem('ce_user_name') || 'Someone';
+  postWinRaw(name, message || 'scored a win! 🏆');
+}
+
+function renderWallOfWins() {
+  const role    = getActiveRole();
+  const feedEl  = document.getElementById('dash-wow-feed');
+  const inputEl = document.getElementById('dash-wow-input');
+  const clearEl = document.getElementById('dash-wow-clear');
+  if (!feedEl) return;
+
+  // Show input only for manager/closer (they can post wins manually)
+  const canPost = role === 'manager' || role === 'master_admin' || role === 'closer';
+  if (inputEl) inputEl.style.display = canPost ? '' : 'none';
+
+  const wins = DataStore.loadWins();
+  if (!wins.length) {
+    feedEl.innerHTML = '<div class="wow-empty">No wins posted yet — close a deal and it\'ll show here! 🔥</div>';
+    return;
+  }
+  feedEl.innerHTML = wins.slice(0, 10).map(w => {
+    const initials = (w.who || '?').split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+    const isLegend = (w.what || '').toLowerCase().includes('sign');
+    return `
+      <div class="wow-card">
+        <div class="wow-avatar${isLegend ? ' wow-avatar--legend' : ''}">${initials}</div>
+        <div class="wow-body">
+          <div class="wow-who">${escHtml(w.who)}</div>
+          <div class="wow-what">${escHtml(w.what)}</div>
+          <div class="wow-when">${timeAgo(w.when)}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Wire clear button (manager only)
+  if (clearEl) {
+    clearEl.style.display = (role === 'manager' || role === 'master_admin') ? '' : 'none';
+    clearEl.onclick = () => {
+      if (confirm('Clear the Wall of Wins?')) { DataStore.saveWins([]); renderWallOfWins(); }
+    };
+  }
+}
+
+// Wire Wall of Wins post button
+document.addEventListener('DOMContentLoaded', function() {
+  const postBtn = document.getElementById('wow-post-btn');
+  const input   = document.getElementById('wow-input-text');
+  if (!postBtn || !input) return;
+  postBtn.addEventListener('click', function() {
+    const msg = input.value.trim();
+    if (!msg) return;
+    postWin(msg);
+    input.value = '';
+  });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { postBtn.click(); }
+  });
+});
+
+// ── v76: Rep Baseball Card ────────────────────────────────────────────────
+
+function _computeRepRank(score) {
+  if (score >= 500) return { tier: 'Legend', cls: 'rank-badge--legend', emoji: '👑' };
+  if (score >= 200) return { tier: 'Elite',  cls: 'rank-badge--elite',  emoji: '⚡' };
+  if (score >= 75)  return { tier: 'Pro',    cls: 'rank-badge--pro',    emoji: '🔥' };
+  return                   { tier: 'Rookie', cls: 'rank-badge--rookie', emoji: '🌱' };
+}
+
+function _buildRepProfileHTML(repName) {
+  const entries  = DataStore.loadEntries();
+  const appts    = DataStore.loadAppointments();
+  const teamData = DataStore.loadTeam();
+
+  const repEntries = entries.filter(e => (e.repName || e.name || '').toLowerCase() === repName.toLowerCase());
+  const repAppts   = appts.filter(a => (a.closer || a.repName || '').toLowerCase() === repName.toLowerCase());
+
+  const totalDoors    = repEntries.length;
+  const totalContacts = repEntries.filter(e => ['go-back','made-contact'].includes(e.status)).length;
+  const totalBooked   = repAppts.length;
+  const totalSigned   = repAppts.filter(a => (a.result || '').toLowerCase() === 'signed').length;
+  const score         = totalDoors + (totalContacts * 3) + (totalSigned * 10);
+  const rank          = _computeRepRank(score);
+
+  // This week stats
+  const WEEK_MS  = 7 * 24 * 3600 * 1000;
+  const weekCutoff = Date.now() - WEEK_MS;
+  const weekDoors  = repEntries.filter(e => e.timestamp >= weekCutoff).length;
+  const weekSigned = repAppts.filter(a => (a.result||'').toLowerCase()==='signed' && (a.updatedAt||a.createdAt||0) >= weekCutoff).length;
+
+  // Show rate
+  const dispoAppts  = repAppts.filter(a => a.result && a.result !== 'Pending');
+  const showedAppts = dispoAppts.filter(a => a.result !== 'No Show').length;
+  const showRate    = dispoAppts.length ? Math.round(showedAppts / dispoAppts.length * 100) : null;
+
+  // Recent entries (last 5)
+  const recent = repEntries.slice(0, 5);
+
+  // Team member info (role, etc.)
+  const teamMember = (teamData || []).find(m => (m.name || '').toLowerCase() === repName.toLowerCase()) || {};
+  const roleLabel  = { canvasser: 'Canvasser', closer: 'Closer', manager: 'Manager', master_admin: 'Admin' }[teamMember.role] || 'Rep';
+
+  const initials   = repName.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+  const rankNext   = rank.tier === 'Rookie' ? 75 : rank.tier === 'Pro' ? 200 : rank.tier === 'Elite' ? 500 : 999;
+  const progressPct = rank.tier === 'Legend' ? 100 : Math.min(100, Math.round((score / rankNext) * 100));
+
+  return `
+    <div class="rps-hero">
+      <div class="rps-avatar-ring">
+        <div class="rps-avatar">${initials}</div>
+      </div>
+      <div class="rps-name">${escHtml(repName)}</div>
+      <div class="rps-role">${escHtml(roleLabel)}</div>
+      <div class="rank-badge ${rank.cls}" style="margin-top:8px;font-size:13px;padding:5px 14px">${rank.emoji} ${rank.tier}</div>
+      <div style="width:100%;max-width:200px;margin:10px auto 0">
+        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;text-align:center">${score} pts${rank.tier !== 'Legend' ? ' → ' + rankNext + ' for next rank' : ''}</div>
+        <div style="height:5px;background:rgba(255,255,255,0.10);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${progressPct}%;border-radius:3px;background:var(--primary);transition:width 0.6s var(--slide-up)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="rps-body">
+      <div class="rps-section-title">This Week</div>
+      <div class="rps-stats-grid">
+        <div class="rps-stat"><div class="rps-stat-val">${weekDoors}</div><div class="rps-stat-lbl">Doors</div></div>
+        <div class="rps-stat"><div class="rps-stat-val">${weekSigned}</div><div class="rps-stat-lbl">Signed</div></div>
+        <div class="rps-stat"><div class="rps-stat-val">${showRate !== null ? showRate + '%' : '—'}</div><div class="rps-stat-lbl">Show Rate</div></div>
+      </div>
+      <div class="rps-section-title" style="margin-top:18px">All-Time</div>
+      <div class="rps-alltime-grid">
+        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalDoors}</div><div class="rps-alltime-lbl">🚪 Doors</div></div>
+        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalContacts}</div><div class="rps-alltime-lbl">👋 Contacts</div></div>
+        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalBooked}</div><div class="rps-alltime-lbl">📅 Booked</div></div>
+        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalSigned}</div><div class="rps-alltime-lbl">✅ Signed</div></div>
+      </div>
+      ${recent.length ? `
+      <div class="rps-section-title" style="margin-top:18px">Recent Doors</div>
+      ${recent.map(e => `
+        <div class="rps-recent-item">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(e.address||'Unknown address')}</div>
+            <div style="font-size:11px;color:var(--text-secondary)">${STATUS_META[e.status]?.label||e.status||'—'}</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-secondary);flex-shrink:0">${timeAgo(e.timestamp)}</div>
+        </div>`).join('')}` : ''}
+      <button class="rps-share-btn" onclick="_shareRepProfile('${escHtml(repName)}')">📤 Share Profile</button>
+    </div>`;
+}
+
+function openRepProfile(repName) {
+  const overlay = document.getElementById('rep-profile-overlay');
+  const sheet   = document.getElementById('rep-profile-sheet');
+  const inner   = document.getElementById('rep-profile-inner');
+  if (!overlay || !sheet) return;
+  inner.innerHTML = _buildRepProfileHTML(repName);
+  overlay.classList.add('open');
+  sheet.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRepProfile() {
+  const overlay = document.getElementById('rep-profile-overlay');
+  const sheet   = document.getElementById('rep-profile-sheet');
+  if (overlay) overlay.classList.remove('open');
+  if (sheet)   sheet.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function _shareRepProfile(repName) {
+  try {
+    if (navigator.share) {
+      navigator.share({ title: repName + ' — Capital Energy Rep Card', text: 'Check out ' + repName + '\'s performance on Capital Energy!' });
+    } else {
+      navigator.clipboard?.writeText(repName + ' on Capital Energy: ' + totalDoors + ' doors, rank ' + tier);
+      alert('Profile link copied!');
+    }
+  } catch(_) {}
+}
 
 // ── F10: Impersonation ────────────────────────────────────────────────────
 function populateImpersonateDropdown() {
