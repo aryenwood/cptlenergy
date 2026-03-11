@@ -6441,13 +6441,13 @@
   /* ── Dashboard OTD toggle card (replaces FAB) ── */
   .otd-toggle-card {
     display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(135deg, rgba(6,148,162,0.14) 0%, rgba(8,110,125,0.08) 100%);
-    border: 1.5px solid rgba(20,143,152,0.3);
+    background: linear-gradient(135deg, rgba(6,148,162,0.18) 0%, rgba(8,110,125,0.10) 100%);
+    border: 1.5px solid rgba(20,143,152,0.40);
     border-radius: 20px; padding: 16px 18px;
     cursor: pointer; -webkit-tap-highlight-color: transparent;
     transition: border-color .18s, background .18s;
     width: 100%; text-align: left; font-family: inherit;
-    box-shadow: 0 2px 12px rgba(20,143,152,0.12);
+    box-shadow: 0 2px 16px rgba(20,143,152,0.18);
   }
   .otd-toggle-card:active { background: rgba(6,148,162,0.22); }
   .otd-toggle-card.otd-active {
@@ -6474,7 +6474,7 @@
   /* pill toggle switch */
   .otd-toggle-switch {
     width: 46px; height: 26px; border-radius: 13px; flex-shrink: 0;
-    background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.15);
+    background: rgba(20,143,152,0.12); border: 1.5px solid rgba(20,143,152,0.25);
     position: relative; transition: background .2s, border-color .2s;
   }
   .otd-toggle-card.otd-active .otd-toggle-switch {
@@ -6483,11 +6483,17 @@
   .otd-toggle-knob {
     position: absolute; top: 2px; left: 2px;
     width: 18px; height: 18px; border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    transition: transform .2s var(--spring), background .2s;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: transform .2s var(--spring), background .2s, box-shadow .2s;
   }
   .otd-toggle-card.otd-active .otd-toggle-knob {
     transform: translateX(20px); background: #fff;
+    box-shadow: 0 1px 6px rgba(20,143,152,0.35);
+  }
+  /* Dark mode — toggle switch track */
+  html.dark-mode .otd-toggle-switch {
+    background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12);
   }
 
   /* ── Confirm sheet (slides up when toggle is tapped) ── */
