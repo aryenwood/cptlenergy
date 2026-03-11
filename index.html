@@ -145,6 +145,7 @@
       --purple-glow:   rgba(167,139,250,0.16);
       --rank-legend:   #c084fc;
       --hero-gradient: linear-gradient(135deg, rgba(0,229,255,0.10) 0%, rgba(167,139,250,0.08) 100%);
+      --amber-glow: rgba(0,229,255,0.18);
     }
 
     /* ── Dark mode — component overrides ────────────────────────────────── */
@@ -354,10 +355,12 @@
       border-color: rgba(0,229,255,0.14);
       color: var(--text);
     }
+    html.dark-mode input[type="date"],
+    html.dark-mode input[type="time"],
+    html.dark-mode input[type="datetime-local"] { color-scheme: dark; }
     html.dark-mode .followup-row input[type="date"] {
       background: rgba(0,229,255,0.04);
       border-color: rgba(0,229,255,0.14);
-      color-scheme: dark;
     }
 
     /* Satellite FAB active stays teal with neon glow */
@@ -569,7 +572,7 @@
         radial-gradient(ellipse 70% 55% at 8%  12%, rgba(20,143,152,0.18)  0%, transparent 65%),
         radial-gradient(ellipse 55% 45% at 92%  8%, rgba(89,125,255,0.12)  0%, transparent 60%),
         radial-gradient(ellipse 60% 50% at 75% 92%, rgba(20,143,152,0.10)  0%, transparent 60%),
-        radial-gradient(ellipse 80% 60% at 42% 55%, rgba(255,255,255,0.60) 0%, transparent 70%);
+        radial-gradient(ellipse 80% 60% at 42% 55%, rgba(255,255,255,0.30) 0%, transparent 70%);
     }
     /* Explicit dark body background — bulletproof override */
     html.dark-mode body {
@@ -653,6 +656,7 @@
       padding: 4px 12px;
       box-shadow: 0 2px 12px rgba(20,143,152,0.18), 0 1px 3px rgba(0,0,0,0.10);
     }
+    html.dark-mode #header-brand-img { background: rgba(255,255,255,0.06); box-shadow: 0 2px 12px rgba(0,200,215,0.12); }
 
     /* Actions group — pushed to the far right */
     #header-actions {
@@ -1293,8 +1297,10 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .stat-card--green .stat-value { color: #4ade80; }
-    .stat-card--amber .stat-value { color: #00c8d7; }
+    .stat-card--green .stat-value { color: #16a34a; }
+    .stat-card--amber .stat-value { color: var(--amber); }
+    html.dark-mode .stat-card--green .stat-value { color: #4ade80; }
+    html.dark-mode .stat-card--amber .stat-value { color: #00c8d7; }
     .stat-card--purple { border-color: rgba(139,92,246,0.25); background: rgba(139,92,246,0.06); }
     .stat-card--purple::after { background: linear-gradient(90deg, transparent, rgba(139,92,246,0.18), transparent); }
     .stat-card--purple .stat-value { color: var(--purple); }
@@ -1661,6 +1667,12 @@
       font-family: 'Inter', sans-serif;
     }
     .leaflet-popup-tip { display: none; }
+    html.dark-mode .leaflet-popup-content-wrapper { background: rgba(10,17,24,0.96); color: var(--text); }
+    html.dark-mode .leaflet-popup-tip { border-top-color: rgba(10,17,24,0.96); }
+    html.dark-mode .leaflet-bar a { background: rgba(15,25,35,0.96); color: var(--text); border-bottom-color: rgba(0,229,255,0.10); }
+    html.dark-mode .leaflet-bar a:hover { background: rgba(20,35,50,0.96); }
+    html.dark-mode .leaflet-control-attribution { background: rgba(4,11,15,0.75) !important; color: var(--text-3); }
+    html.dark-mode .leaflet-control-attribution a { color: var(--text-2); }
 
     /* View toggle */
     #map-toggle-wrap {
@@ -2461,6 +2473,7 @@
       overflow: hidden; flex-shrink: 0;
     }
     .logo-preview img { width: 80%; height: 80%; object-fit: contain; }
+    html.dark-mode .logo-preview { background: rgba(255,255,255,0.08); }
     .logo-upload-btn {
       flex: 1; padding: 10px 14px;
       background: var(--g1); border: 1px dashed var(--g-border-hi);
@@ -2744,7 +2757,9 @@
       background-repeat: no-repeat; background-position: right 14px center;
       transition: border-color 0.18s, box-shadow 0.18s;
     }
-    .form-select option { background: #0d1e20; color: var(--text); }
+    .form-select option { background: #fff; color: #111827; }
+    html.dark-mode .form-select option { background: #0d1e20; color: var(--text); }
+    html.dark-mode .form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23a8d4e8' stroke-width='2' stroke-linecap='round' d='M2 4l4 4 4-4'/%3E%3C/svg%3E"); }
     .form-select:focus {
       border-color: rgba(20,143,152,0.50);
       box-shadow: 0 0 0 3px rgba(20,143,152,0.13);
@@ -3593,6 +3608,8 @@
       box-shadow: 0 0 0 3px rgba(20,143,152,0.13), 0 1px 0 rgba(255,255,255,0.04) inset;
     }
     textarea.form-input { resize: none; line-height: 1.5; min-height: 80px; }
+    html.dark-mode .form-input:focus,
+    html.dark-mode .form-select:focus { border-color: rgba(0,229,255,0.50); box-shadow: 0 0 0 3px rgba(0,229,255,0.18); }
 
     .form-prefix-wrap { position: relative; }
     .form-prefix {
@@ -5962,6 +5979,10 @@
   .cust-files-record-btn--rec { background:#b91c1c; color:#fff; animation:pulse-rec 1s ease infinite; }
   @keyframes pulse-rec { 0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.4)} 50%{box-shadow:0 0 0 8px rgba(185,28,28,0)} }
   .file-card-icon--audio { background:#fce7f3; color:#db2777; }
+  html.dark-mode .btn-dictate--active { background: rgba(245,158,11,0.18); border-color: rgba(245,158,11,0.45); color: #fbbf24; }
+  html.dark-mode .coaching-badge { background: rgba(245,158,11,0.18); color: #fbbf24; }
+  html.dark-mode .cust-files-record-btn { background: rgba(185,28,28,0.18); border-color: rgba(252,165,165,0.30); color: #fca5a5; }
+  html.dark-mode .file-card-icon--audio { background: rgba(219,39,119,0.15); color: #f472b6; }
   /* ===== v72 Coaching Sheet ===== */
   #coaching-overlay { position:fixed; inset:0; z-index:9100; background:rgba(0,0,0,0.55); opacity:0; pointer-events:none; transition:opacity .25s; }
   #coaching-overlay.open { opacity:1; pointer-events:auto; }
@@ -6610,7 +6631,7 @@
     margin: 0 16px 12px; flex-wrap: nowrap;
   }
   #dash-rank-progress {
-    flex: 1; height: 5px; background: rgba(255,255,255,0.08);
+    flex: 1; height: 5px; background: var(--g-border);
     border-radius: 3px; overflow: hidden; min-width: 40px;
   }
   #dash-rank-progress-bar {
@@ -6640,7 +6661,7 @@
   .fq-card-main  { flex: 1; min-width: 0; }
   .fq-card-name  { font-size: 15px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .fq-card-meta  { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-  .fq-card-notes { font-size: 12px; color: var(--text-secondary); margin-top: 4px; font-style: italic; }
+  .fq-card-notes { font-size: 12px; color: var(--text-3); margin-top: 4px; font-style: italic; }
   .fq-card-date  { font-size: 12px; font-weight: 600; }
   .fq-badge      { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; padding: 0 4px; margin-left: 4px; vertical-align: middle; line-height: 1; }
   .fq-card--overdue  .fq-card-date { color: var(--c-red); }
@@ -6689,9 +6710,10 @@
     font-family: var(--font-body); outline: none;
   }
   .wow-input:focus { border-color: var(--amber); }
+  .wow-input::placeholder { color: var(--text-3); }
   .wow-post-btn {
     height: 44px; padding: 0 18px; border-radius: 12px; border: none;
-    background: var(--amber); color: #000; font-size: 14px; font-weight: 700;
+    background: var(--amber); color: #fff; font-size: 14px; font-weight: 700;
     cursor: pointer; font-family: inherit; white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
   }
@@ -6807,18 +6829,18 @@
   /* ===== v76 Show Rate Leaderboard ===== */
   .lb-show-rate-header { display:flex; align-items:baseline; gap:8px; padding:14px 0 8px; border-top:1px solid var(--border); margin-top:4px; }
   .lb-show-rate-title  { font-size:13px; font-weight:700; color:var(--text); }
-  .lb-show-rate-hint   { font-size:11px; color:var(--text-secondary); }
-  .lb-show-rate-row    { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .lb-show-rate-hint   { font-size:11px; color:var(--text-3); }
+  .lb-show-rate-row    { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid var(--g-border); }
   .lb-show-rate-row.is-you .lb-sr-name { color:var(--primary); font-weight:700; }
   .lb-sr-name    { font-size:13px; font-weight:600; min-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
-  .lb-sr-bar-wrap{ flex:2; height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; }
+  .lb-sr-bar-wrap{ flex:2; height:7px; background:var(--g-border); border-radius:4px; overflow:hidden; }
   .lb-sr-bar     { height:100%; border-radius:4px; transition:width 0.6s var(--slide-up); }
   .lb-sr-bar--green { background:linear-gradient(90deg,#22c55e,#4ade80); }
   .lb-sr-bar--amber { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
   .lb-sr-bar--red   { background:linear-gradient(90deg,#ef4444,#f87171); }
   .lb-sr-pct   { font-size:13px; font-weight:700; min-width:36px; text-align:right; color:var(--text); }
-  .lb-sr-detail{ font-size:11px; color:var(--text-secondary); min-width:30px; text-align:right; }
-  .lb-show-rate-empty { text-align:center; color:var(--text-secondary); font-size:13px; padding:20px 0; }
+  .lb-sr-detail{ font-size:11px; color:var(--text-3); min-width:30px; text-align:right; }
+  .lb-show-rate-empty { text-align:center; color:var(--text-3); font-size:13px; padding:20px 0; }
 
   </style>
 </head>
@@ -6941,7 +6963,7 @@
         <div id="dash-rank-progress">
           <div id="dash-rank-progress-bar" style="width:0%"></div>
         </div>
-        <span id="dash-rank-score" style="font-size:11px;color:var(--text-secondary);white-space:nowrap">0 pts</span>
+        <span id="dash-rank-score" style="font-size:11px;color:var(--text-3);white-space:nowrap">0 pts</span>
       </div>
 
       <!-- Log Door CTA — with daily goal progress -->
@@ -7171,7 +7193,7 @@
       <div id="dash-wow-section">
         <div class="dash-section-label" style="margin-top:28px">
           <span class="dash-section-title">🏆 Wall of Wins</span>
-          <button class="dash-section-action" id="dash-wow-clear" style="color:var(--text-secondary)">Clear</button>
+          <button class="dash-section-action" id="dash-wow-clear" style="color:var(--text-3)">Clear</button>
         </div>
         <!-- Manual win post (manager + closer) -->
         <div id="dash-wow-input" style="display:none;margin-bottom:12px">
@@ -7293,7 +7315,7 @@
         <div id="fq-empty" class="fq-empty" style="display:none">
           <div style="font-size:32px;margin-bottom:8px">✅</div>
           <div style="font-weight:700;font-size:16px;margin-bottom:4px">Queue clear!</div>
-          <div style="font-size:13px;color:var(--text-secondary)">No go-backs pending follow-up.</div>
+          <div style="font-size:13px;color:var(--text-3)">No go-backs pending follow-up.</div>
         </div>
       </div><!-- /crm-pane-followup -->
 
@@ -19343,7 +19365,7 @@ function _buildRepProfileHTML(repName) {
       <div class="rps-role">${escHtml(roleLabel)}</div>
       <div class="rank-badge ${rank.cls}" style="margin-top:8px;font-size:13px;padding:5px 14px">${rank.emoji} ${rank.tier}</div>
       <div style="width:100%;max-width:200px;margin:10px auto 0">
-        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;text-align:center">${score} pts${rank.tier !== 'Legend' ? ' → ' + rankNext + ' for next rank' : ''}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-bottom:4px;text-align:center">${score} pts${rank.tier !== 'Legend' ? ' → ' + rankNext + ' for next rank' : ''}</div>
         <div style="height:5px;background:rgba(255,255,255,0.10);border-radius:3px;overflow:hidden">
           <div style="height:100%;width:${progressPct}%;border-radius:3px;background:var(--primary);transition:width 0.6s var(--slide-up)"></div>
         </div>
@@ -19369,9 +19391,9 @@ function _buildRepProfileHTML(repName) {
         <div class="rps-recent-item">
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(e.address||'Unknown address')}</div>
-            <div style="font-size:11px;color:var(--text-secondary)">${STATUS_META[e.status]?.label||e.status||'—'}</div>
+            <div style="font-size:11px;color:var(--text-3)">${STATUS_META[e.status]?.label||e.status||'—'}</div>
           </div>
-          <div style="font-size:11px;color:var(--text-secondary);flex-shrink:0">${timeAgo(e.timestamp)}</div>
+          <div style="font-size:11px;color:var(--text-3);flex-shrink:0">${timeAgo(e.timestamp)}</div>
         </div>`).join('')}` : ''}
       <button class="rps-share-btn" onclick="_shareRepProfile('${escHtml(repName)}')">📤 Share Profile</button>
     </div>`;
