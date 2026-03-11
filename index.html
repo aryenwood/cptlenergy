@@ -6531,7 +6531,7 @@
     flex: 1; gap: 16px;
   }
   .otd-record-btn {
-    width: 140px; height: 140px; border-radius: 50%; border: none; cursor: pointer;
+    width: 140px; height: 140px; border-radius: 50%; cursor: pointer;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 6px; flex-shrink: 0;
     background: rgba(255,255,255,0.06); border: 3px solid rgba(255,255,255,0.15);
@@ -6559,9 +6559,10 @@
     70%  { box-shadow: 0 0 0 18px rgba(239,68,68,0), 0 0 60px rgba(239,68,68,0.25), 0 8px 32px rgba(185,28,28,0.5); }
     100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), 0 0 60px rgba(239,68,68,0.25), 0 8px 32px rgba(185,28,28,0.5); }
   }
-  /* Saved state */
-  .otd-record-btn--saved { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.4); box-shadow: 0 0 40px rgba(34,197,94,0.15), 0 8px 32px rgba(0,0,0,0.3); }
+  /* Saved state — stays green until reset */
+  .otd-record-btn--saved { background: rgba(34,197,94,0.25); border-color: #4ade80; box-shadow: 0 0 40px rgba(34,197,94,0.25), 0 0 80px rgba(34,197,94,0.1), 0 8px 32px rgba(0,0,0,0.3); }
   .otd-record-btn--saved svg { stroke: #4ade80; }
+  .otd-record-btn--saved .otd-record-btn-lbl { color: #4ade80; }
   /* Timer label inside button */
   .otd-record-timer { font-size: 18px; font-weight: 800; color: #fff; font-family: var(--font-display); letter-spacing: -0.01em; }
 
@@ -6574,7 +6575,6 @@
     transition: transform .35s cubic-bezier(.34,1.2,.64,1);
     max-height: 75vh;
     display: flex; flex-direction: column;
-    touch-action: none;
   }
   #otd-dispo-drawer.otd-drawer-open {
     transform: translateY(0);
@@ -9700,7 +9700,7 @@
   <div id="otd-dispo-drawer">
     <div class="otd-drawer-peek" id="otd-drawer-peek" onclick="otdToggleDrawer()">
       <div class="otd-drawer-handle"></div>
-      <div class="otd-drawer-hint">Swipe up to dispo</div>
+      <div class="otd-drawer-hint">Tap to dispo</div>
     </div>
     <div class="otd-drawer-content">
       <div class="otd-section-label">What happened at this door?</div>
@@ -15115,8 +15115,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v90\n` +
-      `SW cache:      capital-energy-v90\n` +
+      `App version:   capital-energy-v91\n` +
+      `SW cache:      capital-energy-v91\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -18620,7 +18620,7 @@ function otdOpenDrawer() {
   d.classList.add('otd-drawer-open');
   _otdDrawerOpen = true;
   var hint = d.querySelector('.otd-drawer-hint');
-  if (hint) hint.textContent = 'Swipe down to close';
+  if (hint) hint.textContent = 'Tap to close';
 }
 
 function otdCloseDrawer() {
@@ -18629,58 +18629,10 @@ function otdCloseDrawer() {
   d.classList.remove('otd-drawer-open');
   _otdDrawerOpen = false;
   var hint = d.querySelector('.otd-drawer-hint');
-  if (hint) hint.textContent = 'Swipe up to dispo';
+  if (hint) hint.textContent = 'Tap to dispo';
 }
 
-/* ─── Swipe gesture on drawer ─── */
-(function() {
-  document.addEventListener('DOMContentLoaded', function() {
-    var drawer = document.getElementById('otd-dispo-drawer');
-    if (!drawer) return;
-
-    var startY = 0, currentY = 0, dragging = false, canSwipeClose = false;
-    var THRESHOLD = 60; // px to trigger open/close
-
-    drawer.addEventListener('touchstart', function(e) {
-      startY = e.touches[0].clientY;
-      currentY = startY;
-      dragging = true;
-      // Only allow swipe-to-close when content is at the top (not mid-scroll)
-      var content = drawer.querySelector('.otd-drawer-content');
-      canSwipeClose = !content || content.scrollTop <= 2;
-    }, { passive: true });
-
-    drawer.addEventListener('touchmove', function(e) {
-      if (!dragging) return;
-      currentY = e.touches[0].clientY;
-      var dy = currentY - startY;
-
-      if (_otdDrawerOpen && canSwipeClose && dy > 10) {
-        // Open state: drag down to close (only if content at top)
-        drawer.style.transition = 'none';
-        drawer.style.transform = 'translateY(' + dy + 'px)';
-      } else if (!_otdDrawerOpen && dy < -10) {
-        // Peek state: drag up to open
-        drawer.style.transition = 'none';
-        drawer.style.transform = 'translateY(calc(100% - 48px + ' + dy + 'px))';
-      }
-    }, { passive: true });
-
-    drawer.addEventListener('touchend', function(e) {
-      if (!dragging) return;
-      dragging = false;
-      drawer.style.transition = '';
-      drawer.style.transform = '';
-      var dy = currentY - startY;
-
-      if (_otdDrawerOpen && canSwipeClose && dy > THRESHOLD) {
-        otdCloseDrawer();
-      } else if (!_otdDrawerOpen && dy < -THRESHOLD) {
-        otdOpenDrawer();
-      }
-    }, { passive: true });
-  });
-})();
+/* Drawer opens/closes via tap only (otdToggleDrawer on peek handle) */
 
 /* ─── Dashboard toggle card tap ─── */
 function otdToggleTap() {
@@ -18933,6 +18885,55 @@ function _otdBuildEntry(extra) {
   }, extra || {});
 }
 
+/* ─── Attach voice memo blob to customer CRM files ─── */
+function _otdAttachVoice(entry) {
+  if (!_otdVoiceBlob) return;
+  var blob = _otdVoiceBlob;
+  _otdVoiceBlob = null;
+  try {
+    var normPhone = function(p) { return (p || '').replace(/\D/g,'').slice(-10); };
+    var normAddr  = function(a) { return (a || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20); };
+    var custKey   = normPhone(entry.phone) || normAddr(entry.address) || ('log-' + entry.id);
+    var uploaderName = localStorage.getItem('ce_user_name') || 'Rep';
+    var now = new Date();
+    var ds  = now.toISOString().slice(0,16).replace('T',' ');
+    var mimeType = blob.type || 'audio/webm';
+    var ext = mimeType.includes('mp4') || mimeType.includes('m4a') ? 'mp4' : 'webm';
+    var baseName = 'OTD Voice Memo ' + ds;
+    var fr = new FileReader();
+    fr.onloadend = function() {
+      var audioFile = {
+        id: 'otdvm_' + Date.now().toString(36),
+        name: baseName + '.' + ext,
+        ext: ext, type: mimeType,
+        size: blob.size,
+        uploadedBy: uploaderName,
+        uploadedAt: Date.now(),
+        dataUrl: fr.result,
+        isVoiceMemo: true,
+      };
+      try {
+        var existing = JSON.parse(localStorage.getItem('ce_cust_files_' + custKey) || '[]');
+        existing.unshift(audioFile);
+        if (entry.notes) {
+          var noteText = '[OTD Note – ' + ds + ']\nStatus: ' + (entry.status || '') + '\n\n' + entry.notes;
+          existing.unshift({
+            id: 'otdn_' + Date.now().toString(36),
+            name: 'OTD Note ' + ds + '.txt',
+            ext: 'txt', type: 'text/plain',
+            size: noteText.length,
+            uploadedBy: uploaderName,
+            uploadedAt: Date.now(),
+            dataUrl: 'data:text/plain;charset=utf-8,' + encodeURIComponent(noteText),
+          });
+        }
+        localStorage.setItem('ce_cust_files_' + custKey, JSON.stringify(existing.slice(0, 20)));
+      } catch(e) {}
+    };
+    fr.readAsDataURL(blob);
+  } catch(e) {}
+}
+
 /* ─── Save to DataStore + counter update ─── */
 function _otdSaveEntry(entry) {
   var entries = DataStore.loadEntries();
@@ -18942,55 +18943,8 @@ function _otdSaveEntry(entry) {
   if (entry.status === 'made-contact') _otdSessionContact++;
   _otdUpdateCounters();
 
-  // v82: persist voice memo blob + transcript to customer CRM files
-  if (_otdVoiceBlob) {
-    (function(blob) {
-      try {
-        var normPhone = function(p) { return (p || '').replace(/\D/g,'').slice(-10); };
-        var normAddr  = function(a) { return (a || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20); };
-        var custKey   = normPhone(entry.phone) || normAddr(entry.address) || ('log-' + entry.id);
-        var uploaderName = localStorage.getItem('ce_user_name') || 'Rep';
-        var now = new Date();
-        var ds  = now.toISOString().slice(0,16).replace('T',' ');
-        var mimeType = blob.type || 'audio/webm';
-        var ext = mimeType.includes('mp4') || mimeType.includes('m4a') ? 'mp4' : 'webm';
-        var baseName = 'OTD Voice Memo ' + ds;
-        var fr = new FileReader();
-        fr.onloadend = function() {
-          var audioFile = {
-            id: 'otdvm_' + Date.now().toString(36),
-            name: baseName + '.' + ext,
-            ext: ext, type: mimeType,
-            size: blob.size,
-            uploadedBy: uploaderName,
-            uploadedAt: Date.now(),
-            dataUrl: fr.result,
-            isVoiceMemo: true,
-          };
-          try {
-            var existing = JSON.parse(localStorage.getItem('ce_cust_files_' + custKey) || '[]');
-            existing.unshift(audioFile);
-            // Also add notes as text file if present
-            if (entry.notes) {
-              var noteText = '[OTD Note – ' + ds + ']\nStatus: ' + (entry.status || '') + '\n\n' + entry.notes;
-              existing.unshift({
-                id: 'otdn_' + Date.now().toString(36),
-                name: 'OTD Note ' + ds + '.txt',
-                ext: 'txt', type: 'text/plain',
-                size: noteText.length,
-                uploadedBy: uploaderName,
-                uploadedAt: Date.now(),
-                dataUrl: 'data:text/plain;charset=utf-8,' + encodeURIComponent(noteText),
-              });
-            }
-            localStorage.setItem('ce_cust_files_' + custKey, JSON.stringify(existing.slice(0, 20)));
-          } catch(e) {}
-        };
-        fr.readAsDataURL(blob);
-      } catch(e) {}
-    })(_otdVoiceBlob);
-    _otdVoiceBlob = null;
-  }
+  // Persist voice memo if present
+  if (_otdVoiceBlob) { _otdAttachVoice(entry); }
 
   var banner = document.getElementById('otd-saved-banner');
   if (banner) banner.classList.add('otd-visible');
@@ -19011,6 +18965,9 @@ function otdBookAppt() {
   var entries = DataStore.loadEntries();
   entries.unshift(entry); DataStore.saveEntries(entries);
   _otdSessionDoors++; if (entry.status === 'made-contact') _otdSessionContact++;
+  _otdUpdateCounters();
+  // Persist voice memo to customer CRM files if present
+  if (_otdVoiceBlob) { _otdAttachVoice(entry); }
   // Pre-fill OTD inline booking form with collected HO info
   var name  = (document.getElementById('otd-ho-name')  || {}).value || '';
   var phone = (document.getElementById('otd-ho-phone') || {}).value || '';
@@ -19174,6 +19131,7 @@ function otdFillForm() {
   var entries = DataStore.loadEntries();
   entries.unshift(entry); DataStore.saveEntries(entries);
   _otdSessionDoors++; if (entry.status === 'made-contact') _otdSessionContact++;
+  if (_otdVoiceBlob) { _otdAttachVoice(entry); }
   closeOTD();
   setTimeout(function() {
     activateTab('log');
@@ -19293,11 +19251,8 @@ function _otdCloseInteractionSheet() {
 /* "Yes — dispo this door" — close sheet, scroll dispo into view */
 function otdInteractionDispo() {
   _otdCloseInteractionSheet();
-  // Scroll the dispo grid into view
-  setTimeout(function() {
-    var grid = document.querySelector('.otd-dispo-grid');
-    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 200);
+  // Open the dispo drawer so user can pick a result
+  setTimeout(function() { otdOpenDrawer(); }, 200);
 }
 
 /* "No — keep recording" — just close and reset so user can record again */

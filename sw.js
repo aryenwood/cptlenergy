@@ -1,4 +1,4 @@
-const CACHE_NAME = 'capital-energy-v90';
+const CACHE_NAME = 'capital-energy-v91';
 
 // ── Complete app shell — everything needed to run 100% offline ──────────────
 const STATIC_ASSETS = [
