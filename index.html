@@ -33,6 +33,27 @@
     /* ── Reset ───────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── View Transitions CSS ── (ported from SvelteKit) ────────────────── */
+    @keyframes smk-fade-in  { from { opacity: 0; } }
+    @keyframes smk-fade-out { to   { opacity: 0; } }
+    @keyframes smk-slide-from-right { from { transform: translateX(20px); } }
+    @keyframes smk-slide-to-left    { to   { transform: translateX(-20px); } }
+    @keyframes smk-scale-in  { from { transform: scale(0.97); opacity: 0; } }
+
+    ::view-transition-old(root) {
+      animation: 120ms cubic-bezier(0.4, 0, 1, 1) both smk-fade-out;
+    }
+    ::view-transition-new(root) {
+      animation: 200ms cubic-bezier(0, 0, 0.2, 1) 80ms both smk-fade-in,
+                 250ms cubic-bezier(0, 0, 0.2, 1) both smk-scale-in;
+    }
+
+    /* Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-old(root),
+      ::view-transition-new(root) { animation: none !important; }
+    }
+
     /* ── Design tokens ─── v96 Stitch-derived design system ────────────── */
     :root {
       /* Brand — CPTL Energy palette (Stitch-verified) */
@@ -10565,6 +10586,385 @@
 
 <script>
 // ══════════════════════════════════════════════════════════════════════════
+// SvelteMotionKit — Ported from sveltejs/svelte (MIT License)
+// Source: https://github.com/sveltejs/svelte
+// Modules: svelte/easing, svelte/transition, svelte/animate, svelte/motion
+// Zero dependencies. Pure math + Web Animations API.
+// ══════════════════════════════════════════════════════════════════════════
+const SvelteMotionKit = (() => {
+  'use strict';
+
+  // ── Easing functions ── (svelte/easing/index.js, MIT License)
+  // Adapted from https://github.com/mattdesl/eases
+  const linear = t => t;
+  const backIn = t => { const s = 1.70158; return t * t * ((s + 1) * t - s); };
+  const backOut = t => { const s = 1.70158; return --t * t * ((s + 1) * t + s) + 1; };
+  const backInOut = t => { const s = 1.70158 * 1.525; if ((t *= 2) < 1) return 0.5 * (t * t * ((s + 1) * t - s)); return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2); };
+  const bounceOut = t => { const a = 4/11, b = 8/11, c = 9/10, ca = 4356/361, cb = 35442/1805, cc = 16061/1805, t2 = t*t; return t < a ? 7.5625*t2 : t < b ? 9.075*t2 - 9.9*t + 3.4 : t < c ? ca*t2 - cb*t + cc : 10.8*t*t - 20.52*t + 10.72; };
+  const bounceIn = t => 1 - bounceOut(1 - t);
+  const bounceInOut = t => t < 0.5 ? 0.5 * (1 - bounceOut(1 - t * 2)) : 0.5 * bounceOut(t * 2 - 1) + 0.5;
+  const circIn = t => 1 - Math.sqrt(1 - t * t);
+  const circOut = t => Math.sqrt(1 - --t * t);
+  const circInOut = t => { if ((t *= 2) < 1) return -0.5 * (Math.sqrt(1 - t*t) - 1); return 0.5 * (Math.sqrt(1 - (t -= 2)*t) + 1); };
+  const cubicIn = t => t * t * t;
+  const cubicOut = t => { const f = t - 1; return f * f * f + 1; };
+  const cubicInOut = t => t < 0.5 ? 4 * t * t * t : 0.5 * Math.pow(2 * t - 2, 3) + 1;
+  const elasticIn = t => Math.sin(13 * t * Math.PI / 2) * Math.pow(2, 10 * (t - 1));
+  const elasticOut = t => Math.sin(-13 * (t + 1) * Math.PI / 2) * Math.pow(2, -10 * t) + 1;
+  const elasticInOut = t => t < 0.5 ? 0.5 * Math.sin(13 * Math.PI / 2 * 2 * t) * Math.pow(2, 10 * (2*t - 1)) : 0.5 * Math.sin(-13 * Math.PI / 2 * (2*t - 1 + 1)) * Math.pow(2, -10 * (2*t - 1)) + 1;
+  const expoIn = t => t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoInOut = t => t === 0 || t === 1 ? t : t < 0.5 ? 0.5 * Math.pow(2, 20*t - 10) : -0.5 * Math.pow(2, 10 - t*20) + 1;
+  const quadIn = t => t * t;
+  const quadOut = t => -t * (t - 2);
+  const quadInOut = t => { t /= 0.5; if (t < 1) return 0.5*t*t; t--; return -0.5*(t*(t-2)-1); };
+  const quartIn = t => Math.pow(t, 4);
+  const quartOut = t => Math.pow(t - 1, 3) * (1 - t) + 1;
+  const quartInOut = t => t < 0.5 ? 8 * Math.pow(t, 4) : -8 * Math.pow(t - 1, 4) + 1;
+  const quintIn = t => t * t * t * t * t;
+  const quintOut = t => --t * t * t * t * t + 1;
+  const quintInOut = t => { if ((t *= 2) < 1) return 0.5*t*t*t*t*t; return 0.5*((t -= 2)*t*t*t*t + 2); };
+  const sineIn = t => { const v = Math.cos(t * Math.PI * 0.5); return Math.abs(v) < 1e-14 ? 1 : 1 - v; };
+  const sineOut = t => Math.sin(t * Math.PI / 2);
+  const sineInOut = t => -0.5 * (Math.cos(Math.PI * t) - 1);
+
+  const easing = { linear, backIn, backOut, backInOut, bounceIn, bounceOut, bounceInOut, circIn, circOut, circInOut, cubicIn, cubicOut, cubicInOut, elasticIn, elasticOut, elasticInOut, expoIn, expoOut, expoInOut, quadIn, quadOut, quadInOut, quartIn, quartOut, quartInOut, quintIn, quintOut, quintInOut, sineIn, sineOut, sineInOut };
+
+  // ── Accessibility — prefers-reduced-motion ──
+  const _reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reducedMotion = () => _reduceMotion.matches;
+
+  // ── Core animation runner ──
+  // Converts Svelte's TransitionConfig (css function) into Web Animations API calls
+  function _runTransition(node, config, direction) {
+    if (reducedMotion()) { config.duration = 0; }
+    const { delay = 0, duration = 400, easing: easeFn = cubicOut, css } = config;
+    if (!css) return null;
+    const steps = Math.max(Math.ceil(duration / 16), 2);
+    const keyframes = [];
+    for (let i = 0; i <= steps; i++) {
+      const rawT = i / steps;
+      const t = direction === 'in' ? rawT : 1 - rawT;
+      const u = 1 - t;
+      const easedT = easeFn(t);
+      const easedU = 1 - easedT;
+      const cssStr = css(easedT, easedU);
+      const kf = {};
+      cssStr.split(';').forEach(rule => {
+        const [prop, val] = rule.split(':').map(s => s && s.trim());
+        if (prop && val) {
+          // Convert CSS prop to JS camelCase
+          const jsProp = prop.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+          kf[jsProp] = val;
+        }
+      });
+      keyframes.push(kf);
+    }
+    return node.animate(keyframes, { duration, delay, fill: 'forwards', easing: 'linear' });
+  }
+
+  // ── Transition: fade ── (svelte/transition)
+  function fade(node, { delay = 0, duration = 400, easing: easeFn = linear } = {}) {
+    const o = +getComputedStyle(node).opacity;
+    return { delay, duration, easing: easeFn, css: t => `opacity: ${t * o}` };
+  }
+
+  // ── Transition: fly ── (svelte/transition)
+  function fly(node, { delay = 0, duration = 400, easing: easeFn = cubicOut, x = 0, y = 0, opacity = 0 } = {}) {
+    const style = getComputedStyle(node);
+    const targetOpacity = +style.opacity;
+    const transform = style.transform === 'none' ? '' : style.transform;
+    const od = targetOpacity * (1 - opacity);
+    return { delay, duration, easing: easeFn,
+      css: (t, u) => `transform: ${transform} translate(${(1-t)*x}px, ${(1-t)*y}px); opacity: ${targetOpacity - od * u}`
+    };
+  }
+
+  // ── Transition: scale ── (svelte/transition)
+  function scale(node, { delay = 0, duration = 400, easing: easeFn = cubicOut, start = 0, opacity = 0 } = {}) {
+    const style = getComputedStyle(node);
+    const targetOpacity = +style.opacity;
+    const transform = style.transform === 'none' ? '' : style.transform;
+    const sd = 1 - start;
+    const od = targetOpacity * (1 - opacity);
+    return { delay, duration, easing: easeFn,
+      css: (t, u) => `transform: ${transform} scale(${1 - sd * u}); opacity: ${targetOpacity - od * u}`
+    };
+  }
+
+  // ── Transition: blur ── (svelte/transition)
+  function blur(node, { delay = 0, duration = 400, easing: easeFn = cubicInOut, amount = 5, opacity = 0 } = {}) {
+    const style = getComputedStyle(node);
+    const targetOpacity = +style.opacity;
+    const f = style.filter === 'none' ? '' : style.filter;
+    const od = targetOpacity * (1 - opacity);
+    return { delay, duration, easing: easeFn,
+      css: (t, u) => `opacity: ${targetOpacity - od * u}; filter: ${f} blur(${u * amount}px)`
+    };
+  }
+
+  // ── Transition: slide ── (svelte/transition)
+  function slide(node, { delay = 0, duration = 400, easing: easeFn = cubicOut, axis = 'y' } = {}) {
+    const style = getComputedStyle(node);
+    const opacity = +style.opacity;
+    const primary = axis === 'y' ? 'height' : 'width';
+    const primaryVal = parseFloat(style[primary]);
+    const dirs = axis === 'y' ? ['Top', 'Bottom'] : ['Left', 'Right'];
+    const ps = parseFloat(style[`padding${dirs[0]}`]);
+    const pe = parseFloat(style[`padding${dirs[1]}`]);
+    const ms = parseFloat(style[`margin${dirs[0]}`]);
+    const me = parseFloat(style[`margin${dirs[1]}`]);
+    const bs = parseFloat(style[`border${dirs[0]}Width`]);
+    const be = parseFloat(style[`border${dirs[1]}Width`]);
+    return { delay, duration, easing: easeFn,
+      css: t => `overflow:hidden; opacity:${Math.min(t*20,1)*opacity}; ${primary}:${t*primaryVal}px; padding-${dirs[0].toLowerCase()}:${t*ps}px; padding-${dirs[1].toLowerCase()}:${t*pe}px; margin-${dirs[0].toLowerCase()}:${t*ms}px; margin-${dirs[1].toLowerCase()}:${t*me}px; border-${dirs[0].toLowerCase()}-width:${t*bs}px; border-${dirs[1].toLowerCase()}-width:${t*be}px; min-${primary}:0`
+    };
+  }
+
+  // ── Transition: draw (SVG) ── (svelte/transition)
+  function draw(node, { delay = 0, speed, duration, easing: easeFn = cubicInOut } = {}) {
+    let len = node.getTotalLength();
+    if (getComputedStyle(node).strokeLinecap !== 'butt') len += parseInt(getComputedStyle(node).strokeWidth);
+    if (duration === undefined) duration = speed === undefined ? 800 : len / speed;
+    return { delay, duration, easing: easeFn,
+      css: (_, u) => `stroke-dasharray: ${len}; stroke-dashoffset: ${u * len}`
+    };
+  }
+
+  // ── High-level transition helpers ──
+  // These wrap the Svelte config objects into simple one-call animations
+  function animateIn(node, transitionFn, opts = {}) {
+    const config = transitionFn(node, opts);
+    return _runTransition(node, config, 'in');
+  }
+
+  function animateOut(node, transitionFn, opts = {}) {
+    const config = transitionFn(node, opts);
+    return _runTransition(node, config, 'out');
+  }
+
+  // ── Spring physics engine ── (svelte/motion/spring.js)
+  // Exact port of tick_spring from Svelte source
+  function _tickSpring(ctx, lastVal, currentVal, targetVal) {
+    if (typeof currentVal === 'number') {
+      const delta = targetVal - currentVal;
+      const velocity = (currentVal - lastVal) / (ctx.dt || 1/60);
+      const springForce = ctx.opts.stiffness * delta;
+      const damperForce = ctx.opts.damping * velocity;
+      const acceleration = (springForce - damperForce) * ctx.invMass;
+      const d = (velocity + acceleration) * ctx.dt;
+      if (Math.abs(d) < ctx.opts.precision && Math.abs(delta) < ctx.opts.precision) {
+        return targetVal;
+      }
+      ctx.settled = false;
+      return currentVal + d;
+    } else if (Array.isArray(currentVal)) {
+      return currentVal.map((_, i) => _tickSpring(ctx, lastVal[i], currentVal[i], targetVal[i]));
+    } else if (typeof currentVal === 'object' && currentVal !== null) {
+      const next = {};
+      for (const k in currentVal) next[k] = _tickSpring(ctx, lastVal[k], currentVal[k], targetVal[k]);
+      return next;
+    }
+    return targetVal;
+  }
+
+  class SpringValue {
+    constructor(value, { stiffness = 0.15, damping = 0.8, precision = 0.01 } = {}) {
+      this.current = value;
+      this.target = value;
+      this._last = value;
+      this._lastTime = performance.now();
+      this._opts = { stiffness: Math.max(0, Math.min(1, stiffness)), damping: Math.max(0, Math.min(1, damping)), precision };
+      this._invMass = 1;
+      this._raf = null;
+      this._listeners = new Set();
+    }
+
+    onChange(fn) { this._listeners.add(fn); return () => this._listeners.delete(fn); }
+
+    set(target, { hard = false, soft = false, preserveMomentum = 0 } = {}) {
+      this.target = target;
+      if (hard) {
+        this.current = target;
+        this._last = target;
+        this._notify();
+        return;
+      }
+      if (soft) { this._invMass = 0; }
+      if (preserveMomentum) { this._invMass = 0; setTimeout(() => { this._invMass = 1; }, preserveMomentum); }
+      if (!this._raf) this._animate();
+    }
+
+    _notify() { this._listeners.forEach(fn => fn(this.current)); }
+
+    _animate() {
+      const now = performance.now();
+      // Clamp elapsed to 1/30s to prevent haywire on tab-switch (from Svelte source)
+      const elapsed = Math.min(now - this._lastTime, 1000 / 30);
+      this._invMass = Math.min(this._invMass + 0.017, 1); // recover from soft
+
+      const ctx = { invMass: this._invMass, opts: this._opts, settled: true, dt: (elapsed * 60) / 1000 };
+      const next = _tickSpring(ctx, this._last, this.current, this.target);
+
+      this._last = this.current;
+      this._lastTime = now;
+      this.current = next;
+      this._notify();
+
+      if (!ctx.settled) {
+        this._raf = requestAnimationFrame(() => this._animate());
+      } else {
+        this._raf = null;
+      }
+    }
+  }
+
+  // ── Tweened value ── (svelte/motion/tweened.js)
+  class TweenedValue {
+    constructor(value, { duration = 400, easing: easeFn = cubicOut } = {}) {
+      this.current = value;
+      this._duration = duration;
+      this._easing = easeFn;
+      this._listeners = new Set();
+      this._raf = null;
+    }
+
+    onChange(fn) { this._listeners.add(fn); return () => this._listeners.delete(fn); }
+
+    set(target, { duration, easing: easeFn } = {}) {
+      const dur = duration ?? this._duration;
+      const ease = easeFn ?? this._easing;
+      const start = this.current;
+      const startTime = performance.now();
+      if (this._raf) cancelAnimationFrame(this._raf);
+
+      const animate = (now) => {
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / dur, 1);
+        const easedT = ease(t);
+
+        if (typeof start === 'number') {
+          this.current = start + (target - start) * easedT;
+        } else if (typeof start === 'object' && start !== null) {
+          this.current = {};
+          for (const k in start) this.current[k] = start[k] + (target[k] - start[k]) * easedT;
+        }
+
+        this._listeners.forEach(fn => fn(this.current));
+        if (t < 1) { this._raf = requestAnimationFrame(animate); }
+        else { this._raf = null; }
+      };
+      this._raf = requestAnimationFrame(animate);
+    }
+  }
+
+  // ── FLIP animation system ── (svelte/animate)
+  // Exact port of flip() from Svelte source
+  function flipAnimate(elements, mutationFn, { duration, easing: easeFn = cubicOut } = {}) {
+    // FIRST — capture positions
+    const rects = new Map();
+    elements.forEach(el => rects.set(el, el.getBoundingClientRect()));
+
+    // Execute DOM mutation
+    mutationFn();
+
+    // LAST + INVERT + PLAY
+    elements.forEach(el => {
+      const from = rects.get(el);
+      if (!from) return;
+      const to = el.getBoundingClientRect();
+      const dx = from.left - to.left;
+      const dy = from.top - to.top;
+      const dw = from.width / (to.width || 1);
+      const dh = from.height / (to.height || 1);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const dur = duration || (typeof duration === 'function' ? duration(dist) : Math.sqrt(dist) * 120);
+
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return; // no meaningful movement
+
+      const steps = Math.max(Math.ceil(dur / 16), 2);
+      const keyframes = [];
+      for (let i = 0; i <= steps; i++) {
+        const raw = i / steps;
+        const t = easeFn(raw);
+        const u = 1 - t;
+        keyframes.push({
+          transform: `translate(${u * dx}px, ${u * dy}px) scale(${t + u * dw}, ${t + u * dh})`
+        });
+      }
+
+      el.animate(keyframes, { duration: dur, easing: 'linear', fill: 'none' });
+    });
+  }
+
+  // ── View Transitions API wrapper ──
+  // Ported from SvelteKit's onNavigate pattern
+  function viewTransition(updateFn, { fallback = true } = {}) {
+    if (document.startViewTransition && !reducedMotion()) {
+      return document.startViewTransition(updateFn);
+    }
+    // Fallback: just run the update
+    if (fallback) updateFn();
+    return null;
+  }
+
+  // ── Convenience: staggered entrance ──
+  // Animate a list of elements with staggered delays (common in premium apps)
+  function stagger(elements, transitionFn, { staggerDelay = 50, ...opts } = {}) {
+    const nodes = elements instanceof NodeList ? Array.from(elements) : elements;
+    return nodes.map((node, i) => {
+      const config = transitionFn(node, { ...opts, delay: (opts.delay || 0) + i * staggerDelay });
+      return _runTransition(node, config, 'in');
+    });
+  }
+
+  // ── Convenience: counter animation ──
+  // Animate a number from current to target (for stat cards, leaderboard scores)
+  function animateCounter(element, target, { duration = 800, easing: easeFn = cubicOut, prefix = '', suffix = '', decimals = 0 } = {}) {
+    const start = parseFloat(element.textContent.replace(/[^0-9.-]/g, '')) || 0;
+    const tween = new TweenedValue(start, { duration, easing: easeFn });
+    tween.onChange(val => {
+      element.textContent = prefix + val.toFixed(decimals) + suffix;
+    });
+    tween.set(target);
+    return tween;
+  }
+
+  // ── Public API ──
+  return {
+    // Easing (31 functions)
+    easing,
+
+    // Transitions (6 Svelte transitions)
+    fade, fly, scale, blur, slide, draw,
+
+    // High-level helpers
+    animateIn, animateOut, stagger, animateCounter,
+
+    // Motion stores
+    SpringValue, TweenedValue,
+
+    // FLIP animation
+    flipAnimate,
+
+    // View Transitions
+    viewTransition,
+
+    // Accessibility
+    reducedMotion,
+
+    // Shorthand aliases for the most-used easings
+    ease: { out: cubicOut, inOut: cubicInOut, bounce: bounceOut, elastic: elasticOut, back: backOut, spring: backOut }
+  };
+})();
+
+// Global shorthand
+const SMK = SvelteMotionKit;
+
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
 // DataStore — backend-ready abstraction (v71)
 // Swap internals for fetch() calls when real backend is ready.
 // ══════════════════════════════════════════════════════════════════════════
@@ -11262,7 +11662,15 @@ const TrainerBot = {
     var div = document.createElement('div');
     div.className = 'trainer-msg trainer-msg--' + type;
     div.textContent = text;
+    div.style.opacity = '0';
     container.appendChild(div);
+    // SvelteMotionKit: fly + fade each message in
+    if (typeof SMK !== 'undefined' && !SMK.reducedMotion()) {
+      var flyX = type === 'user' ? 20 : -20;
+      SMK.animateIn(div, SMK.fly, { x: flyX, y: 8, duration: 350 });
+    } else {
+      div.style.opacity = '1';
+    }
     container.scrollTop = container.scrollHeight;
   },
 
@@ -11605,26 +12013,57 @@ function activateTab(tabId) {
     return;
   }
 
-  navItems.forEach(btn => {
-    const active = btn.dataset.tab === tabId;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', active);
-  });
-  panels.forEach(panel => {
-    panel.classList.toggle('active', panel.id === `panel-${tabId}`);
-  });
-  // Persist last tab
-  try { localStorage.setItem('ce_active_tab', tabId); } catch(_) {}
+  // ── SvelteMotionKit: View Transitions on tab switch ──
+  const doSwitch = () => {
+    navItems.forEach(btn => {
+      const active = btn.dataset.tab === tabId;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active);
+    });
+    panels.forEach(panel => {
+      panel.classList.toggle('active', panel.id === `panel-${tabId}`);
+    });
+    // Persist last tab
+    try { localStorage.setItem('ce_active_tab', tabId); } catch(_) {}
 
-  if (tabId !== 'map') stopGpsWatch();
-  if (tabId === 'dashboard')   { renderDashboard(); }
-  if (tabId === 'log')         { if (currentCrmPane === 'activity') renderLogList(); else if (currentCrmPane === 'appointments') renderApptCrmList(); else if (currentCrmPane === 'customers') renderCustomerList(); else if (currentCrmPane === 'followup') renderFollowUpQueue(); }
-  if (tabId === 'admin')       loadAdminSettings();
-  if (tabId === 'map')         setTimeout(() => { initMap(); applyMapViewUI(); }, 80);
-  if (tabId === 'resources')   setTimeout(renderBookCovers, 80);
-  if (tabId === 'leaderboard') renderLeaderboard();
-  if (tabId === 'calendar')    renderCalendar();
-  if (tabId === 'trainer')     TrainerBot._renderStats();
+    if (tabId !== 'map') stopGpsWatch();
+    if (tabId === 'dashboard')   { renderDashboard(); _smkDashEntrance(); }
+    if (tabId === 'log')         { if (currentCrmPane === 'activity') renderLogList(); else if (currentCrmPane === 'appointments') renderApptCrmList(); else if (currentCrmPane === 'customers') renderCustomerList(); else if (currentCrmPane === 'followup') renderFollowUpQueue(); }
+    if (tabId === 'admin')       loadAdminSettings();
+    if (tabId === 'map')         setTimeout(() => { initMap(); applyMapViewUI(); }, 80);
+    if (tabId === 'resources')   setTimeout(renderBookCovers, 80);
+    if (tabId === 'leaderboard') renderLeaderboard();
+    if (tabId === 'calendar')    renderCalendar();
+    if (tabId === 'trainer')     TrainerBot._renderStats();
+  };
+
+  // Use View Transitions API if available (ported from SvelteKit's onNavigate)
+  if (typeof SMK !== 'undefined') {
+    SMK.viewTransition(doSwitch);
+  } else {
+    doSwitch();
+  }
+}
+
+// ── SvelteMotionKit: Dashboard entrance animations ──
+function _smkDashEntrance() {
+  if (typeof SMK === 'undefined' || SMK.reducedMotion()) return;
+
+  // Stagger stat cards flying up
+  const statCards = document.querySelectorAll('#panel-dashboard .stat-card');
+  if (statCards.length) {
+    SMK.stagger(statCards, SMK.fly, { y: 24, duration: 450, staggerDelay: 60 });
+  }
+
+  // Greeting fade + blur in
+  const greeting = document.getElementById('dash-greeting');
+  if (greeting) SMK.animateIn(greeting, SMK.blur, { amount: 4, duration: 500 });
+
+  // Activity cards fly from right
+  const actCards = document.querySelectorAll('#panel-dashboard .entry-card, #panel-dashboard .dash-activity-card');
+  if (actCards.length) {
+    SMK.stagger(actCards, SMK.fly, { x: 30, y: 0, duration: 400, staggerDelay: 80, delay: 200 });
+  }
 }
 
 navItems.forEach(btn => {
@@ -11779,7 +12218,7 @@ const STATUS_META = {
 // Animates an element's displayed number from its current parsed value to `target`.
 // For the rate stat, pass suffix='%'.  Duration ~600ms, ease-out cubic.
 const _countToMap = new Map(); // element → animationFrameId
-function countTo(el, target, { suffix = '', duration = 600 } = {}) {
+function countTo(el, target, { suffix = '', duration = 700 } = {}) {
   if (!el) return;
   // Cancel any in-flight animation on this element
   if (_countToMap.has(el)) cancelAnimationFrame(_countToMap.get(el));
@@ -11792,11 +12231,13 @@ function countTo(el, target, { suffix = '', duration = 600 } = {}) {
   // If already at target, just snap
   if (delta === 0) { el.textContent = target + suffix; return; }
 
+  // SvelteMotionKit: use backOut easing (overshoots then settles) for premium feel
+  const easeFn = (typeof SMK !== 'undefined') ? SMK.easing.backOut : (t => 1 - Math.pow(1 - t, 3));
+
   function tick(now) {
     const elapsed  = now - t0;
     const progress = Math.min(elapsed / duration, 1);
-    // Ease-out cubic: 1 - (1 - t)^3
-    const eased    = 1 - Math.pow(1 - progress, 3);
+    const eased    = easeFn(progress);
     const current  = Math.round(start + delta * eased);
     el.textContent = current + suffix;
     if (progress < 1) {
@@ -13871,6 +14312,12 @@ function renderLogList() {
       ev.stopPropagation();
       openCoachingSheet(el.dataset.coachingId);
     });
+  }
+
+  // SvelteMotionKit: staggered card entrance for CRM entries
+  if (typeof SMK !== 'undefined' && !SMK.reducedMotion()) {
+    const cards = document.querySelectorAll('#log-list .entry-card');
+    if (cards.length) SMK.stagger(cards, SMK.fly, { y: 16, duration: 350, staggerDelay: 35 });
   }
 }
 
@@ -17286,7 +17733,20 @@ document.querySelectorAll('.lb-range-tab').forEach(btn => {
       if (lbBoards) lbBoards.style.display = '';
       if (achWrap)  achWrap.style.display  = '';
       if (momPanel) momPanel.style.display = 'none';
-      renderLeaderboard();
+      // FLIP animate leaderboard rows on range change
+      const existingRows = document.querySelectorAll('.lb-row');
+      if (existingRows.length && typeof SMK !== 'undefined') {
+        SMK.flipAnimate(Array.from(existingRows), () => renderLeaderboard());
+      } else {
+        renderLeaderboard();
+      }
+      // Stagger entrance for new rows
+      setTimeout(() => {
+        if (typeof SMK !== 'undefined') {
+          const newRows = document.querySelectorAll('.lb-row');
+          if (newRows.length) SMK.stagger(newRows, SMK.fly, { x: 20, y: 0, duration: 350, staggerDelay: 40 });
+        }
+      }, 30);
     }
   });
 });
