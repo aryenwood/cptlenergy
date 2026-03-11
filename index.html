@@ -3397,6 +3397,11 @@
       z-index: 310;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.30s ease;
+    }
+    .cust-detail-overlay.cust-overlay--open {
+      opacity: 1; pointer-events: auto;
     }
     .cust-detail-sheet {
       position: fixed;
@@ -3405,10 +3410,14 @@
       z-index: 311;
       display: flex; flex-direction: column;
       transform: translateY(100%);
+      pointer-events: none;
       transition: transform 0.40s var(--spring);
       overflow: hidden;
     }
-    .cust-detail-sheet.cust-sheet--open { transform: translateY(0); }
+    .cust-detail-sheet.cust-sheet--open {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
 
     /* Sticky top bar */
     .cust-d-topbar {
@@ -7239,13 +7248,6 @@
         <!-- Customer list -->
         <div id="cust-list"></div>
 
-        <!-- Customer detail sheet (slide-up) -->
-        <div class="cust-detail-overlay crm-pane--hidden" id="cust-detail-overlay"></div>
-        <div class="cust-detail-sheet" id="cust-detail-sheet">
-          <div class="cust-detail-handle"></div>
-          <div class="cust-detail-inner" id="cust-detail-inner"></div>
-        </div>
-
       </div><!-- /crm-pane-customers -->
 
       <!-- ── v76: Follow-Up Queue Pane ── -->
@@ -9288,6 +9290,13 @@
 </div>
 
 <!-- ── v76: Rep Baseball Card Profile Sheet ──────────────────────────── -->
+<!-- Customer detail — body-level so it's never clipped by CRM pane visibility -->
+<div class="cust-detail-overlay" id="cust-detail-overlay"></div>
+<div class="cust-detail-sheet" id="cust-detail-sheet">
+  <div class="cust-detail-handle"></div>
+  <div class="cust-detail-inner" id="cust-detail-inner"></div>
+</div>
+
 <div id="rep-profile-overlay" onclick="closeRepProfile()"></div>
 <div id="rep-profile-sheet" role="dialog" aria-modal="true" aria-label="Rep Profile">
   <div class="rps-handle"></div>
@@ -12541,8 +12550,8 @@ function openCustomerDetail(idx) {
     });
   });
 
-  // Show sheet
-  overlay.classList.remove('crm-pane--hidden');
+  // Show sheet — v80: overlay uses cust-overlay--open (body-level, not inside CRM pane)
+  overlay.classList.add('cust-overlay--open');
   requestAnimationFrame(() => sheet.classList.add('cust-sheet--open'));
 }
 
@@ -12967,7 +12976,7 @@ function closeCustomerDetail() {
   const sheet   = document.getElementById('cust-detail-sheet');
   if (!overlay || !sheet) return;
   sheet.classList.remove('cust-sheet--open');
-  setTimeout(() => overlay.classList.add('crm-pane--hidden'), 400);
+  overlay.classList.remove('cust-overlay--open');
 }
 
 // ── CRM event listeners (registered in _initApp to avoid null-ref crash) ──
@@ -14293,8 +14302,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v80\n` +
-      `SW cache:      capital-energy-v80\n` +
+      `App version:   capital-energy-v81\n` +
+      `SW cache:      capital-energy-v81\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
