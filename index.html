@@ -5957,7 +5957,7 @@
     position: fixed;
     bottom: 88px; /* sit just above the bottom nav */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(0);
     z-index: 9200;
     align-items: center;
     gap: 8px;
@@ -5969,9 +5969,27 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.6s ease, transform 0.6s ease;
     animation: offline-glow 2s ease-in-out infinite;
   }
   #offline-banner.visible { display: flex; }
+  /* Restored state — green, fades out upward */
+  #offline-banner.restored {
+    border-color: rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 0 4px rgba(34,197,94,0.12), 0 8px 32px rgba(0,0,0,0.5);
+    animation: restored-glow 1.5s ease-in-out infinite;
+  }
+  #offline-banner.restored .offline-dot {
+    background: #22c55e;
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+  #offline-banner.fade-out {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
   .offline-dot {
     width: 8px; height: 8px;
     border-radius: 50%;
@@ -5990,6 +6008,10 @@
   @keyframes offline-glow {
     0%, 100% { box-shadow: 0 0 0 4px rgba(239,68,68,0.12), 0 8px 32px rgba(0,0,0,0.5); }
     50%       { box-shadow: 0 0 0 7px rgba(239,68,68,0.22), 0 8px 32px rgba(0,0,0,0.5); }
+  }
+  @keyframes restored-glow {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(34,197,94,0.12), 0 8px 32px rgba(0,0,0,0.5); }
+    50%       { box-shadow: 0 0 0 8px rgba(34,197,94,0.25), 0 8px 32px rgba(0,0,0,0.5); }
   }
 
   /* F10: Impersonation banner */
@@ -11719,15 +11741,45 @@ window.addEventListener('online',  runDeferredGeocode);
 
 // ── v78: Offline detection banner ─────────────────────────────────────────
 (function() {
-  const banner = document.getElementById('offline-banner');
-  if (!banner) return;
-  function setOffline(isOffline) {
-    banner.classList.toggle('visible', isOffline);
+  const banner  = document.getElementById('offline-banner');
+  const dot     = banner  ? banner.querySelector('.offline-dot')  : null;
+  const textEl  = banner  ? banner.querySelector('.offline-text') : null;
+  if (!banner || !dot || !textEl) return;
+
+  let _wasOffline  = false;
+  let _restoreTimer = null;
+
+  function showOffline() {
+    clearTimeout(_restoreTimer);
+    banner.classList.remove('restored', 'fade-out');
+    textEl.textContent = "You're offline — data saves locally";
+    banner.classList.add('visible');
+    _wasOffline = true;
   }
+
+  function showRestored() {
+    if (!_wasOffline) return; // don't flash "restored" on a clean first load
+    clearTimeout(_restoreTimer);
+    banner.classList.remove('fade-out');
+    banner.classList.add('restored');
+    textEl.textContent = '✓ Connection restored — data synced';
+    banner.classList.add('visible');
+
+    // Hold the green state for 2.5 s, then fade up and hide
+    _restoreTimer = setTimeout(() => {
+      banner.classList.add('fade-out');
+      setTimeout(() => {
+        banner.classList.remove('visible', 'restored', 'fade-out');
+        _wasOffline = false;
+      }, 650); // matches the CSS transition duration
+    }, 2500);
+  }
+
   // Set initial state (in case app loaded while already offline)
-  setOffline(!navigator.onLine);
-  window.addEventListener('offline', () => setOffline(true));
-  window.addEventListener('online',  () => setOffline(false));
+  if (!navigator.onLine) showOffline();
+
+  window.addEventListener('offline', showOffline);
+  window.addEventListener('online',  showRestored);
 })();
 
 // ── Property photo ────────────────────────────────────────────────────────
@@ -14217,8 +14269,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v78\n` +
-      `SW cache:      capital-energy-v78\n` +
+      `App version:   capital-energy-v79\n` +
+      `SW cache:      capital-energy-v79\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
