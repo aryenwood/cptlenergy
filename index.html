@@ -5951,17 +5951,46 @@
      v71 NEW FEATURE STYLES
      ═══════════════════════════════════════════════════════════════════════ */
 
-  /* F5: Sync queue badge — tappable to dismiss */
-  #sync-queue-badge {
-    display: none; align-items: center;
-    font-size: 10px; font-weight: 700;
-    color: #fff; background: #f59e0b;
-    padding: 2px 8px; border-radius: 50px;
-    white-space: nowrap; margin: 0 6px; flex-shrink: 0;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+  /* ── v78: Offline banner ─────────────────────────────────────────────── */
+  #offline-banner {
+    display: none;
+    position: fixed;
+    bottom: 88px; /* sit just above the bottom nav */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9200;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(15, 15, 20, 0.92);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    border-radius: 50px;
+    box-shadow: 0 0 0 4px rgba(239,68,68,0.12), 0 8px 32px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    white-space: nowrap;
+    animation: offline-glow 2s ease-in-out infinite;
   }
-  #sync-queue-badge:active { opacity: 0.75; }
+  #offline-banner.visible { display: flex; }
+  .offline-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    flex-shrink: 0;
+    animation: offline-pulse 1.4s ease-in-out infinite;
+  }
+  .offline-text {
+    font-size: 12px; font-weight: 700;
+    color: #fff; letter-spacing: 0.02em;
+  }
+  @keyframes offline-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+  @keyframes offline-glow {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(239,68,68,0.12), 0 8px 32px rgba(0,0,0,0.5); }
+    50%       { box-shadow: 0 0 0 7px rgba(239,68,68,0.22), 0 8px 32px rgba(0,0,0,0.5); }
+  }
 
   /* F10: Impersonation banner */
   #impersonate-banner {
@@ -6764,6 +6793,12 @@
 
 <div id="app">
 
+  <!-- ── v78: Offline banner — shows only when device loses internet ─────── -->
+  <div id="offline-banner" aria-live="polite" aria-atomic="true">
+    <span class="offline-dot"></span>
+    <span class="offline-text">You're offline — data saves locally</span>
+  </div>
+
   <!-- ── Header ─────────────────────────────────────────────────────────── -->
   <header id="header">
     <div id="header-inner">
@@ -6786,9 +6821,6 @@
       <div id="header-titles">
         <img id="header-brand-img" src="logo.png" alt="Capital Energy" />
       </div>
-
-      <!-- v77: Sync queue badge — tap to dismiss (local-only app, no backend) -->
-      <div id="sync-queue-badge" title="All changes are stored locally — tap to dismiss" onclick="DataStore.drainSyncQueue();showToast('✅ Sync cleared')"></div>
 
       <div id="header-actions">
         <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
@@ -9749,23 +9781,15 @@ const DataStore = (() => {
     _appendSync(key.replace('ce_',''));
   }
   function _appendSync(entity) {
+    // v78: sync queue is kept for future backend use but no longer drives any UI badge
     try {
       const q = JSON.parse(localStorage.getItem('ce_sync_queue') || '[]');
       q.push({ op:'upsert', entity, timestamp: Date.now(), deviceId: localStorage.getItem('ce_device_id') || 'unknown' });
       if (q.length > 500) q.splice(0, q.length - 500);
       localStorage.setItem('ce_sync_queue', JSON.stringify(q));
-      _updateBadge();
     } catch(_) {}
   }
-  function _updateBadge() {
-    try {
-      const q = JSON.parse(localStorage.getItem('ce_sync_queue') || '[]');
-      const badge = document.getElementById('sync-queue-badge');
-      if (!badge) return;
-      if (q.length > 0) { badge.textContent = q.length + ' pending sync'; badge.style.display = 'inline-flex'; }
-      else { badge.textContent = ''; badge.style.display = 'none'; }
-    } catch(_) {}
-  }
+  function _updateBadge() { /* v78: badge removed — offline state handled by #offline-banner */ }
   return {
     loadEntries()        { return _read(KEYS.entries, []); },
     saveEntries(arr)     { _write(KEYS.entries, arr); },
@@ -11691,7 +11715,20 @@ function runDeferredGeocode() {
   }, Promise.resolve());
 }
 
-window.addEventListener('online', runDeferredGeocode);
+window.addEventListener('online',  runDeferredGeocode);
+
+// ── v78: Offline detection banner ─────────────────────────────────────────
+(function() {
+  const banner = document.getElementById('offline-banner');
+  if (!banner) return;
+  function setOffline(isOffline) {
+    banner.classList.toggle('visible', isOffline);
+  }
+  // Set initial state (in case app loaded while already offline)
+  setOffline(!navigator.onLine);
+  window.addEventListener('offline', () => setOffline(true));
+  window.addEventListener('online',  () => setOffline(false));
+})();
 
 // ── Property photo ────────────────────────────────────────────────────────
 photoInput.addEventListener('change', () => {
@@ -14180,8 +14217,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v77\n` +
-      `SW cache:      capital-energy-v77\n` +
+      `App version:   capital-energy-v78\n` +
+      `SW cache:      capital-energy-v78\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
