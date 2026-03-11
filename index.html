@@ -854,6 +854,9 @@
     .nav-item--home .nav-label {
       font-size: 10px; font-weight: 500; color: var(--text-3);
       letter-spacing: 0.02em; transition: color 0.2s, font-weight 0.2s;
+      margin-top: 2px;
+      position: relative;
+      top: 4px;
     }
     .nav-item--home.active .nav-label { color: var(--amber); font-weight: 600; }
     /* keep home icon white — prevent amber active override */
@@ -3045,6 +3048,7 @@
     /* ── CRM Sub-tabs ──────────────────────────────────────────────────────── */
     .crm-subtab-nav {
       display: flex;
+      justify-content: center;
       gap: 6px;
       padding: 14px 16px 0;
       border-bottom: 1px solid var(--g-border);
@@ -7462,7 +7466,7 @@
       <div class="res-subtab-nav">
         <button class="res-subtab res-subtab--active" data-pane="wins">🏆 Wins</button>
         <button class="res-subtab" data-pane="adders">Adders</button>
-        <button class="res-subtab" data-pane="books">Books</button>
+        <button class="res-subtab" data-pane="books">📖 Books</button>
         <button class="res-subtab" data-pane="utility">⚡ Utility</button>
         <button class="res-subtab" data-pane="videos">Videos</button>
         <button class="res-subtab" data-pane="training">Training</button>
@@ -16226,10 +16230,14 @@ function saveAdminSettings() {
   applyRoleUI();
 
   const msg = document.getElementById('admin-success');
-  msg.classList.add('show');
+  if (msg) msg.classList.add('show');
   setTimeout(() => {
-    msg.classList.remove('show');
+    if (msg) msg.classList.remove('show');
+    // Force-close admin panel and switch to dashboard
+    const ap = document.getElementById('panel-admin');
+    if (ap) ap.classList.remove('active');
     activateTab('dashboard');
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, 900);
 }
 
