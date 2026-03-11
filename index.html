@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Dev/test site: redirect to test harness if not already in iframe -->
+  <script>
+  if (window.location.hostname === 'testcptlapp.netlify.app' && window.self === window.top) {
+    window.location.replace('/test.html');
+  }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#148f98" />
   <meta name="mobile-web-app-capable" content="yes" />

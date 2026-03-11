@@ -21,10 +21,3 @@
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
     Pragma = "no-cache"
-
-# Dev branch: serve test harness with debug sidebar as landing page
-[context.dev]
-  [[context.dev.redirects]]
-    from = "/"
-    to = "/test.html"
-    status = 200
