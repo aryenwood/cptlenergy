@@ -6478,14 +6478,17 @@
 
   /* ── OTD inline booking sheet ── */
   #otd-booking-sheet {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9250;
-    background: #0d1e2e; border-radius: 24px 24px 0 0;
-    padding: 0 18px calc(env(safe-area-inset-bottom, 0px) + 100px);
-    box-shadow: 0 -12px 40px rgba(0,0,0,0.6);
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9250;
+    background: #0d1e2e;
     transform: translateY(100%); transition: transform .35s cubic-bezier(.34,1.56,.64,1);
-    max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    overflow: hidden; touch-action: pan-y;
   }
-  #otd-booking-sheet.otd-sheet-open { display: block; transform: translateY(0); }
+  #otd-booking-sheet.otd-sheet-open { display: flex; flex-direction: column; transform: translateY(0); }
+  #otd-booking-sheet .otd-book-scroll {
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 0 18px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    overscroll-behavior: contain;
+  }
   #otd-booking-sheet .otd-int-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 14px auto 14px; }
   #otd-booking-sheet .otd-book-title {
     font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px;
@@ -6522,11 +6525,16 @@
     margin-top: 8px; margin-bottom: 16px;
   }
 
-  /* ── Big center record button ── */
+  /* ── Big center record button — floats in center of OTD screen ── */
+  .otd-record-wrap {
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px 0 0;
+    flex: 1;
+  }
   .otd-record-btn {
-    width: 80px; height: 80px; border-radius: 50%; border: none; cursor: pointer;
+    width: 96px; height: 96px; border-radius: 50%; border: none; cursor: pointer;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; flex-shrink: 0;
+    gap: 4px; flex-shrink: 0;
     background: rgba(255,255,255,0.1); border: 2.5px solid rgba(255,255,255,0.18);
     transition: transform .15s var(--spring), background .2s, border-color .2s;
     -webkit-tap-highlight-color: transparent; position: relative; z-index: 1;
@@ -9690,6 +9698,20 @@
       ⚡ Save &amp; Next Door
     </button>
 
+    <!-- Big center record button -->
+    <div class="otd-record-wrap">
+      <button class="otd-record-btn" id="otd-record-btn" onclick="otdToggleVoice()">
+        <svg id="otd-record-icon" viewBox="0 0 24 24">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+        <span class="otd-record-btn-lbl" id="otd-voice-label">Record</span>
+        <span id="otd-voice-emoji" style="display:none">🎙️</span>
+      </button>
+    </div>
+
   </div><!-- /otd-body -->
 
   <!-- Floating capture bar -->
@@ -9698,20 +9720,6 @@
     <button class="otd-cam-btn otd-cam-btn--bill" onclick="otdSnapBill()">
       <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#7dd3fc;fill:none;stroke-width:1.8;stroke-linecap:round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span style="font-size:10px;font-weight:700;color:#7dd3fc">Snap Bill</span>
-    </button>
-
-    <!-- Big center record button -->
-    <button class="otd-record-btn" id="otd-record-btn" onclick="otdToggleVoice()">
-      <!-- idle: mic icon -->
-      <svg id="otd-record-icon" viewBox="0 0 24 24">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-        <line x1="12" y1="19" x2="12" y2="23"/>
-        <line x1="8" y1="23" x2="16" y2="23"/>
-      </svg>
-      <span class="otd-record-btn-lbl" id="otd-voice-label">Record</span>
-      <!-- Hidden legacy emoji span for JS compat -->
-      <span id="otd-voice-emoji" style="display:none">🎙️</span>
     </button>
 
     <!-- Drop Call (shown when configured) -->
@@ -9755,61 +9763,70 @@
     <button onclick="otdCloseDropCall()" style="margin-top:14px;width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:rgba(255,255,255,0.6);font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
   </div>
 
-  <!-- OTD inline booking sheet -->
+  <!-- OTD inline booking sheet — full-screen within OTD -->
   <div id="otd-booking-sheet">
-    <div class="otd-int-handle"></div>
-    <div class="otd-book-title">📅 Book Appointment</div>
-    <div class="otd-book-sub">Schedule a closer visit for this homeowner</div>
-
-    <div class="otd-book-field">
-      <div class="otd-book-label">Date & Time *</div>
-      <input class="otd-book-input" type="datetime-local" id="otd-b-datetime" required />
-    </div>
-
-    <div class="otd-book-field">
-      <div class="otd-book-label">Assigned Closer *</div>
-      <select class="otd-book-input" id="otd-b-closer" required>
-        <option value="">Select a closer…</option>
-      </select>
-    </div>
-
-    <div class="otd-book-field">
-      <div class="otd-book-label">Customer Name *</div>
-      <div class="otd-book-row">
-        <input class="otd-book-input" type="text" id="otd-b-first" placeholder="First" />
-        <input class="otd-book-input" type="text" id="otd-b-last" placeholder="Last" />
+    <!-- Header (fixed at top) -->
+    <div style="padding:0 18px;flex-shrink:0;padding-top:calc(env(safe-area-inset-top, 14px) + 10px)">
+      <div class="otd-int-handle"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="otd-book-title">📅 Book Appointment</div>
+        <button onclick="otdCloseBookingSheet()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 13px;font-size:13px;font-weight:700;color:rgba(255,255,255,0.65);cursor:pointer;font-family:inherit">✕ Close</button>
       </div>
+      <div class="otd-book-sub">Schedule a closer visit for this homeowner</div>
     </div>
 
-    <div class="otd-book-field">
-      <div class="otd-book-label">Email</div>
-      <input class="otd-book-input" type="email" id="otd-b-email" placeholder="email@example.com" />
-    </div>
-
-    <div class="otd-book-field">
-      <div class="otd-book-label">Phone *</div>
-      <div class="otd-book-row">
-        <input class="otd-book-input" type="tel" id="otd-b-area" placeholder="555" maxlength="3" style="max-width:100px" />
-        <input class="otd-book-input" type="tel" id="otd-b-phone" placeholder="123-4567" />
+    <!-- Scrollable form content -->
+    <div class="otd-book-scroll">
+      <div class="otd-book-field">
+        <div class="otd-book-label">Date & Time *</div>
+        <input class="otd-book-input" type="datetime-local" id="otd-b-datetime" required />
       </div>
-    </div>
 
-    <div class="otd-book-field">
-      <div class="otd-book-label">Address</div>
-      <input class="otd-book-input" type="text" id="otd-b-street" placeholder="Street address" style="margin-bottom:8px" />
-      <div class="otd-book-row">
-        <input class="otd-book-input" type="text" id="otd-b-city" placeholder="City" />
-        <input class="otd-book-input" type="text" id="otd-b-zip" placeholder="Zip" maxlength="5" />
+      <div class="otd-book-field">
+        <div class="otd-book-label">Assigned Closer *</div>
+        <select class="otd-book-input" id="otd-b-closer" required>
+          <option value="">Select a closer…</option>
+        </select>
       </div>
-    </div>
 
-    <div class="otd-book-field">
-      <div class="otd-book-label">Avg Monthly Bill</div>
-      <input class="otd-book-input" type="text" id="otd-b-bill" placeholder="$200" />
-    </div>
+      <div class="otd-book-field">
+        <div class="otd-book-label">Customer Name *</div>
+        <div class="otd-book-row">
+          <input class="otd-book-input" type="text" id="otd-b-first" placeholder="First" />
+          <input class="otd-book-input" type="text" id="otd-b-last" placeholder="Last" />
+        </div>
+      </div>
 
-    <button class="otd-book-submit" id="otd-book-submit-btn">📅 Book Appointment</button>
-    <button class="otd-book-cancel" onclick="otdCloseBookingSheet()">Cancel</button>
+      <div class="otd-book-field">
+        <div class="otd-book-label">Email</div>
+        <input class="otd-book-input" type="email" id="otd-b-email" placeholder="email@example.com" />
+      </div>
+
+      <div class="otd-book-field">
+        <div class="otd-book-label">Phone *</div>
+        <div class="otd-book-row">
+          <input class="otd-book-input" type="tel" id="otd-b-area" placeholder="555" maxlength="3" style="max-width:100px" />
+          <input class="otd-book-input" type="tel" id="otd-b-phone" placeholder="123-4567" />
+        </div>
+      </div>
+
+      <div class="otd-book-field">
+        <div class="otd-book-label">Address</div>
+        <input class="otd-book-input" type="text" id="otd-b-street" placeholder="Street address" style="margin-bottom:8px" />
+        <div class="otd-book-row">
+          <input class="otd-book-input" type="text" id="otd-b-city" placeholder="City" />
+          <input class="otd-book-input" type="text" id="otd-b-zip" placeholder="Zip" maxlength="5" />
+        </div>
+      </div>
+
+      <div class="otd-book-field">
+        <div class="otd-book-label">Avg Monthly Bill</div>
+        <input class="otd-book-input" type="text" id="otd-b-bill" placeholder="$200" />
+      </div>
+
+      <button class="otd-book-submit" id="otd-book-submit-btn">📅 Book Appointment</button>
+      <button class="otd-book-cancel" onclick="otdCloseBookingSheet()">Cancel</button>
+    </div>
   </div>
 
 </div><!-- /#otd-overlay -->
@@ -15056,8 +15073,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v88\n` +
-      `SW cache:      capital-energy-v88\n` +
+      `App version:   capital-energy-v89\n` +
+      `SW cache:      capital-energy-v89\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
