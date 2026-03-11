@@ -6623,14 +6623,15 @@
   }
   #rep-profile-overlay.open { opacity: 1; pointer-events: auto; }
   #rep-profile-sheet {
-    position: absolute; bottom: 0; left: 0; right: 0;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9151;
     max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     background: var(--g1); border-radius: 24px 24px 0 0;
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px);
-    transform: translateY(100%);
+    transform: translateY(110%);
+    pointer-events: none;
     transition: transform 0.38s var(--slide-up);
   }
-  #rep-profile-overlay.open #rep-profile-sheet { transform: translateY(0); }
+  #rep-profile-sheet.open { transform: translateY(0); pointer-events: auto; }
   .rps-handle { width: 36px; height: 4px; background: var(--g-border); border-radius: 2px; margin: 12px auto 0; }
   .rps-close {
     position: absolute; top: 16px; right: 18px; width: 32px; height: 32px;
