@@ -118,35 +118,6 @@
       --slide-up:         cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        /* Xbox Dashboard — deep space navy, electric teal neon */
-        --bg:          #040b0f;
-        --g0:          rgba(6,16,24,0.75);
-        --g1:          rgba(8,20,30,0.82);
-        --g2:          rgba(12,28,42,0.90);
-        --g3:          rgba(16,36,52,0.96);
-        --g-border:    rgba(0,229,255,0.08);
-        --g-border-hi: rgba(0,229,255,0.32);
-        --g-shine:     rgba(0,229,255,0.05);
-        --g-shadow:    rgba(0,0,0,0.75);
-        --surface:     var(--g1);
-        --surface-2:   var(--g2);
-        --surface-3:   var(--g3);
-        --border:      var(--g-border);
-        --border-lit:  rgba(0,229,255,0.28);
-        --text:        #f0f8ff;
-        --text-2:      #a8d4e8;
-        --text-3:      #7ab0c4;
-        /* Neon boost in dark mode */
-        --neon-glow:   0 0 20px rgba(0,200,215,0.40), 0 0 60px rgba(0,200,215,0.14);
-        --neon-border: rgba(0,229,255,0.30);
-        /* v76 dark overrides */
-        --purple-glow:   rgba(167,139,250,0.16);
-        --rank-legend:   #c084fc;
-        --hero-gradient: linear-gradient(135deg, rgba(0,229,255,0.10) 0%, rgba(167,139,250,0.08) 100%);
-      }
-    }
 
     /* Manual dark mode override (toggled via JS) */
     html.dark-mode {
@@ -188,18 +159,6 @@
       background: rgba(0,229,255,0.04);
       border-color: rgba(0,229,255,0.10);
     }
-    @media (prefers-color-scheme: dark) {
-      #dash-greeting-text {
-        background: linear-gradient(135deg, #f0f8ff 10%, #00e5f5 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      #dash-greeting {
-        background: rgba(0,229,255,0.04);
-        border-color: rgba(0,229,255,0.10);
-      }
-    }
 
     /* Stat cards — neon borders in dark mode */
     html.dark-mode .stat-card {
@@ -225,20 +184,6 @@
         0 0 28px rgba(0,200,215,0.08),
         0 4px 24px rgba(0,0,0,0.50);
     }
-    @media (prefers-color-scheme: dark) {
-      .stat-card {
-        border-color: rgba(0,229,255,0.08);
-        box-shadow: 0 1px 0 rgba(0,229,255,0.05) inset, 0 0 24px rgba(0,229,255,0.04), 0 4px 24px rgba(0,0,0,0.50);
-      }
-      .stat-card--green {
-        border-color: rgba(74,222,128,0.18); background: rgba(74,222,128,0.05);
-        box-shadow: 0 1px 0 rgba(74,222,128,0.12) inset, 0 0 28px rgba(74,222,128,0.07), 0 4px 24px rgba(0,0,0,0.50);
-      }
-      .stat-card--amber {
-        border-color: rgba(0,229,255,0.16); background: rgba(0,200,215,0.06);
-        box-shadow: 0 1px 0 rgba(0,229,255,0.10) inset, 0 0 28px rgba(0,200,215,0.08), 0 4px 24px rgba(0,0,0,0.50);
-      }
-    }
     /* ── Dark mode — component overrides ─────────────────────────────────── */
 
     /* Header / nav — Tesla precision */
@@ -256,6 +201,15 @@
       box-shadow:
         0 1px 0 rgba(0,229,255,0.04) inset,
         0 -4px 32px rgba(0,0,0,0.65);
+    }
+    /* Bottom nav glow beam — mirrors header beam */
+    html.dark-mode #bottom-nav::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.35), transparent);
+      box-shadow: 0 0 8px rgba(0,229,255,0.18);
     }
 
     /* Nav active pill — neon teal in dark mode */
@@ -412,86 +366,6 @@
       box-shadow: 0 0 20px rgba(0,200,215,0.40), 0 4px 20px rgba(0,0,0,0.55);
     }
 
-    @media (prefers-color-scheme: dark) {
-      #header {
-        background: rgba(5,10,14,0.97);
-        border-bottom-color: rgba(0,229,255,0.07);
-        box-shadow: 0 1px 0 rgba(0,229,255,0.05) inset, 0 4px 32px rgba(0,0,0,0.60);
-      }
-      #bottom-nav {
-        background: rgba(5,10,14,0.99);
-        border-top-color: rgba(0,229,255,0.07);
-        box-shadow: 0 1px 0 rgba(0,229,255,0.04) inset, 0 -4px 32px rgba(0,0,0,0.65);
-      }
-      .nav-item.active .nav-icon-wrap {
-        background: rgba(0,229,255,0.10);
-        box-shadow: 0 0 16px rgba(0,229,255,0.15), 0 1px 0 rgba(255,255,255,0.04) inset;
-        border: 1px solid rgba(0,229,255,0.18);
-      }
-      .nav-item.active svg { stroke: #00c8d7; }
-      .nav-item.active .nav-label { color: #00c8d7; }
-      .nav-home-circle {
-        border-color: rgba(5,10,14,0.99);
-        box-shadow: 0 6px 22px rgba(0,200,215,0.45), 0 0 28px rgba(0,200,215,0.18), 0 2px 8px rgba(0,0,0,0.30);
-      }
-      #header-logo {
-        background: rgba(0,229,255,0.05);
-        border-color: rgba(0,229,255,0.12);
-        box-shadow: 0 0 12px rgba(0,200,215,0.15);
-      }
-      .sheet {
-        background: rgba(10,17,24,0.98);
-        border-top-color: rgba(0,229,255,0.10);
-        box-shadow: 0 -8px 48px rgba(0,0,0,0.70), 0 1px 0 rgba(0,229,255,0.06) inset;
-      }
-      .sheet-handle { background: rgba(0,229,255,0.28); }
-      #quick-log-sheet, #appt-result-sheet, #dispo-sheet {
-        background: rgba(10,17,24,0.98);
-        border-top-color: rgba(0,229,255,0.10);
-      }
-      .ql-addr-row { background: rgba(0,229,255,0.05); }
-      #ql-notes { background: rgba(0,229,255,0.05); }
-      .ql-handle { background: rgba(0,229,255,0.28); }
-      .appt-hero-title {
-        background: linear-gradient(135deg, #f0f8ff 10%, #00e5f5 100%);
-        -webkit-background-clip: text; background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      #map-toggle-wrap {
-        background: rgba(10,17,24,0.96); box-shadow: 0 2px 16px rgba(0,0,0,0.60);
-        border: 1px solid rgba(0,229,255,0.10);
-      }
-      .map-toggle-btn { color: var(--text-2); }
-      .map-toggle-divider { background: rgba(0,229,255,0.18); }
-      .map-pill {
-        background: rgba(15,25,35,0.96);
-        border-color: rgba(0,229,255,0.14); color: var(--text-2);
-      }
-      .map-pill.active { background: var(--amber); border-color: var(--amber); color: #fff; }
-      #map-legend {
-        background: rgba(10,17,24,0.96); box-shadow: 0 2px 14px rgba(0,0,0,0.55);
-        border: 1px solid rgba(0,229,255,0.08);
-      }
-      #map-locate-btn, #map-satellite-btn {
-        background: rgba(15,25,35,0.96); box-shadow: 0 4px 20px rgba(0,0,0,0.55);
-      }
-      #map-count-badge {
-        background: rgba(10,17,24,0.96); box-shadow: 0 2px 10px rgba(0,0,0,0.50);
-        border: 1px solid rgba(0,229,255,0.08);
-      }
-      #map-stats-card {
-        background: rgba(10,17,24,0.96); box-shadow: 0 2px 14px rgba(0,0,0,0.55);
-        border: 1px solid rgba(0,229,255,0.08);
-      }
-      .form-input, .form-select, .admin-input, .admin-select {
-        background: rgba(0,229,255,0.04);
-        border-color: rgba(0,229,255,0.14);
-        color: var(--text);
-      }
-      .followup-row input[type="date"] {
-        background: rgba(0,229,255,0.04); border-color: rgba(0,229,255,0.14); color-scheme: dark;
-      }
-    }
 
     /* ══════════════════════════════════════════════════════════════════════
        SPRINT 2 — Xbox Dashboard Animations & Neon UI
@@ -505,16 +379,6 @@
     /* Grid lines removed per user preference — keeping elements for compatibility */
     #app-grid-lines { display: none; }
     #app-grid-glow  { display: none; }
-    @media (prefers-color-scheme: dark) {
-      #app-grid-lines {
-        background-image:
-          linear-gradient(rgba(0,200,215,0.12) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0,200,215,0.12) 1px, transparent 1px);
-      }
-      #app-grid-glow {
-        background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,200,215,0.10) 0%, transparent 70%);
-      }
-    }
     @keyframes gridDrift {
       0%   { transform: translateY(0); }
       100% { transform: translateY(48px); }
@@ -540,9 +404,6 @@
       0%   { left: -60%; }
       100% { left: 100%; }
     }
-    html.dark-mode #header::after { opacity: 0.65; }
-    @media (prefers-color-scheme: dark) { #header::after { opacity: 0.65; } }
-
     /* ── Stat card — depth glow + staggered scan ───────────────────────── */
     .stat-card::before {
       content: '';
@@ -582,15 +443,6 @@
         0 0 0 1px var(--neon-border),
         0 8px 36px rgba(0,0,0,0.70),
         0 0 30px rgba(0,200,215,0.22);
-    }
-    @media (prefers-color-scheme: dark) {
-      .stat-card {
-        box-shadow:
-          0 1px 0 var(--g-shine) inset,
-          0 0 0 1px var(--g-border),
-          0 4px 28px rgba(0,0,0,0.60),
-          var(--neon-glow);
-      }
     }
 
     /* ── Quick-link icon float animation ───────────────────────────────── */
@@ -647,11 +499,6 @@
     html.dark-mode .nav-item.active svg {
       filter: drop-shadow(0 0 7px rgba(0,200,215,1));
     }
-    @media (prefers-color-scheme: dark) {
-      .nav-item.active svg {
-        filter: drop-shadow(0 0 7px rgba(0,200,215,1));
-      }
-    }
 
     /* ── Home circle neon pulse — removed (was glitchy) ───────────────── */
 
@@ -696,7 +543,7 @@
       height: 100dvh;
       /* Lock pull-to-refresh and all overscroll bounce at root */
       overscroll-behavior: none;
-      touch-action: pan-y;
+      touch-action: manipulation;
     }
     body {
       min-height: -webkit-fill-available;
@@ -707,9 +554,8 @@
       font-size: 15px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       overscroll-behavior: none;
-      touch-action: pan-y;
+      touch-action: manipulation;
     }
 
     /* Gradient mesh — soft ambient glow */
@@ -731,14 +577,6 @@
         radial-gradient(ellipse 40% 30% at 0%   0%,   rgba(0,200,215,0.20) 0%, transparent 55%),
         radial-gradient(ellipse 30% 24% at 100% 100%, rgba(0,100,200,0.14) 0%, transparent 50%),
         radial-gradient(ellipse 20% 18% at 50%  50%,  rgba(0,229,255,0.04) 0%, transparent 60%);
-    }
-    @media (prefers-color-scheme: dark) {
-      body::before {
-        background:
-          radial-gradient(ellipse 40% 30% at 0%   0%,   rgba(0,200,215,0.20) 0%, transparent 55%),
-          radial-gradient(ellipse 30% 24% at 100% 100%, rgba(0,100,200,0.14) 0%, transparent 50%),
-          radial-gradient(ellipse 20% 18% at 50%  50%,  rgba(0,229,255,0.04) 0%, transparent 60%);
-      }
     }
 
     /* ── App shell ───────────────────────────────────────────────────────── */
@@ -3981,6 +3819,28 @@
       pointer-events: none;
       animation: splashGlowPulse 3s ease-in-out infinite;
     }
+    /* Starfield behind splash — tiny dots drifting up */
+    #splash::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(0,229,255,0.50) 50%, transparent 100%),
+        radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.35) 50%, transparent 100%),
+        radial-gradient(1px 1px at 55% 15%, rgba(0,229,255,0.40) 50%, transparent 100%),
+        radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.30) 50%, transparent 100%),
+        radial-gradient(1px 1px at 85% 40%, rgba(0,200,215,0.45) 50%, transparent 100%),
+        radial-gradient(1px 1px at 20% 90%, rgba(139,92,246,0.30) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 42% 45%, rgba(0,229,255,0.35) 50%, transparent 100%),
+        radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.25) 50%, transparent 100%);
+      background-size: 200px 200px;
+      animation: starScroll 20s linear infinite;
+    }
+    @keyframes starScroll {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-200px); }
+    }
 
     @keyframes splashGlowPulse {
       0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
@@ -4040,8 +3900,8 @@
     }
     #splash-bar {
       height: 100%; width: 0%; border-radius: 99px;
-      background: linear-gradient(90deg, var(--amber) 0%, #1ec8d5 100%);
-      box-shadow: 0 0 8px rgba(30,200,213,0.60);
+      background: linear-gradient(90deg, var(--amber) 0%, #1ec8d5 50%, #a78bfa 100%);
+      box-shadow: 0 0 12px rgba(30,200,213,0.70), 0 0 24px rgba(30,200,213,0.30);
       animation: splashBarFill 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
     }
   /* ── Business Card Modal ─────────────────────────────────────────────── */
@@ -5081,18 +4941,6 @@
       --g-border-hi: rgba(20,143,152,0.45);
       --g-shine:     rgba(255,255,255,0.04);
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg:          #07111f;
-        --g0:          rgba(8,20,42,0.72);
-        --g1:          rgba(12,28,62,0.80);
-        --g2:          rgba(18,41,74,0.90);
-        --g3:          rgba(22,50,90,0.97);
-        --g-border:    rgba(255,255,255,0.06);
-        --g-border-hi: rgba(20,143,152,0.45);
-        --g-shine:     rgba(255,255,255,0.04);
-      }
-    }
 
     /* ── P1b: Dark mode body atmosphere — top bloom ────────────────────── */
     html.dark-mode body::before {
@@ -5100,14 +4948,6 @@
         radial-gradient(ellipse 80% 55% at 50% 0%,  rgba(20,143,152,0.22) 0%, transparent 65%),
         radial-gradient(ellipse 40% 35% at 100% 0%, rgba(255,255,255,0.05) 0%, transparent 55%),
         radial-gradient(ellipse 30% 28% at 0% 100%, rgba(8,80,120,0.12) 0%, transparent 55%);
-    }
-    @media (prefers-color-scheme: dark) {
-      body::before {
-        background:
-          radial-gradient(ellipse 80% 55% at 50% 0%,  rgba(20,143,152,0.22) 0%, transparent 65%),
-          radial-gradient(ellipse 40% 35% at 100% 0%, rgba(255,255,255,0.05) 0%, transparent 55%),
-          radial-gradient(ellipse 30% 28% at 0% 100%, rgba(8,80,120,0.12) 0%, transparent 55%);
-      }
     }
 
     /* ── P1c: Ambient orbs — dark mode only ────────────────────────────── */
@@ -5121,9 +4961,6 @@
     }
     html.dark-mode #orb-tl,
     html.dark-mode #orb-br { opacity: 1; }
-    @media (prefers-color-scheme: dark) {
-      #orb-tl, #orb-br { opacity: 1; }
-    }
     #orb-tl {
       width: 320px; height: 320px;
       top: -80px; left: -80px;
@@ -5151,11 +4988,79 @@
         linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px) !important;
     }
-    @media (prefers-color-scheme: dark) {
-      #app-grid-lines {
-        background-image:
-          linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px) !important;
+
+    /* ── P1e: Space-age atmosphere enhancements (v92) ─────────────────── */
+
+    /* Scanline overlay — subtle CRT/HUD effect in dark mode */
+    html.dark-mode body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,229,255,0.012) 2px,
+        rgba(0,229,255,0.012) 4px
+      );
+      animation: scanDrift 8s linear infinite;
+    }
+    @keyframes scanDrift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(4px); }
+    }
+
+    /* Third ambient orb — drifts slowly for depth */
+    #orb-center {
+      position: fixed;
+      width: 200px; height: 200px;
+      top: 45%; left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 70%);
+      filter: blur(50px);
+      transition: opacity 0.5s ease;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+    html.dark-mode #orb-center { opacity: 1; }
+    @keyframes orbFloat {
+      0%   { transform: translate(-50%, -50%) translate(0, 0); }
+      100% { transform: translate(-50%, -50%) translate(20px, -15px); }
+    }
+
+    /* Header glow beam — thin teal accent line */
+    html.dark-mode #header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.50), transparent);
+      box-shadow: 0 0 12px rgba(0,229,255,0.25), 0 0 4px rgba(0,229,255,0.40);
+    }
+
+    /* Nav active — breathing neon glow */
+    html.dark-mode .nav-item.active .nav-icon-wrap {
+      animation: navPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes navPulse {
+      0%, 100% { box-shadow: 0 0 8px rgba(0,200,215,0.25), 0 0 20px rgba(0,200,215,0.08); }
+      50%      { box-shadow: 0 0 14px rgba(0,200,215,0.40), 0 0 32px rgba(0,200,215,0.15); }
+    }
+
+    /* Stat cards — subtle glow pulse on hover */
+    @media (hover: hover) {
+      html.dark-mode .stat-card:hover {
+        border-color: rgba(0,229,255,0.22);
+        box-shadow:
+          0 1px 0 rgba(0,229,255,0.08) inset,
+          0 0 32px rgba(0,229,255,0.10),
+          0 8px 32px rgba(0,0,0,0.55);
+        transform: translateY(-2px);
       }
     }
 
@@ -5174,29 +5079,10 @@
         0 1px 0 rgba(255,255,255,0.05) inset,
         0 4px 24px rgba(0,0,0,0.55);
     }
-    @media (prefers-color-scheme: dark) {
-      .quick-link-btn {
-        background: linear-gradient(145deg, rgba(18,41,74,0.72) 0%, rgba(6,13,24,0.92) 100%);
-        border-color: rgba(255,255,255,0.07);
-        box-shadow:
-          0 1px 0 rgba(255,255,255,0.05) inset,
-          0 4px 24px rgba(0,0,0,0.55);
-      }
-    }
 
     /* Dark hover — teal glow */
     @media (hover: hover) {
       html.dark-mode .quick-link-btn:hover {
-        transform: translateY(-3px);
-        border-color: rgba(20,143,152,0.50);
-        box-shadow:
-          0 1px 0 rgba(255,255,255,0.06) inset,
-          0 10px 36px rgba(0,0,0,0.60),
-          0 0 24px rgba(20,143,152,0.22);
-      }
-    }
-    @media (hover: hover) and (prefers-color-scheme: dark) {
-      .quick-link-btn:hover {
         transform: translateY(-3px);
         border-color: rgba(20,143,152,0.50);
         box-shadow:
@@ -5215,27 +5101,11 @@
         0 1px 0 rgba(255,255,255,0.06) inset,
         0 4px 24px rgba(0,0,0,0.55);
     }
-    @media (prefers-color-scheme: dark) {
-      .quick-link-btn--primary {
-        background: linear-gradient(145deg, rgba(8,70,80,0.70) 0%, rgba(6,13,24,0.92) 100%);
-        border-color: rgba(20,143,152,0.30);
-        box-shadow:
-          0 0 28px rgba(20,143,152,0.15),
-          0 1px 0 rgba(255,255,255,0.06) inset,
-          0 4px 24px rgba(0,0,0,0.55);
-      }
-    }
 
     /* Dispo — green-navy blend */
     html.dark-mode .quick-link-btn--dispo {
       background: linear-gradient(145deg, rgba(8,40,20,0.70) 0%, rgba(6,13,24,0.92) 100%);
       border-color: rgba(34,197,94,0.26);
-    }
-    @media (prefers-color-scheme: dark) {
-      .quick-link-btn--dispo {
-        background: linear-gradient(145deg, rgba(8,40,20,0.70) 0%, rgba(6,13,24,0.92) 100%);
-        border-color: rgba(34,197,94,0.26);
-      }
     }
 
     /* Dark stat cards — navy gradient */
@@ -5245,15 +5115,6 @@
       box-shadow:
         0 1px 0 rgba(255,255,255,0.05) inset,
         0 4px 24px rgba(0,0,0,0.55);
-    }
-    @media (prefers-color-scheme: dark) {
-      .stat-card {
-        background: linear-gradient(145deg, rgba(18,41,74,0.72) 0%, rgba(6,13,24,0.92) 100%);
-        border-color: rgba(255,255,255,0.07);
-        box-shadow:
-          0 1px 0 rgba(255,255,255,0.05) inset,
-          0 4px 24px rgba(0,0,0,0.55);
-      }
     }
     @media (hover: hover) {
       html.dark-mode .stat-card:hover {
@@ -5272,15 +5133,6 @@
       box-shadow:
         0 1px 0 rgba(255,255,255,0.05) inset,
         0 6px 32px rgba(0,0,0,0.55);
-    }
-    @media (prefers-color-scheme: dark) {
-      #dash-greeting {
-        background: linear-gradient(145deg, rgba(14,35,72,0.80) 0%, rgba(6,13,24,0.92) 100%);
-        border-color: rgba(255,255,255,0.07);
-        box-shadow:
-          0 1px 0 rgba(255,255,255,0.05) inset,
-          0 6px 32px rgba(0,0,0,0.55);
-      }
     }
 
     /* ── P3: Icon Containers ─────────────────────────────────────────── */
@@ -5302,15 +5154,6 @@
         0 0 24px rgba(20,143,152,0.28),
         0 1px 0 rgba(255,255,255,0.08) inset;
     }
-    @media (prefers-color-scheme: dark) {
-      .ql-icon {
-        background: linear-gradient(135deg, rgba(8,70,80,0.90) 0%, rgba(20,143,152,0.75) 100%);
-        border-color: rgba(20,143,152,0.22);
-        box-shadow:
-          0 0 24px rgba(20,143,152,0.28),
-          0 1px 0 rgba(255,255,255,0.08) inset;
-      }
-    }
 
     /* Primary icon — brighter teal */
     html.dark-mode .quick-link-btn--primary .ql-icon {
@@ -5320,23 +5163,10 @@
         0 0 30px rgba(20,143,152,0.35),
         0 1px 0 rgba(255,255,255,0.10) inset;
     }
-    @media (prefers-color-scheme: dark) {
-      .quick-link-btn--primary .ql-icon {
-        background: linear-gradient(135deg, rgba(8,90,100,0.95) 0%, rgba(20,143,152,0.90) 100%);
-        border-color: rgba(20,143,152,0.35);
-        box-shadow:
-          0 0 30px rgba(20,143,152,0.35),
-          0 1px 0 rgba(255,255,255,0.10) inset;
-      }
-    }
 
     /* SVG icons white in dark */
     html.dark-mode .ql-icon svg { stroke: rgba(255,255,255,0.90); }
     html.dark-mode .quick-link-btn--primary .ql-icon svg { stroke: #ffffff; }
-    @media (prefers-color-scheme: dark) {
-      .ql-icon svg { stroke: rgba(255,255,255,0.90); }
-      .quick-link-btn--primary .ql-icon svg { stroke: #ffffff; }
-    }
 
     /* ── P4: Greeting, Badge & Header ───────────────────────────────── */
 
@@ -5359,13 +5189,6 @@
       border-color: rgba(20,143,152,0.35);
       color: var(--amber-bright);
     }
-    @media (prefers-color-scheme: dark) {
-      #dash-hub-badge {
-        background: rgba(20,143,152,0.15);
-        border-color: rgba(20,143,152,0.35);
-        color: var(--amber-bright);
-      }
-    }
 
     /* Greeting text — bolder and bigger */
     #dash-greeting-text {
@@ -5376,9 +5199,6 @@
 
     /* Date line — muted in dark */
     html.dark-mode #dash-date { color: rgba(255,255,255,0.45); letter-spacing: 0.05em; }
-    @media (prefers-color-scheme: dark) {
-      #dash-date { color: rgba(255,255,255,0.45); letter-spacing: 0.05em; }
-    }
 
     /* Header — deeper blue-navy glass in dark */
     html.dark-mode #header {
@@ -5387,15 +5207,6 @@
       box-shadow:
         0 1px 0 rgba(255,255,255,0.04) inset,
         0 4px 32px rgba(0,0,0,0.70);
-    }
-    @media (prefers-color-scheme: dark) {
-      #header {
-        background: rgba(4,9,22,0.97);
-        border-bottom-color: rgba(255,255,255,0.06);
-        box-shadow:
-          0 1px 0 rgba(255,255,255,0.04) inset,
-          0 4px 32px rgba(0,0,0,0.70);
-      }
     }
 
     /* ── P5: Typography Polish (universal — both modes) ─────────────── */
@@ -5427,17 +5238,6 @@
         0 4px 28px rgba(0,0,0,0.60);
     }
     html.dark-mode .stat-card--amber .stat-value { color: var(--amber-bright); }
-    @media (prefers-color-scheme: dark) {
-      .stat-card--amber {
-        background: linear-gradient(180deg, rgba(8,60,80,0.60) 0%, rgba(6,13,24,0.96) 100%);
-        border-color: rgba(20,143,152,0.50);
-        box-shadow:
-          0 1px 0 rgba(20,143,152,0.15) inset,
-          0 0 36px rgba(20,143,152,0.14),
-          0 4px 28px rgba(0,0,0,0.60);
-      }
-      .stat-card--amber .stat-value { color: var(--amber-bright); }
-    }
 
 
     /* ── v76: Purple Show Rate stat card (dark mode) ──────────────────── */
@@ -5447,14 +5247,6 @@
       box-shadow: 0 1px 0 rgba(139,92,246,0.15) inset, 0 0 32px rgba(139,92,246,0.12), 0 4px 24px rgba(0,0,0,0.55);
     }
     html.dark-mode .stat-card--purple .stat-value { color: var(--purple-bright); }
-    @media (prefers-color-scheme: dark) {
-      .stat-card--purple {
-        background: linear-gradient(180deg, rgba(60,20,100,0.55) 0%, rgba(6,13,24,0.96) 100%);
-        border-color: rgba(139,92,246,0.45);
-        box-shadow: 0 1px 0 rgba(139,92,246,0.15) inset, 0 0 32px rgba(139,92,246,0.12), 0 4px 24px rgba(0,0,0,0.55);
-      }
-      .stat-card--purple .stat-value { color: var(--purple-bright); }
-    }
 
     /* ── Header calendar button ──────────────────────────────────────── */
     #header-cal-btn {
@@ -5477,14 +5269,6 @@
       box-shadow: 0 0 10px rgba(20,143,152,0.10), 0 1px 0 rgba(20,143,152,0.06) inset;
     }
     html.dark-mode #header-cal-btn svg { stroke: var(--amber-bright); }
-    @media (prefers-color-scheme: dark) {
-      #header-cal-btn {
-        background: rgba(20,143,152,0.07);
-        border-color: rgba(20,143,152,0.18);
-        box-shadow: 0 0 10px rgba(20,143,152,0.10), 0 1px 0 rgba(20,143,152,0.06) inset;
-      }
-      #header-cal-btn svg { stroke: var(--amber-bright); }
-    }
 
     /* ══ CALENDAR REDESIGN — Modern Minimalist ═══════════════════════════ */
     #panel-calendar {
@@ -5554,12 +5338,6 @@
     html.dark-mode #cal-today-btn {
       background: rgba(18,41,74,0.60);
       border-color: rgba(255,255,255,0.07);
-    }
-    @media (prefers-color-scheme: dark) {
-      #cal-prev, #cal-next, #cal-today-btn {
-        background: rgba(18,41,74,0.60);
-        border-color: rgba(255,255,255,0.07);
-      }
     }
 
     /* ── Calendar filter bar ────────────────────────────────────────────────── */
@@ -5728,14 +5506,6 @@
       background: linear-gradient(135deg, rgba(8,90,100,0.95), rgba(20,143,152,0.90));
       box-shadow: 0 2px 10px rgba(20,143,152,0.50);
     }
-    @media (prefers-color-scheme: dark) {
-      .cal-day--today .cal-day-num { color: var(--amber-bright); }
-      .cal-day--today .cal-day-num::before { background: rgba(0,200,215,0.12); border-color: rgba(0,200,215,0.30); }
-      .cal-day--selected .cal-day-num::before {
-        background: linear-gradient(135deg, rgba(8,90,100,0.95), rgba(20,143,152,0.90));
-        box-shadow: 0 2px 10px rgba(20,143,152,0.50);
-      }
-    }
 
     /* Divider between grid and list */
     #cal-divider {
@@ -5891,13 +5661,6 @@
       border-color: rgba(255,255,255,0.07);
       box-shadow: 0 2px 16px rgba(0,0,0,0.40);
     }
-    @media (prefers-color-scheme: dark) {
-      .cal-appt-card {
-        background: linear-gradient(145deg, rgba(18,41,74,0.72), rgba(6,13,24,0.92));
-        border-color: rgba(255,255,255,0.07);
-        box-shadow: 0 2px 16px rgba(0,0,0,0.40);
-      }
-    }
     .cal-appt-time-block {
       display: flex;
       flex-direction: column;
@@ -5981,22 +5744,6 @@
     }
     html.dark-mode #cal-day-sheet { background: #0d1f33; }
     html.dark-mode #cal-day-sheet-close { background: rgba(255,255,255,0.08); }
-    /* System dark mirror */
-    @media (prefers-color-scheme: dark) {
-      #panel-calendar { background: #07111f; }
-      #cal-month-label { color: #f0f8ff; }
-      #cal-year-label { color: rgba(255,255,255,0.40); }
-      #cal-dow-headers span { color: rgba(255,255,255,0.35); }
-      .cal-day { color: rgba(255,255,255,0.85); }
-      .cal-day--other-month { color: rgba(255,255,255,0.18); }
-      #cal-divider { background: rgba(255,255,255,0.06); }
-      #cal-appt-label { color: rgba(255,255,255,0.38); }
-      .cal-appt-empty { color: rgba(255,255,255,0.35); }
-      .cal-appt-ampm { color: rgba(255,255,255,0.40); }
-      .cal-appt-chevron { stroke: rgba(255,255,255,0.30); }
-      #cal-day-sheet { background: #0d1f33; }
-      #cal-day-sheet-close { background: rgba(255,255,255,0.08); }
-    }
 
     /* appt-item on dashboard — tappable (opens calendar) */
     .appt-item {
@@ -7074,6 +6821,7 @@
 <!-- Sprint 2b — Ambient depth orbs (dark mode only) -->
 <div id="orb-tl" aria-hidden="true"></div>
 <div id="orb-br" aria-hidden="true"></div>
+<div id="orb-center" aria-hidden="true"></div>
 
 <!-- ── Splash screen — shown on cold launch, dismissed once app is ready ── -->
 <div id="splash">
@@ -9770,8 +9518,6 @@
       <span style="font-size:10px;font-weight:700;color:#a78bfa">Drop Call</span>
     </button>
 
-    <!-- Legacy voice btn (hidden, kept for JS compat) -->
-    <button class="otd-cam-btn otd-cam-btn--voice" id="otd-voice-btn" style="display:none"></button>
   </div>
 
   <!-- Interaction complete sheet -->
@@ -10257,11 +10003,18 @@ const DataStore = (() => {
     wins:         'ce_wins',        // v76: Wall of Wins
     cardViews:    'ce_card_views',  // v76: business card view counter
   };
+  const _cache = {};  // In-memory cache to avoid repeated JSON.parse
   function _read(key, fallback) {
-    try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
-    catch(_) { return fallback; }
+    if (_cache[key] !== undefined) return _cache[key];
+    try {
+      var raw = localStorage.getItem(key);
+      var val = raw !== null ? JSON.parse(raw) : fallback;
+      _cache[key] = val;
+      return val;
+    } catch(_) { return fallback; }
   }
   function _write(key, val) {
+    _cache[key] = val;  // Update cache immediately
     try { localStorage.setItem(key, JSON.stringify(val)); } catch(_) {}
     _appendSync(key.replace('ce_',''));
   }
@@ -10406,7 +10159,10 @@ let gpsWatchId = null;
 // Using 'load' (not DOMContentLoaded) so Leaflet, PDF.js, installs.js are
 // guaranteed ready before we try to render anything. Critical for PWA cold
 // launches from iPhone home screen where scripts may arrive from SW cache.
+var _appInitDone = false;
 function _initApp() {
+  if (_appInitDone) return; // Guard against double-init
+  _appInitDone = true;
   // Run one-time data migration
   migrateDataV1();
 
@@ -14274,11 +14030,19 @@ bookingForm.addEventListener('submit', e => {
   });
   if (firstInvalid) { firstInvalid.focus(); return; }
 
+  // Block submit when no real closer is assigned
+  const closerVal = document.getElementById('b-closer').value;
+  if (!closerVal || closerVal === '__manual__') {
+    const cs = document.getElementById('b-closer');
+    if (cs) { cs.style.borderColor = 'rgba(239,68,68,0.6)'; setTimeout(() => cs.style.borderColor = '', 2000); cs.focus(); }
+    return;
+  }
+
   const appt = {
     id:        Date.now().toString(36) + Math.random().toString(36).slice(2,6),
     createdAt: Date.now(),
     datetime:  document.getElementById('b-datetime').value,
-    closer:    document.getElementById('b-closer').value,
+    closer:    closerVal,
     firstName: document.getElementById('b-first').value.trim(),
     lastName:  document.getElementById('b-last').value.trim(),
     email:     document.getElementById('b-email').value.trim(),
@@ -15115,8 +14879,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v91\n` +
-      `SW cache:      capital-energy-v91\n` +
+      `App version:   capital-energy-v92\n` +
+      `SW cache:      capital-energy-v92\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -18607,7 +18371,6 @@ var _otdEntryIdForSnap = null;
 var _otdSessionDoors   = 0;   // doors knocked this session
 var _otdSessionContact = 0;   // contacts made this session
 var _otdDrawerOpen     = false;
-var _otdDrawerY0       = null; // touch start Y for swipe
 
 /* ─── Dispo Drawer — toggle, swipe, open/close ─── */
 function otdToggleDrawer() {
@@ -18719,6 +18482,7 @@ function otdRequestClose() {
 /* ─── UI reset for next door ─── */
 function _resetOTDUI() {
   _otdStatus = null;
+  _otdVoiceBlob = null; // Prevent voice leaking between entries
   document.querySelectorAll('.otd-dispo-btn').forEach(function(b) { b.classList.remove('otd-dispo-btn--selected'); });
   var card = document.getElementById('otd-info-card');
   if (card) card.classList.remove('otd-visible');
@@ -19070,11 +18834,19 @@ function _otdPopulateCloser() {
       if (!dt || !dt.value) { if (dt) { dt.style.borderColor = 'rgba(239,68,68,0.6)'; setTimeout(function(){ dt.style.borderColor = ''; }, 2000); dt.focus(); } return; }
       if (!first || !first.value.trim()) { if (first) { first.style.borderColor = 'rgba(239,68,68,0.6)'; setTimeout(function(){ first.style.borderColor = ''; }, 2000); first.focus(); } return; }
 
+      // Block submit when no real closer is assigned
+      var closerEl = document.getElementById('otd-b-closer');
+      var closerVal = closerEl ? closerEl.value : '';
+      if (!closerVal || closerVal === '__manual__') {
+        if (closerEl) { closerEl.style.borderColor = 'rgba(239,68,68,0.6)'; setTimeout(function(){ closerEl.style.borderColor = ''; }, 2000); closerEl.focus(); }
+        return;
+      }
+
       var appt = {
         id:        Date.now().toString(36) + Math.random().toString(36).slice(2,6),
         createdAt: Date.now(),
         datetime:  dt.value,
-        closer:    (document.getElementById('otd-b-closer') || {}).value || '',
+        closer:    closerVal,
         firstName: first.value.trim(),
         lastName:  (document.getElementById('otd-b-last') || {}).value.trim(),
         email:     (document.getElementById('otd-b-email') || {}).value.trim(),
@@ -19096,8 +18868,13 @@ function _otdPopulateCloser() {
       // Close booking sheet, stay in OTD
       otdCloseBookingSheet();
 
+      // Notify & remind — mirror main booking pipeline
+      sendApptNotification(appt);
+      scheduleApptReminders(appt);
+
       // Celebration!
       launchConfetti('🎯 Appointment Booked! Let\'s close it!');
+      setTimeout(function(){ showHandoffCard(appt); }, 900);
 
       // Update counters and show saved banner
       _otdUpdateCounters();
