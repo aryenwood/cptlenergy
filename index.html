@@ -57,6 +57,8 @@
       --border-lit:    rgba(20,143,152,0.30);
 
       /* Typography */
+      --fs-base:       16px;
+      --fs-scale:      1;
       --text:          #111827;
       --text-2:        #4b5563;
       --text-3:        #9ca3af;
@@ -67,7 +69,7 @@
 
       /* Layout */
       --header-h:      76px;
-      --nav-h:         72px;
+      --nav-h:         62px;
       --r-sm:          12px;
       --r-md:          16px;
       --r-lg:          20px;
@@ -356,6 +358,11 @@
       border-color: rgba(0,229,255,0.14);
       color: var(--text);
     }
+    html.dark-mode .admin-accordion { background:rgba(0,229,255,0.04); border-color:rgba(0,229,255,0.10); }
+    html.dark-mode .admin-accordion[open] { background:rgba(0,229,255,0.02); }
+    html.dark-mode .admin-accordion-chevron { stroke:var(--text-2); }
+    html.dark-mode .trainer-mode-tab { color:var(--text-2); }
+    html.dark-mode .trainer-agent-chip { background:rgba(0,229,255,0.06); border-color:rgba(0,229,255,0.12); }
     html.dark-mode input[type="date"],
     html.dark-mode input[type="time"],
     html.dark-mode input[type="datetime-local"] { color-scheme: dark; }
@@ -555,7 +562,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-body);
-      font-size: 15px;
+      font-size: calc(var(--fs-base) * var(--fs-scale));
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
@@ -726,7 +733,7 @@
       height: calc(var(--nav-h) + var(--safe-bottom));
       display: flex;
       align-items: flex-start;
-      padding: 8px 4px 0;
+      padding: 6px 2px 0;
       padding-bottom: var(--safe-bottom);
       overflow: visible;
     }
@@ -734,9 +741,9 @@
     .nav-item {
       flex: 1;
       display: flex; flex-direction: column; align-items: center;
-      gap: 3px;
+      gap: 1px;
       cursor: pointer;
-      padding: 2px 6px;
+      padding: 2px 2px;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       border: none; background: none;
@@ -749,9 +756,9 @@
     /* Tesla-style nav icon wrap with active indicator underline */
     .nav-icon-wrap {
       position: relative;
-      width: 46px; height: 30px;
+      width: 38px; height: 26px;
       display: flex; align-items: center; justify-content: center;
-      border-radius: 14px;
+      border-radius: 12px;
       transition:
         background 0.20s var(--spring),
         box-shadow  0.20s ease;
@@ -782,7 +789,7 @@
     }
 
     .nav-item svg {
-      width: 20px; height: 20px;
+      width: 18px; height: 18px;
       stroke: var(--text-3); fill: none;
       stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
       position: relative; z-index: 1;
@@ -797,9 +804,9 @@
     }
 
     .nav-label {
-      font-size: 9px; font-weight: 500;
+      font-size: 8px; font-weight: 500;
       color: var(--text-3);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       transition: color 0.2s, font-weight 0.2s;
     }
@@ -812,7 +819,7 @@
     .nav-item--home {
       position: absolute;
       left: 50%; top: 0;
-      transform: translateX(-50%) translateY(-38%);
+      transform: translateX(-50%) translateY(-32%);
       display: flex; flex-direction: column; align-items: center;
       gap: 4px; padding: 0;
       border: none; background: none; cursor: pointer;
@@ -832,13 +839,13 @@
       pointer-events: auto;
     }
     .nav-home-circle {
-      width: 58px; height: 58px; border-radius: 50%;
+      width: 48px; height: 48px; border-radius: 50%;
       background: var(--amber);
       display: flex; align-items: center; justify-content: center;
-      border: 3.5px solid rgba(232,242,244,0.96);
+      border: 3px solid rgba(232,242,244,0.96);
       box-shadow:
-        0 6px 22px rgba(20,143,152,0.38),
-        0 2px 8px rgba(0,0,0,0.14),
+        0 4px 16px rgba(20,143,152,0.34),
+        0 2px 6px rgba(0,0,0,0.12),
         0 1px 0 rgba(255,255,255,0.22) inset;
       transition: transform 0.18s var(--spring), box-shadow 0.18s ease;
       pointer-events: none;
@@ -848,16 +855,16 @@
       box-shadow: 0 2px 10px rgba(20,143,152,0.28), 0 1px 4px rgba(0,0,0,0.10);
     }
     .nav-home-circle svg {
-      width: 24px; height: 24px;
+      width: 20px; height: 20px;
       stroke: #fff; fill: none;
       stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
     }
     .nav-item--home .nav-label {
-      font-size: 10px; font-weight: 500; color: var(--text-3);
+      font-size: 8px; font-weight: 500; color: var(--text-3);
       letter-spacing: 0.02em; transition: color 0.2s, font-weight 0.2s;
-      margin-top: 2px;
+      margin-top: 1px;
       position: relative;
-      top: 4px;
+      top: 2px;
     }
     .nav-item--home.active .nav-label { color: var(--amber); font-weight: 600; }
     /* keep home icon white — prevent amber active override */
@@ -888,7 +895,7 @@
     }
 
     .section-sub {
-      font-size: 13px; color: var(--text-2);
+      font-size: 14px; color: var(--text-2);
       margin-bottom: 22px;
     }
 
@@ -2412,13 +2419,34 @@
     }
 
     .admin-section-title {
-      font-size: 12px; font-weight: 700;
+      font-size: 13px; font-weight: 700;
       letter-spacing: 0.07em; text-transform: uppercase;
       color: var(--amber); margin-bottom: 16px;
     }
 
+    /* v95: Accordion admin sections */
+    .admin-accordion { border:none; margin-bottom:8px; border-radius:14px; background:var(--g1); border:1px solid var(--g-border); overflow:hidden; }
+    .admin-accordion[open] { background:var(--g0); }
+    .admin-accordion-header { display:flex; align-items:center; gap:10px; padding:14px 16px; cursor:pointer; list-style:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+    .admin-accordion-header::-webkit-details-marker { display:none; }
+    .admin-accordion-icon { font-size:18px; flex-shrink:0; }
+    .admin-accordion-label { font-size:14px; font-weight:700; color:var(--text); flex:1; }
+    .admin-accordion-chevron { width:18px; height:18px; stroke:var(--text-3); transition:transform 0.25s var(--spring); flex-shrink:0; }
+    .admin-accordion[open] .admin-accordion-chevron { transform:rotate(180deg); }
+    .admin-accordion-body { padding:0 16px 16px; }
+    .admin-field-row { display:flex; gap:10px; }
+
     .admin-field { margin-bottom: 14px; }
     .admin-field:last-child { margin-bottom: 0; }
+
+    /* Font size slider */
+    .admin-font-slider-wrap { display:flex; align-items:center; gap:10px; margin-top:6px; }
+    .admin-font-label-sm { font-size:12px; color:var(--text-3); font-weight:600; }
+    .admin-font-label-lg { font-size:20px; color:var(--text-2); font-weight:700; }
+    .admin-font-size-val { font-size:12px; color:var(--amber); font-weight:600; min-width:36px; text-align:center; }
+    .admin-range-slider { flex:1; -webkit-appearance:none; appearance:none; height:6px; border-radius:3px; background:var(--g2); outline:none; cursor:pointer; }
+    .admin-range-slider::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:var(--amber); border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.2); cursor:pointer; }
+    .admin-range-slider::-moz-range-thumb { width:22px; height:22px; border-radius:50%; background:var(--amber); border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.2); cursor:pointer; }
 
     .admin-section-hint {
       font-size: 12px; color: var(--text-3); line-height: 1.5;
@@ -6847,6 +6875,200 @@
   .lb-sr-detail{ font-size:11px; color:var(--text-3); min-width:30px; text-align:right; }
   .lb-show-rate-empty { text-align:center; color:var(--text-3); font-size:13px; padding:20px 0; }
 
+  /* ── v94: Sales Trainer ─────────────────────────────────────────────────── */
+
+  /* Scenario selector */
+  .trainer-scenarios-wrap { padding: 20px 16px calc(env(safe-area-inset-bottom,0px) + 90px); }
+  .trainer-header { text-align:center; margin-bottom:24px; }
+  .trainer-header-icon { font-size:48px; margin-bottom:8px; }
+  .trainer-title { font-family:'Outfit',sans-serif; font-size:26px; font-weight:800; letter-spacing:-0.03em; color:var(--text); margin:0; }
+  .trainer-subtitle { font-size:14px; color:var(--text-2); margin:6px 0 0; }
+
+  /* Mode tabs */
+  .trainer-mode-tabs { display:flex; gap:6px; margin:16px 0 12px; background:var(--g0); border-radius:12px; padding:4px; }
+  .trainer-mode-tab { flex:1; padding:10px 8px; border:none; background:transparent; border-radius:10px; font-size:14px; font-weight:600; color:var(--text-2); cursor:pointer; transition:all 0.2s; font-family:inherit; }
+  .trainer-mode-tab--active { background:var(--amber); color:#fff; box-shadow:0 2px 8px rgba(20,143,152,0.3); }
+
+  /* Live Agent section */
+  .trainer-agent-intro { text-align:center; padding:24px 16px; }
+  .trainer-agent-avatar { font-size:56px; margin-bottom:12px; }
+  .trainer-agent-intro h3 { font-family:'Outfit',sans-serif; font-size:20px; font-weight:700; margin:0 0 8px; color:var(--text); }
+  .trainer-agent-intro p { font-size:14px; color:var(--text-2); line-height:1.5; margin:0 0 16px; }
+  .trainer-agent-start-btn { background:var(--amber); color:#fff; border:none; border-radius:12px; padding:12px 28px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(20,143,152,0.3); transition:transform 0.15s, box-shadow 0.15s; }
+  .trainer-agent-start-btn:active { transform:scale(0.96); }
+  .trainer-agent-topics { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:0 16px 16px; }
+  .trainer-agent-chip { background:var(--g1); border:1px solid var(--g-border); border-radius:20px; padding:8px 14px; font-size:12px; color:var(--text-2); cursor:pointer; transition:all 0.2s; }
+  .trainer-agent-chip:active { background:rgba(20,143,152,0.1); color:var(--amber); }
+
+  .trainer-scenario-grid { display:flex; flex-direction:column; gap:12px; }
+  .trainer-scenario-card {
+    display:flex; align-items:center; gap:14px;
+    background:var(--g1); border:1px solid var(--g-border);
+    border-radius:var(--r-md); padding:16px 18px;
+    cursor:pointer; font-family:inherit; text-align:left;
+    box-shadow:0 2px 8px var(--g-shadow), 0 1px 0 var(--g-shine) inset;
+    transition:transform 0.15s var(--spring), border-color 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .trainer-scenario-card:active { transform:scale(0.97); }
+  .trainer-scenario-card:hover { border-color:var(--g-border-hi); box-shadow:0 4px 16px rgba(20,143,152,0.15), 0 1px 0 var(--g-shine) inset; }
+  .trainer-scenario-emoji { font-size:36px; flex-shrink:0; }
+  .trainer-scenario-info h3 { font-family:'Outfit',sans-serif; font-size:16px; font-weight:700; color:var(--text); margin:0 0 3px; }
+  .trainer-scenario-info p { font-size:13px; color:var(--text-2); margin:0; line-height:1.4; }
+
+  /* Stats summary */
+  .trainer-stats-summary {
+    margin-top:24px; padding:16px 18px;
+    background:var(--g1); border:1px solid var(--g-border); border-radius:var(--r-md);
+  }
+  .trainer-stats-summary h3 { font-size:15px; font-weight:700; margin:0 0 12px; color:var(--text); }
+  .trainer-stats-row { display:flex; justify-content:space-between; padding:6px 0; font-size:14px; color:var(--text-2); }
+  .trainer-stats-row strong { color:var(--amber); }
+
+  /* Chat area */
+  .trainer-chat-wrap {
+    display:flex; flex-direction:column;
+    height:calc(100vh - var(--header-h) - var(--nav-h) - var(--safe-bottom));
+    position:relative;
+  }
+
+  .trainer-chat-header {
+    display:flex; align-items:center; gap:10px;
+    padding:12px 16px; flex-shrink:0;
+    background:var(--g1); border-bottom:1px solid var(--g-border);
+  }
+  .trainer-back-btn {
+    width:32px; height:32px; border-radius:8px;
+    background:var(--g2); border:1px solid var(--g-border);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--text-2);
+    transition:background 0.15s, transform 0.12s var(--spring);
+  }
+  .trainer-back-btn:active { transform:scale(0.88); background:var(--g3); }
+  .trainer-back-btn svg { stroke:var(--text-2); }
+  .trainer-chat-persona { display:flex; align-items:center; gap:6px; flex:1; }
+  .trainer-chat-persona span:first-child { font-size:22px; }
+  .trainer-chat-persona span:last-child { font-size:15px; font-weight:700; color:var(--text); }
+  .trainer-warmth-indicator { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+  .trainer-warmth-bar { width:60px; height:6px; background:var(--g2); border-radius:3px; overflow:hidden; }
+  .trainer-warmth-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#3b82f6,#22c55e,#f59e0b); transition:width 0.6s var(--ease-out); }
+  .trainer-warmth-label { font-size:10px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.04em; }
+
+  /* Messages */
+  .trainer-messages {
+    flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:16px 14px 8px; display:flex; flex-direction:column; gap:10px;
+  }
+
+  .trainer-msg {
+    max-width:82%; padding:11px 15px; border-radius:16px;
+    font-size:14px; line-height:1.55; word-wrap:break-word;
+    animation:trainerBubbleIn 0.28s var(--ease-out) both;
+  }
+  .trainer-msg--bot {
+    align-self:flex-start;
+    background:var(--g1); border:1px solid var(--g-border);
+    color:var(--text); border-bottom-left-radius:4px;
+  }
+  .trainer-msg--user {
+    align-self:flex-end;
+    background:linear-gradient(135deg,var(--amber) 0%,var(--amber-bright) 100%);
+    color:#fff; border-bottom-right-radius:4px;
+    box-shadow:0 2px 10px rgba(20,143,152,0.25);
+  }
+  .trainer-msg--system {
+    align-self:center; max-width:90%;
+    font-size:12px; color:var(--text-3); font-style:italic; text-align:center;
+    padding:8px 14px; background:transparent;
+  }
+  .trainer-msg-time { font-size:10px; opacity:0.6; margin-top:4px; display:block; }
+
+  @keyframes trainerBubbleIn {
+    from { opacity:0; transform:translateY(10px) scale(0.92); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* Typing indicator */
+  .trainer-typing { display:flex; gap:4px; padding:11px 15px; }
+  .trainer-typing-dot {
+    width:7px; height:7px; border-radius:50%;
+    background:var(--text-3); animation:trainerTypingBounce 1.4s ease-in-out infinite;
+  }
+  .trainer-typing-dot:nth-child(2) { animation-delay:0.16s; }
+  .trainer-typing-dot:nth-child(3) { animation-delay:0.32s; }
+  @keyframes trainerTypingBounce {
+    0%,60%,100% { transform:translateY(0); opacity:0.4; }
+    30% { transform:translateY(-6px); opacity:1; }
+  }
+
+  /* Hint banner */
+  .trainer-hint-banner {
+    padding:10px 14px; margin:0 14px 6px;
+    background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25);
+    border-radius:var(--r-sm); display:flex; align-items:flex-start; gap:8px;
+    animation:trainerBubbleIn 0.25s var(--ease-out);
+  }
+  .trainer-hint-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+  .trainer-hint-text { font-size:13px; color:var(--text); line-height:1.5; flex:1; }
+  .trainer-hint-close { background:none; border:none; cursor:pointer; font-size:14px; color:var(--text-3); padding:0 2px; }
+
+  /* Input area */
+  .trainer-input-area {
+    flex-shrink:0; padding:8px 14px calc(env(safe-area-inset-bottom,0px) + 10px);
+    background:var(--g1); border-top:1px solid var(--g-border);
+    backdrop-filter:var(--blur-md); -webkit-backdrop-filter:var(--blur-md);
+  }
+  .trainer-controls-row { display:flex; gap:8px; margin-bottom:8px; justify-content:center; }
+  .trainer-control-pill {
+    padding:6px 14px; border-radius:50px; font-size:12px; font-weight:600;
+    border:1px solid var(--g-border); background:var(--g2); color:var(--text-2);
+    cursor:pointer; font-family:inherit; transition:background 0.15s, border-color 0.15s, color 0.15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .trainer-control-pill:active { transform:scale(0.95); }
+  .trainer-control-pill.active { background:rgba(20,143,152,0.14); border-color:rgba(20,143,152,0.32); color:var(--amber); }
+
+  .trainer-input-bar { display:flex; align-items:flex-end; gap:8px; }
+  .trainer-mic-btn {
+    width:40px; height:40px; border-radius:50%; flex-shrink:0;
+    background:var(--g2); border:1.5px solid var(--g-border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:all 0.2s; -webkit-tap-highlight-color:transparent;
+  }
+  .trainer-mic-btn svg { stroke:var(--text-2); }
+  .trainer-mic-btn:active { transform:scale(0.9); }
+  .trainer-mic-btn.recording {
+    background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.5);
+    animation:pulse-dictate 1.2s ease infinite;
+  }
+  .trainer-mic-btn.recording svg { stroke:#ef4444; }
+
+  .trainer-input {
+    flex:1; background:var(--g2); border:1px solid var(--g-border);
+    border-radius:20px; padding:10px 16px; font-size:14px;
+    font-family:inherit; color:var(--text); resize:none;
+    max-height:80px; min-height:40px; line-height:1.4;
+    transition:border-color 0.18s; outline:none;
+  }
+  .trainer-input:focus { border-color:rgba(20,143,152,0.5); }
+  .trainer-input::placeholder { color:var(--text-3); }
+
+  .trainer-send-btn {
+    width:40px; height:40px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg,var(--amber) 0%,var(--amber-bright) 100%);
+    border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    box-shadow:0 2px 12px rgba(20,143,152,0.35);
+    transition:transform 0.12s var(--spring), box-shadow 0.15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .trainer-send-btn:active { transform:scale(0.88); box-shadow:0 1px 6px rgba(20,143,152,0.15); }
+
+  /* Dark mode overrides */
+  html.dark-mode .trainer-scenario-card:hover { box-shadow:0 4px 20px rgba(0,229,255,0.12), 0 1px 0 rgba(0,229,255,0.04) inset; }
+  html.dark-mode .trainer-msg--user { box-shadow:0 2px 14px rgba(0,229,255,0.2); }
+  html.dark-mode .trainer-hint-banner { background:rgba(245,158,11,0.08); border-color:rgba(245,158,11,0.2); }
+  html.dark-mode .trainer-mic-btn.recording { background:rgba(239,68,68,0.12); }
+
   </style>
 </head>
 
@@ -8570,179 +8792,250 @@
         </button>
       </div>
 
-      <!-- My Profile & Role -->
-      <div class="admin-section">
-        <div class="admin-section-title">My Profile &amp; Role</div>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-rep-name">Your Name</label>
-          <input class="admin-input" type="text" id="admin-rep-name" placeholder="Full name" />
-        </div>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-rep-title">Your Title</label>
-          <input class="admin-input" type="text" id="admin-rep-title" placeholder="Solar Energy Consultant" />
-        </div>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-rep-phone">Your Phone</label>
-          <input class="admin-input" type="tel" id="admin-rep-phone" placeholder="(555) 000-0000" />
-        </div>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-rep-email">Your Email</label>
-          <input class="admin-input" type="email" id="admin-rep-email" placeholder="you@capitalenergy.com" />
-        </div>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-role-select">Your Role</label>
-          <select class="admin-role-select" id="admin-role-select">
-            <option value="canvasser">🚪 Canvasser / Knocker</option>
-            <option value="closer">🤝 Closer / Salesperson</option>
-            <option value="manager">📊 Manager / Dealer</option>
-          </select>
-        </div>
-      </div>
+      <!-- v95: Collapsible accordion sections for cleaner UX -->
 
-      <!-- Reviews & Reputation -->
-      <div class="admin-section">
-        <div class="admin-section-title">Reviews &amp; Reputation</div>
-        <p class="admin-section-hint">This link opens when reps send a review request to a customer. Paste your Google Business review URL here.</p>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-review-url">Google Review Link</label>
-          <input class="admin-input" type="url" id="admin-review-url" placeholder="https://g.page/r/YOUR_ID/review" />
+      <!-- My Profile & Role — always open by default -->
+      <details class="admin-accordion" open>
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">👤</span>
+          <span class="admin-accordion-label">My Profile &amp; Role</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <div class="admin-field">
+            <label class="admin-label" for="admin-rep-name">Your Name</label>
+            <input class="admin-input" type="text" id="admin-rep-name" placeholder="Full name" />
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="admin-rep-title">Your Title</label>
+            <input class="admin-input" type="text" id="admin-rep-title" placeholder="Solar Energy Consultant" />
+          </div>
+          <div class="admin-field-row">
+            <div class="admin-field" style="flex:1">
+              <label class="admin-label" for="admin-rep-phone">Phone</label>
+              <input class="admin-input" type="tel" id="admin-rep-phone" placeholder="(555) 000-0000" />
+            </div>
+            <div class="admin-field" style="flex:1">
+              <label class="admin-label" for="admin-rep-email">Email</label>
+              <input class="admin-input" type="email" id="admin-rep-email" placeholder="you@company.com" />
+            </div>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="admin-role-select">Your Role</label>
+            <select class="admin-role-select" id="admin-role-select">
+              <option value="canvasser">🚪 Canvasser / Knocker</option>
+              <option value="closer">🤝 Closer / Salesperson</option>
+              <option value="manager">📊 Manager / Dealer</option>
+            </select>
+          </div>
         </div>
-        <div class="admin-review-actions">
-          <button class="admin-review-test-btn" id="admin-review-test-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Test Link
-          </button>
-          <span class="admin-review-hint" id="admin-review-status"></span>
+      </details>
+
+      <!-- Display & Accessibility -->
+      <details class="admin-accordion" open>
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">🎨</span>
+          <span class="admin-accordion-label">Display &amp; Accessibility</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <div class="admin-field">
+            <label class="admin-label" for="admin-font-size">Font Size</label>
+            <div class="admin-font-slider-wrap">
+              <span class="admin-font-label-sm">A</span>
+              <input type="range" id="admin-font-size" class="admin-range-slider" min="12" max="22" step="1" value="16" />
+              <span class="admin-font-label-lg">A</span>
+              <span class="admin-font-size-val" id="admin-font-size-val">16px</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
+
+      <!-- Reviews -->
+      <details class="admin-accordion">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">⭐</span>
+          <span class="admin-accordion-label">Reviews &amp; Reputation</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <p class="admin-section-hint">Paste your Google Business review URL. This link opens when reps send a review request.</p>
+          <div class="admin-field">
+            <label class="admin-label" for="admin-review-url">Google Review Link</label>
+            <input class="admin-input" type="url" id="admin-review-url" placeholder="https://g.page/r/YOUR_ID/review" />
+          </div>
+          <div class="admin-review-actions">
+            <button class="admin-review-test-btn" id="admin-review-test-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Test Link
+            </button>
+            <span class="admin-review-hint" id="admin-review-status"></span>
+          </div>
+        </div>
+      </details>
+
+      <!-- Notifications -->
+      <details class="admin-accordion">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">🔔</span>
+          <span class="admin-accordion-label">Notifications</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 10px;line-height:1.5">Enable notifications that fire even when the app is closed.</p>
+          <button class="admin-save-btn" id="admin-enable-bg-reminders" style="margin-top:0">Enable Background Reminders</button>
+          <div id="admin-bg-reminder-status" style="font-size:12px;color:var(--text-3);margin-top:6px"></div>
+        </div>
+      </details>
 
       <!-- Sales Team — Manager only -->
-      <div class="admin-section" id="admin-team-section">
-        <div class="admin-section-title">Sales Team</div>
-
-        <!-- Closers -->
-        <div class="team-role-header">🤝 Closers</div>
-        <div class="team-list" id="admin-team-closers">
-          <div class="team-empty">No closers added yet.</div>
+      <details class="admin-accordion" id="admin-team-section">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">👥</span>
+          <span class="admin-accordion-label">Sales Team</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <div class="team-role-header">🤝 Closers</div>
+          <div class="team-list" id="admin-team-closers">
+            <div class="team-empty">No closers added yet.</div>
+          </div>
+          <div class="team-role-header" style="margin-top:14px">🚪 Canvassers</div>
+          <div class="team-list" id="admin-team-canvassers">
+            <div class="team-empty">No canvassers added yet.</div>
+          </div>
+          <div class="team-add-row" style="margin-top:14px">
+            <select class="admin-input" id="admin-new-role" style="flex:0 0 110px;min-width:0">
+              <option value="closer">🤝 Closer</option>
+              <option value="canvasser">🚪 Canvasser</option>
+            </select>
+            <input class="admin-input" type="text" id="admin-new-name" placeholder="Full name" style="flex:1;min-width:0" />
+            <input class="admin-input" type="tel" id="admin-new-phone" placeholder="Phone #" style="flex:0 0 95px;min-width:0" inputmode="tel" />
+            <button class="team-add-btn" id="admin-add-member">Add</button>
+          </div>
         </div>
+      </details>
 
-        <!-- Canvassers -->
-        <div class="team-role-header" style="margin-top:14px">🚪 Canvassers</div>
-        <div class="team-list" id="admin-team-canvassers">
-          <div class="team-empty">No canvassers added yet.</div>
+      <!-- Drop Call Numbers — Manager & Master Admin only -->
+      <details class="admin-accordion" id="admin-drop-call-section">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">📞</span>
+          <span class="admin-accordion-label">Drop Call Numbers</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 10px;line-height:1.5">Configure the numbers shown when reps tap "Drop Call" in OTD mode.</p>
+          <div class="admin-field">
+            <label class="admin-label" for="admin-drop-call-numbers">Numbers (one per line)</label>
+            <textarea class="admin-input" id="admin-drop-call-numbers" rows="4"
+              placeholder="Office: +16025550100&#10;Leads: +16025550101&#10;Manager: +16025550102"
+              style="font-family:monospace;font-size:12px;resize:vertical"></textarea>
+            <div style="font-size:11px;color:var(--text-3);margin-top:5px">Format: <code>Label: +1XXXXXXXXXX</code></div>
+          </div>
+          <button class="admin-save-btn" id="admin-save-drop-call-btn" style="margin-top:4px">💾 Save</button>
         </div>
+      </details>
 
-        <!-- Add member row -->
-        <div class="team-add-row" style="margin-top:14px">
-          <select class="admin-input" id="admin-new-role" style="flex:0 0 110px;min-width:0">
-            <option value="closer">🤝 Closer</option>
-            <option value="canvasser">🚪 Canvasser</option>
-          </select>
-          <input class="admin-input" type="text" id="admin-new-name" placeholder="Full name" style="flex:1;min-width:0" />
-          <input class="admin-input" type="tel" id="admin-new-phone" placeholder="Phone #" style="flex:0 0 95px;min-width:0" inputmode="tel" />
-          <button class="team-add-btn" id="admin-add-member">Add</button>
+      <!-- Branding — Manager/Master Admin -->
+      <details class="admin-accordion" id="admin-branding-section">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">🖼️</span>
+          <span class="admin-accordion-label">Branding</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <div class="admin-field">
+            <label class="admin-label">Company Logo</label>
+            <div id="admin-logo-preview" style="display:none;margin-bottom:8px">
+              <img id="admin-logo-preview-img" style="max-height:48px;border-radius:8px" alt="Logo preview" />
+              <button class="admin-save-btn" id="admin-logo-remove" style="padding:4px 10px;font-size:11px;margin:0">Remove</button>
+            </div>
+            <label class="form-file-label" for="admin-logo-file" style="cursor:pointer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload Logo
+            </label>
+            <input type="file" id="admin-logo-file" accept="image/*" style="display:none" />
+          </div>
+          <div class="admin-field" style="margin-top:12px">
+            <label class="admin-label">App Icon</label>
+            <div id="admin-icon-preview" style="display:none;margin-bottom:8px">
+              <img id="admin-icon-preview-img" style="max-height:48px;border-radius:8px" alt="Icon preview" />
+              <button class="admin-save-btn" id="admin-icon-remove" style="padding:4px 10px;font-size:11px;margin:0">Remove</button>
+            </div>
+            <label class="form-file-label" for="admin-icon-file" style="cursor:pointer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload Icon
+            </label>
+            <input type="file" id="admin-icon-file" accept="image/*" style="display:none" />
+          </div>
         </div>
-      </div>
+      </details>
 
-      <!-- Hidden inputs kept for backward compatibility with existing JS (moved to Master Admin) -->
+      <!-- Adder Sheets — Manager/Master Admin -->
+      <details class="admin-accordion" id="admin-adder-section">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">📊</span>
+          <span class="admin-accordion-label">Adder Sheets</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <div class="admin-field">
+            <label class="admin-label">Arizona</label>
+            <div id="admin-adder-az-status" class="admin-upload-status"></div>
+            <label class="form-file-label" for="admin-adder-az-file" style="cursor:pointer">Upload AZ Sheet</label>
+            <input type="file" id="admin-adder-az-file" accept="image/*,.pdf" style="display:none" />
+          </div>
+          <div class="admin-field" style="margin-top:8px">
+            <label class="admin-label">California</label>
+            <div id="admin-adder-ca-status" class="admin-upload-status"></div>
+            <label class="form-file-label" for="admin-adder-ca-file" style="cursor:pointer">Upload CA Sheet</label>
+            <input type="file" id="admin-adder-ca-file" accept="image/*,.pdf" style="display:none" />
+          </div>
+          <div class="admin-field" style="margin-top:8px">
+            <label class="admin-label">Texas</label>
+            <div id="admin-adder-tx-status" class="admin-upload-status"></div>
+            <label class="form-file-label" for="admin-adder-tx-file" style="cursor:pointer">Upload TX Sheet</label>
+            <input type="file" id="admin-adder-tx-file" accept="image/*,.pdf" style="display:none" />
+          </div>
+        </div>
+      </details>
+
+      <!-- Checklist Upload — Manager/Master Admin -->
+      <details class="admin-accordion" id="admin-checklist-section">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">✅</span>
+          <span class="admin-accordion-label">Custom Checklist</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload a custom post-install checklist PDF.</p>
+          <div id="admin-checklist-status" class="admin-upload-status"></div>
+          <label class="form-file-label" for="admin-checklist-file" style="cursor:pointer">Upload Checklist PDF</label>
+          <input type="file" id="admin-checklist-file" accept=".pdf,image/*" style="display:none" />
+        </div>
+      </details>
+
+      <!-- Quick Links Editor -->
+      <details class="admin-accordion" id="admin-ql-section">
+        <summary class="admin-accordion-header">
+          <span class="admin-accordion-icon">🔗</span>
+          <span class="admin-accordion-label">Quick Links</span>
+          <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="admin-accordion-body">
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Customize dashboard quick-link labels, subtitles, and URLs.</p>
+          <div id="admin-ql-list"></div>
+          <button class="admin-save-btn" id="admin-ql-save-btn" style="margin-top:10px">💾 Save Quick Links</button>
+        </div>
+      </details>
+
+      <!-- Hidden inputs for backward compat -->
       <input type="hidden" id="admin-company-name" value="" />
       <input type="hidden" id="admin-tagline" value="" />
       <input type="hidden" id="admin-gosolo-url" value="" />
       <input type="hidden" id="admin-grid-url" value="" />
       <input type="hidden" id="admin-logo-upload" />
       <div style="display:none"><img id="admin-logo-img" /></div>
-
-      <div class="admin-section">
-        <div class="admin-section-title">🔔 Background Reminders</div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;line-height:1.5">Enable notifications that fire even when the app is closed.</p>
-        <button class="admin-save-btn" id="admin-enable-bg-reminders" style="margin-top:0">Enable Background Reminders</button>
-        <div id="admin-bg-reminder-status" style="font-size:12px;color:var(--text-3);margin-top:6px"></div>
-      </div>
-
-      <!-- Drop Call Numbers — Manager & Master Admin only -->
-      <div class="admin-section" id="admin-drop-call-section">
-        <div class="admin-section-title">📞 Drop Call Numbers</div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;line-height:1.5">Configure the numbers shown when reps tap "Drop Call" in OTD mode.</p>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-drop-call-numbers">Numbers (one per line)</label>
-          <textarea class="admin-input" id="admin-drop-call-numbers" rows="5"
-            placeholder="Office: +16025550100&#10;Leads: +16025550101&#10;Manager: +16025550102"
-            style="font-family:monospace;font-size:12px;resize:vertical"></textarea>
-          <div style="font-size:11px;color:var(--text-3);margin-top:5px">Format: <code>Label: +1XXXXXXXXXX</code></div>
-        </div>
-        <button class="admin-save-btn" id="admin-save-drop-call-btn" style="margin-top:4px">💾 Save Drop Call Numbers</button>
-      </div>
-
-      <!-- v93: Branding (Logo & Icon) — Manager/Master Admin -->
-      <div class="admin-section" id="admin-branding-section">
-        <div class="admin-section-title">🎨 Branding</div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload a custom logo and app icon for your team.</p>
-        <div class="admin-field">
-          <label class="admin-label">Company Logo</label>
-          <div id="admin-logo-preview" style="display:none;margin-bottom:8px">
-            <img id="admin-logo-preview-img" style="max-height:48px;border-radius:8px" alt="Logo preview" />
-            <button class="admin-save-btn" id="admin-logo-remove" style="padding:4px 10px;font-size:11px;margin:0">Remove</button>
-          </div>
-          <label class="form-file-label" for="admin-logo-file" style="cursor:pointer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Upload Logo
-          </label>
-          <input type="file" id="admin-logo-file" accept="image/*" style="display:none" />
-        </div>
-        <div class="admin-field" style="margin-top:12px">
-          <label class="admin-label">App Icon</label>
-          <div id="admin-icon-preview" style="display:none;margin-bottom:8px">
-            <img id="admin-icon-preview-img" style="max-height:48px;border-radius:8px" alt="Icon preview" />
-            <button class="admin-save-btn" id="admin-icon-remove" style="padding:4px 10px;font-size:11px;margin:0">Remove</button>
-          </div>
-          <label class="form-file-label" for="admin-icon-file" style="cursor:pointer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:4px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Upload Icon
-          </label>
-          <input type="file" id="admin-icon-file" accept="image/*" style="display:none" />
-        </div>
-      </div>
-
-      <!-- v93: Adder Sheets — Manager/Master Admin -->
-      <div class="admin-section" id="admin-adder-section">
-        <div class="admin-section-title">📊 Adder Sheets</div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload state-specific adder sheets (image or PDF).</p>
-        <div class="admin-field">
-          <label class="admin-label">Arizona</label>
-          <div id="admin-adder-az-status" class="admin-upload-status"></div>
-          <label class="form-file-label" for="admin-adder-az-file" style="cursor:pointer">Upload AZ Sheet</label>
-          <input type="file" id="admin-adder-az-file" accept="image/*,.pdf" style="display:none" />
-        </div>
-        <div class="admin-field" style="margin-top:8px">
-          <label class="admin-label">California</label>
-          <div id="admin-adder-ca-status" class="admin-upload-status"></div>
-          <label class="form-file-label" for="admin-adder-ca-file" style="cursor:pointer">Upload CA Sheet</label>
-          <input type="file" id="admin-adder-ca-file" accept="image/*,.pdf" style="display:none" />
-        </div>
-        <div class="admin-field" style="margin-top:8px">
-          <label class="admin-label">Texas</label>
-          <div id="admin-adder-tx-status" class="admin-upload-status"></div>
-          <label class="form-file-label" for="admin-adder-tx-file" style="cursor:pointer">Upload TX Sheet</label>
-          <input type="file" id="admin-adder-tx-file" accept="image/*,.pdf" style="display:none" />
-        </div>
-      </div>
-
-      <!-- v93: Checklist Upload — Manager/Master Admin -->
-      <div class="admin-section" id="admin-checklist-section">
-        <div class="admin-section-title">✅ Custom Checklist</div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Upload a custom post-install checklist PDF to replace the default interactive one.</p>
-        <div id="admin-checklist-status" class="admin-upload-status"></div>
-        <label class="form-file-label" for="admin-checklist-file" style="cursor:pointer">Upload Checklist PDF</label>
-        <input type="file" id="admin-checklist-file" accept=".pdf,image/*" style="display:none" />
-      </div>
-
-      <!-- v93: Quick Links Editor -->
-      <div class="admin-section" id="admin-ql-section">
-        <div class="admin-section-title">🔗 Quick Links</div>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Customize dashboard quick-link labels, subtitles, and override URLs.</p>
-        <div id="admin-ql-list"></div>
-        <button class="admin-save-btn" id="admin-ql-save-btn" style="margin-top:10px">💾 Save Quick Links</button>
-      </div>
 
       <!-- Save -->
       <div class="admin-save-wrap">
@@ -8852,9 +9145,154 @@
       </div>
     </section>
 
+    <!-- ── v94: Sales Trainer Panel ──────────────────────────────────────── -->
+    <section id="panel-trainer" class="tab-panel" role="tabpanel" aria-label="Sales Trainer">
+
+      <!-- Scenario selector (shown before chat starts) -->
+      <div id="trainer-scenarios" class="trainer-scenarios-wrap">
+        <div class="trainer-header">
+          <div class="trainer-header-icon">🎙️</div>
+          <h2 class="trainer-title">Sales Trainer</h2>
+          <p class="trainer-subtitle">Practice your pitch or ask your live agent anything</p>
+        </div>
+
+        <!-- Mode tabs: Roleplay vs Live Agent -->
+        <div class="trainer-mode-tabs">
+          <button class="trainer-mode-tab trainer-mode-tab--active" id="trainer-mode-roleplay" onclick="TrainerBot.switchMode('roleplay')">
+            🎭 Roleplay
+          </button>
+          <button class="trainer-mode-tab" id="trainer-mode-agent" onclick="TrainerBot.switchMode('agent')">
+            🧠 Live Agent
+          </button>
+        </div>
+
+        <!-- Roleplay scenarios -->
+        <div id="trainer-roleplay-section">
+          <div class="trainer-scenario-grid">
+            <button class="trainer-scenario-card" data-scenario="skeptical" onclick="TrainerBot.startScenario('skeptical')">
+              <div class="trainer-scenario-emoji">🤨</div>
+              <div class="trainer-scenario-info">
+                <h3>The Skeptic</h3>
+                <p>Doubts savings claims, worried about scams</p>
+              </div>
+            </button>
+            <button class="trainer-scenario-card" data-scenario="budget" onclick="TrainerBot.startScenario('budget')">
+              <div class="trainer-scenario-emoji">💰</div>
+              <div class="trainer-scenario-info">
+                <h3>Budget-Conscious</h3>
+                <p>Interested but fixated on upfront cost</p>
+              </div>
+            </button>
+            <button class="trainer-scenario-card" data-scenario="researcher" onclick="TrainerBot.startScenario('researcher')">
+              <div class="trainer-scenario-emoji">🔍</div>
+              <div class="trainer-scenario-info">
+                <h3>The Researcher</h3>
+                <p>Knows some facts, asks technical questions</p>
+              </div>
+            </button>
+            <button class="trainer-scenario-card" data-scenario="spouse" onclick="TrainerBot.startScenario('spouse')">
+              <div class="trainer-scenario-emoji">👫</div>
+              <div class="trainer-scenario-info">
+                <h3>Need to Ask Spouse</h3>
+                <p>Interested but won't commit without partner</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Agent section -->
+        <div id="trainer-agent-section" style="display:none;">
+          <div class="trainer-agent-intro">
+            <div class="trainer-agent-avatar">🧠</div>
+            <h3>Your Sales Coach</h3>
+            <p>Ask me anything about solar sales, objection handling, NEPQ techniques, closing strategies, or how to handle specific situations in the field.</p>
+            <button class="trainer-agent-start-btn" onclick="TrainerBot.startAgent()">Start Conversation</button>
+          </div>
+          <div class="trainer-agent-topics">
+            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('How do I handle the \"I need to talk to my spouse\" objection?')">Spouse objection</span>
+            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('What is the NEPQ method and how do I use it at the door?')">NEPQ basics</span>
+            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('How do I create urgency without being pushy?')">Creating urgency</span>
+            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('What should I say in the first 30 seconds at the door?')">Door opener</span>
+          </div>
+        </div>
+
+        <div class="trainer-stats-summary" id="trainer-stats-summary" style="display:none">
+          <h3>📊 Your Training Stats</h3>
+          <div class="trainer-stats-row">
+            <span>Sessions completed</span>
+            <strong id="trainer-stat-sessions">0</strong>
+          </div>
+          <div class="trainer-stats-row">
+            <span>Topics mastered</span>
+            <strong id="trainer-stat-topics">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat area (hidden until scenario starts) -->
+      <div id="trainer-chat" class="trainer-chat-wrap" style="display:none;">
+        <div class="trainer-chat-header">
+          <button class="trainer-back-btn" onclick="TrainerBot.reset()" aria-label="Back to scenarios">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="trainer-chat-persona">
+            <span id="trainer-persona-emoji">🤨</span>
+            <span id="trainer-persona-name">The Skeptic</span>
+          </div>
+          <div class="trainer-warmth-indicator">
+            <div class="trainer-warmth-bar">
+              <div class="trainer-warmth-fill" id="trainer-warmth-fill" style="width:0%"></div>
+            </div>
+            <span class="trainer-warmth-label" id="trainer-warmth-label">Cold</span>
+          </div>
+        </div>
+
+        <div id="trainer-messages" class="trainer-messages"></div>
+
+        <!-- Hint banner (hidden by default) -->
+        <div id="trainer-hint-banner" class="trainer-hint-banner" style="display:none;">
+          <span class="trainer-hint-icon">💡</span>
+          <span id="trainer-hint-text" class="trainer-hint-text"></span>
+          <button class="trainer-hint-close" onclick="document.getElementById('trainer-hint-banner').style.display='none'">✕</button>
+        </div>
+
+        <div class="trainer-input-area">
+          <div class="trainer-controls-row">
+            <button id="trainer-speaker-btn" class="trainer-control-pill" onclick="TrainerBot.toggleSpeaker()">
+              <span id="trainer-speaker-icon">🔇</span> <span id="trainer-speaker-label">Voice Off</span>
+            </button>
+            <button id="trainer-hint-btn" class="trainer-control-pill" onclick="TrainerBot.showHint()">
+              💡 Hint
+            </button>
+            <button id="trainer-reset-btn" class="trainer-control-pill" onclick="TrainerBot.reset()">
+              🔄 New
+            </button>
+          </div>
+          <div class="trainer-input-bar">
+            <button id="trainer-mic-btn" class="trainer-mic-btn" onclick="TrainerBot.toggleMic()" aria-label="Voice input">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+            <textarea id="trainer-input" class="trainer-input" placeholder="Type your pitch..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();TrainerBot.sendMessage();}"></textarea>
+            <button id="trainer-send-btn" class="trainer-send-btn" onclick="TrainerBot.sendMessage()" aria-label="Send">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
   </main>
 
-  <!-- ── Bottom navigation ───────────────────────────────────────────────── -->
+  <!-- ── Bottom navigation (v94: 3+3 symmetry) ──────────────────────────── -->
   <nav id="bottom-nav" role="navigation" aria-label="Main navigation">
 
     <button class="nav-item" data-tab="log" aria-label="CRM" aria-selected="false">
@@ -8877,11 +9315,37 @@
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
         </svg>
       </div>
-      <span class="nav-label">The Hub</span>
+      <span class="nav-label">Hub</span>
+    </button>
+
+    <!-- v94: Trainer nav item -->
+    <button class="nav-item" data-tab="trainer" aria-label="Trainer" aria-selected="false">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </div>
+      <span class="nav-label">Trainer</span>
     </button>
 
     <!-- Spacer reserves center space for the absolutely-positioned home button -->
     <div class="nav-home-spacer" aria-hidden="true"></div>
+
+    <!-- v94: Calendar restored to nav -->
+    <button class="nav-item" data-tab="calendar" aria-label="Calendar" aria-selected="false">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <span class="nav-label">Cal</span>
+    </button>
 
     <button class="nav-item" data-tab="map" aria-label="Map" aria-selected="false">
       <div class="nav-icon-wrap">
@@ -8904,7 +9368,7 @@
           <line x1="19.5" y1="4" x2="19.5" y2="0"/>
         </svg>
       </div>
-      <span class="nav-label">Leaderboard</span>
+      <span class="nav-label">Board</span>
     </button>
 
     <!-- Home: absolutely centered, floats above nav -->
@@ -10199,6 +10663,936 @@ function applyImpersonateBanner() {
   } else { banner.style.display = 'none'; }
 }
 
+// ── v94→v95: Sales Trainer Bot Engine (context-aware rebuild) ─────────────
+const TrainerBot = {
+  // ── Scenario personas ──────────────────────────────────────
+  scenarios: {
+    skeptical: {
+      name: 'The Skeptic', emoji: '🤨',
+      greeting: "Yeah? What do you want? If you're selling something, I've heard it all before.",
+      personality: 'Distrustful, arms-crossed, references bad experiences.',
+      topicBias: ['scam','savings','neighbor'],
+      resistanceBase: 8 // out of 10 — how hard to convince
+    },
+    budget: {
+      name: 'Budget-Conscious', emoji: '💰',
+      greeting: "Look, I already know about solar. My electric bill is killing me, but I just don't see how I can afford panels right now.",
+      personality: 'Interested but money-focused. Responds well to payment comparisons.',
+      topicBias: ['cost','lease_vs_buy','savings'],
+      resistanceBase: 5
+    },
+    researcher: {
+      name: 'The Researcher', emoji: '🔍',
+      greeting: "I've been looking into solar actually. I've read that panel efficiency varies a lot depending on the brand. What are you guys installing?",
+      personality: 'Informed, asks technical follow-ups. Respects knowledge.',
+      topicBias: ['roof','warranty','grid','timeline'],
+      resistanceBase: 4
+    },
+    spouse: {
+      name: 'Need to Ask Spouse', emoji: '👫',
+      greeting: "Oh solar? Yeah, my wife and I have actually talked about it. She's not home right now though — I can't really make any decisions without her.",
+      personality: 'Warm but deflects to absent partner.',
+      topicBias: ['spouse','cost','timeline'],
+      resistanceBase: 6
+    }
+  },
+
+  // ── Objection banks: homeowner QUESTIONS the salesman must address ─────
+  objections: {
+    cost: [
+      "How much does this actually cost? I've heard it's like $30,000 or something crazy.",
+      "I mean, that sounds nice, but what am I actually paying per month?",
+      "I just can't take on more debt right now. We've got the car payment, the mortgage...",
+      "Why would I pay for solar when my electric bill is only like $150 a month?",
+      "Can you just give me a straight number? No financing tricks."
+    ],
+    roof: [
+      "I just got my roof redone two years ago. I'm not putting holes in it.",
+      "What if the panels damage my roof and void my roofing warranty?",
+      "My roof faces east — someone told me solar only works facing south.",
+      "How heavy are these panels? My roof is older, I'm worried about the weight."
+    ],
+    lease_vs_buy: [
+      "What's the difference between leasing and buying?",
+      "I heard leasing is basically a scam — you never own anything.",
+      "My neighbor leased and now he can't sell his house because of the panels."
+    ],
+    timeline: [
+      "How long does this whole process actually take?",
+      "I heard permitting takes forever. Is that true?",
+      "When would I actually start seeing savings on my bill?"
+    ],
+    savings: [
+      "Everyone says they'll save me money, but how do I know that's real?",
+      "What about net metering? I heard they're changing the rules.",
+      "How much will I actually save per month? Give me a real number."
+    ],
+    warranty: [
+      "What's the warranty situation? What if something breaks in year 5?",
+      "Who do I call if there's a problem? You guys or the manufacturer?",
+      "What about inverter replacement? I heard those fail after 10 years."
+    ],
+    scam: [
+      "I've heard too many horror stories. How do I know this isn't a scam?",
+      "Are you guys even going to be around in 5 years?",
+      "Why are you going door to door? Legit companies don't need to do that."
+    ],
+    neighbor: [
+      "My neighbor across the street got solar and said it was a nightmare.",
+      "A friend of mine said the salesperson lied about the savings.",
+      "I've seen bad reviews online. Why should I trust you?"
+    ],
+    spouse: [
+      "I really need to talk to my wife about this first.",
+      "Can you come back when my husband is home?",
+      "We make all big decisions together. That's just how we do things."
+    ],
+    credit: [
+      "I don't want you running my credit. That's going to hurt my score.",
+      "What if my credit isn't great? Do I still qualify?"
+    ],
+    moving: [
+      "We might move in the next few years. What happens then?",
+      "Does solar actually increase home value? Or just a sales pitch?"
+    ],
+    grid: [
+      "What happens when the power goes out? Do the panels still work?",
+      "Can I go completely off-grid with solar?"
+    ],
+    environment: [
+      "Are the panels recyclable? I've heard they're terrible for landfills.",
+      "I want to do my part, but not if it doesn't make financial sense too."
+    ]
+  },
+
+  // ── Reactive responses: how the homeowner RESPONDS to what the user says ──
+  reactions: {
+    good: {
+      cost: [
+        "Huh, okay. So you're saying my payment could actually be less than what I'm paying now?",
+        "That makes more sense when you break it down that way. What about the tax credit?",
+        "I didn't realize there were $0-down options. Tell me more about that."
+      ],
+      roof: [
+        "Oh you add a waterproof layer? That actually makes me feel better about it.",
+        "Okay, so the panels actually protect the shingles from UV? I didn't know that.",
+        "Good to know the mounting system is warranty-backed too."
+      ],
+      lease_vs_buy: [
+        "Okay, the ownership angle makes more sense. So I'd basically own a power plant.",
+        "That's a better way to think about it. What are the financing terms like?",
+        "So the key difference is I build equity with a purchase. I get it."
+      ],
+      scam: [
+        "Okay, the fact that you have reviews I can check does help.",
+        "I appreciate you being upfront about that. Most salespeople dodge the question.",
+        "Alright, you seem more legit than the last guy who came by."
+      ],
+      savings: [
+        "Those numbers actually add up better than I expected.",
+        "So you're saying even on cloudy days the system covers most of my usage?",
+        "Okay, if my bill really drops that much it's worth looking at."
+      ],
+      warranty: [
+        "25 years? That's longer than I'll probably live in this house.",
+        "Good that it covers production too, not just the hardware.",
+        "Okay, that's actually a solid warranty stack."
+      ],
+      spouse: [
+        "You know what, that's fair. If I had real numbers to show her she'd take it more seriously.",
+        "A design mockup would help. She's very visual, she'd want to see it on the roof.",
+        "Okay, a quick 30-minute appointment with both of us might work."
+      ],
+      neighbor: [
+        "Fair point, not all companies are the same. What brand of panels do you use?",
+        "Okay, that explains why their experience was different.",
+        "I should probably ask them exactly what went wrong before I judge."
+      ],
+      timeline: [
+        "That's faster than I thought. So I could be saving money by next month?",
+        "Okay, the permitting is on your end then. That's good to know.",
+        "So from signing to turning on, we're talking weeks not months?"
+      ],
+      credit: [
+        "Oh it's a soft pull? Okay, that's not as bad as I thought.",
+        "Good to know it won't ding my score. What rates are you seeing?"
+      ],
+      moving: [
+        "4% increase in home value? That's actually a solid return.",
+        "So the solar basically pays for itself AND adds value. Interesting."
+      ],
+      grid: [
+        "So with a battery I'd have backup power. That's actually pretty smart.",
+        "Okay, the grid-tied setup makes sense. What about adding a battery later?"
+      ],
+      environment: [
+        "2,500 trees equivalent? Wow, that's significant.",
+        "I like that it makes financial AND environmental sense."
+      ],
+      generic: [
+        "Hm, okay. You're making some good points. Keep going.",
+        "That's interesting. I hadn't thought about it that way before.",
+        "Alright, I'm listening. What else?"
+      ]
+    },
+    weak: {
+      cost: [
+        "That's pretty vague. Can you give me actual numbers? I need specifics.",
+        "See, that's what every salesperson says. 'It depends.' Just tell me the price.",
+        "You're dancing around the question. How much? Per month. Right now."
+      ],
+      roof: [
+        "That doesn't really answer my question though. What about my roofing warranty?",
+        "You sound like you're reading from a script. Have YOU ever installed panels?",
+        "I'm not convinced. My roofer said panels will void my warranty."
+      ],
+      lease_vs_buy: [
+        "You still haven't explained why I wouldn't just lease. What's your actual recommendation?",
+        "I need you to be straight with me. Is leasing ever actually better?",
+        "That doesn't clear things up. I'm more confused now."
+      ],
+      scam: [
+        "That doesn't make me feel better. Every company says they're different.",
+        "I've heard that pitch before. Got anything concrete?",
+        "Look, talk is cheap. Show me proof."
+      ],
+      savings: [
+        "Those sound like made-up numbers. Where's the guarantee?",
+        "Everyone 'saves' money until the fine print kicks in.",
+        "I'm going to need to see that in writing before I believe it."
+      ],
+      warranty: [
+        "Okay but what happens AFTER the warranty? Who services it?",
+        "That sounds standard. What about if YOUR company goes under?",
+        "You're not really addressing my concern here."
+      ],
+      spouse: [
+        "You're not hearing me. I'm not signing anything without my wife.",
+        "I don't care about numbers right now. She needs to be here.",
+        "I appreciate the hustle but no means no today."
+      ],
+      neighbor: [
+        "My neighbor had the exact same pitch and look what happened to him.",
+        "Everybody says they're different. Prove it.",
+        "I'm not interested in excuses about other companies."
+      ],
+      generic: [
+        "I don't think you're really hearing what I'm saying.",
+        "Look, you seem nice but I'm not convinced yet.",
+        "I'm going to need more than that to keep listening.",
+        "Can you give me something more concrete?"
+      ]
+    },
+    brushoff: [
+      "Yeah... I don't know. Let me think about it.",
+      "Look, I appreciate you coming by, but I've got a lot going on right now.",
+      "Can you just leave some information and I'll call you?",
+      "I'm not really interested right now. Maybe later.",
+      "I've been meaning to look into it but just haven't had the time."
+    ],
+    warmup: [
+      "Okay, that's actually a good point. I hadn't thought about it that way.",
+      "That does make more sense than what the last guy told me.",
+      "You know what, you actually seem like you know what you're talking about.",
+      "That's the first time someone's explained it in a way that makes sense.",
+      "My wife might actually go for this if the numbers work out."
+    ],
+    closing: [
+      "So hypothetically, if I were to move forward, what would that look like?",
+      "Alright, I'm cautiously interested. What do you need from me?",
+      "Can we do a site survey? I want to see if it even makes sense for my roof.",
+      "Let me talk to my wife tonight and you can come back tomorrow. Sound fair?",
+      "I want to see the actual numbers for MY house before I decide anything.",
+      "Okay, what do I need to have ready? Electric bill, anything else?"
+    ]
+  },
+
+  // ── Answer quality keywords: what signals a good answer for each topic ──
+  answerQuality: {
+    cost: { good: /\b(tax credit|itc|30%|zero down|\$0|payment.*less|lock.*rate|no.*increase|compare.*bill|replace.*bill|swap.*payment|offset)\b/i, strong: /\b(show.*bill|look.*usage|design.*free|custom.*quote|your.*specific)\b/i },
+    roof: { good: /\b(waterproof|flash|mount|warranty.*intact|protect.*shingle|uv|secondary layer|ironridge|not.*void|engineering)\b/i, strong: /\b(structural.*engineer|roof.*warrant.*stay|inspect.*free|photos)\b/i },
+    lease_vs_buy: { good: /\b(own|equity|asset|power plant|appreciat|transfer|your.*system|build.*value)\b/i, strong: /\b(compare.*rent.*own|mortgage.*analogy|your.*roof.*your.*power)\b/i },
+    scam: { good: /\b(review|bbb|rating|year.*business|license|bond|insur|track record|referr|google)\b/i, strong: /\b(show.*you.*review|check.*us.*out|call.*customer|reference)\b/i },
+    savings: { good: /\b(net meter|offset|usage|production|kilowatt|kwh|guarantee.*produc|monitoring|real.*time)\b/i, strong: /\b(your.*bill|your.*usage|pull.*up|show.*you|exact.*number|your.*address)\b/i },
+    warranty: { good: /\b(25.*year|panel.*warrant|produc.*guarantee|inverter|workmanship|manufacturer|cover)\b/i, strong: /\b(stack|comprehensive|every.*angle|bumper.*bumper|all.*covered)\b/i },
+    spouse: { good: /\b(respect|understand|together|both|design|numbers|show.*her|show.*him|follow.*up|schedule|callback)\b/i, strong: /\b(real.*numbers|design.*mockup|quick.*15|no.*pressure|bring.*both)\b/i },
+    neighbor: { good: /\b(different.*company|not.*all.*same|what.*brand|what.*went.*wrong|vary|depends)\b/i, strong: /\b(our.*customer|talk.*to|show.*review|same.*street|neighbor.*love)\b/i },
+    timeline: { good: /\b(week|month|permit|install.*day|turn.*on|interconnect|process|step)\b/i, strong: /\b(your.*timeline|fast.*track|priority|start.*saving.*soon)\b/i },
+    credit: { good: /\b(soft.*pull|no.*impact|pre.*qual|multiple.*option|tier|program)\b/i, strong: /\b(won't.*affect.*score|soft.*check|options.*for.*every)\b/i },
+    moving: { good: /\b(home.*value|zillow|4%|increase|sell.*faster|transfer|take.*with)\b/i, strong: /\b(roi|investment|add.*value|best.*upgrade|apprais)\b/i },
+    grid: { good: /\b(battery|backup|powerwall|store|night|cloud|grid.*tie|net.*meter)\b/i, strong: /\b(energy.*independen|never.*worry|blackout.*proof|resilien)\b/i },
+    environment: { good: /\b(carbon|co2|offset|tree|clean|renew|footprint|green)\b/i, strong: /\b(100.*000.*pound|2.*500.*tree|ton.*co2|meaningful.*impact)\b/i },
+    generic: { good: /\b(electric|bill|save|money|power|energy|sun|panel|question|show|help)\b/i, strong: /\b(your.*bill|your.*home|specific|customiz|personal)\b/i }
+  },
+
+  // ── Coaching hints (from NEPQ, Cardone, solar guides) ──────────────────
+  hints: {
+    cost: "NEPQ: Don't defend the price. Ask 'What would it mean if your electric bill was locked in and never went up?' — shift from cost to value.",
+    roof: "Solar Guide: Address head-on. 'We add a waterproof layer under each mount. Many roofs last LONGER because panels protect from UV.'",
+    lease_vs_buy: "Strategy: Compare to renting vs owning. 'With a purchase, you own a power plant. With a lease, you're renting electricity.'",
+    timeline: "Cardone: Create urgency. 'The tax credit drops next year. Every month you wait is a month you pay full price to the utility.'",
+    savings: "NEPQ: Problem awareness question: 'How much will you pay the utility over 25 years if electricity goes up 3-4% per year?'",
+    warranty: "Solar Guide: Stack them. '25-yr panel, 25-yr production, 10-yr inverter, plus our workmanship warranty.'",
+    scam: "Cardone: Agreement kills resistance. 'I totally understand — bad companies ARE out there. That's why we [differentiator].'",
+    neighbor: "NEPQ: Bridge it. 'Do you know what company they used? Not all installations are equal.'",
+    spouse: "Sell or Be Sold: Don't fight it. 'What if we do a quick design so you have real numbers to show her tonight?'",
+    credit: "Strategy: Normalize. 'Initial check is a soft pull — won't affect your score at all.'",
+    moving: "Solar Guide: 'Homes with solar sell 4% higher and 20% faster (Zillow). One of few improvements that pays for itself.'",
+    grid: "Strategy: Paint the picture. 'You're 100% grid-dependent now. Solar + battery = your own power + backup.'",
+    environment: "NEPQ: Connect values to action. 'Average system offsets 100,000 lbs of CO2 — like planting 2,500 trees.'",
+    generic: "Cardone: Problem awareness: 'When you see your electric bill, does that number ever bother you?'"
+  },
+
+  // ── Live Agent knowledge base (Q&A mode) ──────────────────────────────
+  agentKB: {
+    nepq: [
+      { q: /nepq|neuro.*emotional|what.*is.*nepq/i, a: "NEPQ stands for Neuro-Emotional Persuasion Questioning. Instead of pitching, you ask strategic questions that help the homeowner discover their own pain points. The framework: 1) Connecting questions (build rapport), 2) Situation questions (understand their world), 3) Problem awareness questions (surface the pain), 4) Solution awareness questions (link your solution to their pain), 5) Consequence questions (what happens if they don't act)." },
+      { q: /problem.*awareness|surface.*pain|discover.*pain/i, a: "Problem awareness questions help the homeowner feel the cost of doing nothing. Example: 'How much do you think you'll pay the utility company over the next 25 years if rates keep going up 3-4% per year?' Let them do the math — when THEY calculate it, it hits different than if you tell them." },
+      { q: /connecting.*question|build.*rapport|open.*door|first.*30|door.*opener/i, a: "At the door, lead with a connecting question — NOT a pitch. Try: 'Hey! I was just talking with your neighbor [name] about what's happening with electric rates in the area. Have you noticed your bill going up too?' This creates curiosity and social proof simultaneously. Never start with 'Hi, I'm from [company] and we do solar.'" },
+      { q: /situation.*question|understand.*their/i, a: "Situation questions map their world: 'How long have you lived here?' 'Do you own the home?' 'What does your electric bill usually run?' 'Have you looked into solar before?' These aren't closing questions — they're intel-gathering that shows you care about THEIR situation." },
+      { q: /consequence.*question|what.*happen.*if.*don/i, a: "Consequence questions create urgency by showing the cost of inaction: 'If electricity goes up another 20% over the next 3 years — which it's projected to — what would that mean for your household budget?' Let them feel the squeeze without you being pushy." }
+    ],
+    objections: [
+      { q: /spouse|wife|husband|partner.*not.*home|ask.*spouse/i, a: "The spouse objection is usually a stall, not a real blocker. Try: 'I completely respect that — most of our best customers make the decision together. What if I put together a quick design with real numbers so you have something concrete to show her tonight? That way you're not just explaining it — she can see it.' If they push back: 'No pressure at all. Would it help if I scheduled a 15-minute Zoom with both of you this week?'" },
+      { q: /too.*expensive|can't.*afford|cost.*too/i, a: "Never defend price. Reframe: 'I hear you — nobody wants another bill. But here's the thing: you're ALREADY paying for power. The question isn't whether you'll pay — it's whether you keep paying a company that raises rates every year, or lock in a payment that's lower and never goes up. Most of our customers' solar payment is less than their old electric bill from day one.'" },
+      { q: /scam|trust|not.*legit|too.*good/i, a: "Agreement kills resistance (Cardone). 'I totally get it — honestly, there ARE bad solar companies out there, and that makes my job harder. That's exactly why we do things differently: [your differentiator — BBB rating, Google reviews, local office, referral program]. I'd love for you to check our reviews before we go any further. Fair enough?'" },
+      { q: /think.*about|not.*now|come.*back|leave.*info/i, a: "'I totally understand wanting to think about it. Can I ask — what specifically would you want to think about?' This isolates the REAL objection. Usually it's cost, spouse, or trust. Once they name it, you can address it directly. If they insist: 'Fair enough. When would be a good time for me to follow up? I'd hate for you to miss the current incentives.'" },
+      { q: /neighbor.*bad|friend.*said|horror.*stor/i, a: "Bridge to YOUR difference: 'That's really helpful to know. Do you know what company they used? Because not all installations are created equal. [Competitor X] uses string inverters and cheap racking — we use microinverters and [brand]. The experience is completely different. Would it help to talk to one of our existing customers in the area?'" },
+      { q: /roof.*too.*old|new.*roof|holes.*in.*roof/i, a: "'Great question. We actually add a secondary waterproof membrane under every mount point, and our racking system is engineered to maintain your roof warranty. In fact, the panels protect your shingles from UV and weather — many roofs last longer WITH panels. We do a free structural assessment before we design anything.'" },
+      { q: /moving|sell.*house|won't.*be.*here/i, a: "'Actually, that's one of the best reasons TO go solar. Zillow data shows solar homes sell 4.1% higher and 20% faster than comparable homes without solar. You'd recoup your investment in home value AND save on electricity while you're here. It's one of the only home improvements that actually pays for itself.'" },
+      { q: /credit|score|hard.*pull/i, a: "'The initial check is a soft pull — it will NOT affect your credit score at all. We do that just to see what programs and rates you qualify for. A hard pull only happens if and when you decide to move forward with financing. And we have programs for a wide range of credit profiles.'" }
+    ],
+    closing: [
+      { q: /close|closing|ask.*for.*sale|get.*them.*to.*sign|seal.*deal/i, a: "Closing isn't a moment — it's a natural conclusion. If you've done NEPQ right, the homeowner has already convinced themselves. The assumptive close: 'Based on everything we've talked about, it sounds like this makes sense for your family. The next step is just a quick design and site survey — takes about 30 minutes. Does tomorrow afternoon or Saturday morning work better for you?' Give two options, not yes/no." },
+      { q: /urgency|create.*urgency|without.*push/i, a: "Real urgency, not fake pressure: 'The federal tax credit is at 30% right now but it's scheduled to step down. And your utility just filed for another rate increase — that means every month you wait, you're paying more to the utility AND getting less back from the tax credit. I'm not trying to rush you, but the math genuinely gets worse the longer you wait.'" },
+      { q: /trial.*close|temperature.*check|test.*close/i, a: "Sprinkle trial closes throughout: 'If the numbers worked out where your solar payment was actually less than your electric bill, is that something you'd want to explore?' or 'On a scale of 1-10, how interested would you say you are at this point?' Anything 6+ means keep going. Below 6 means you haven't addressed their real concern yet." },
+      { q: /follow.*up|callback|second.*visit/i, a: "For the follow-up: 'I want to respect your time, so let me leave you with this: a custom design showing exactly how it would look on YOUR roof, YOUR savings numbers, and the payment options available to you. I'll send that over tonight. When you and [spouse] have had a chance to look at it, I'll give you a quick call — does tomorrow evening work, or would Wednesday be better?'" }
+    ],
+    general: [
+      { q: /pitch|elevator|opening|intro.*at.*door/i, a: "Your door opener should NOT be a pitch. It should be a question that creates curiosity. Pattern interrupt: 'Hey! Quick question — have you noticed your electric bill going up lately?' or 'I'm not sure if you've heard, but [utility] just filed for another rate increase. We're going around the neighborhood letting homeowners know about a program that locks in a lower rate. Have you heard about it?'" },
+      { q: /body.*language|nonverbal|stance/i, a: "At the door: Stand at an angle (not straight on — less confrontational). Step back slightly after they open. Keep hands visible, not in pockets. Smile genuinely. If they step outside, mirror their body language. If they stay behind the door, take another step back to give space. Your energy should be casual neighbor, not aggressive salesperson." },
+      { q: /got.*better|improve|tip|advice|what.*should|how.*do.*i/i, a: "Top 5 things that separate top solar reps from average ones: 1) They ask more questions than they make statements. 2) They know their product cold — every objection has a specific, confident answer. 3) They control the energy — calm confidence, never desperate. 4) They use stories and social proof constantly. 5) They always set a specific next step, never leave it open-ended." },
+      { q: /cardone|grant.*cardone|10x/i, a: "Cardone's key solar principles: 1) Speed — don't overthink, massive action. 2) Agreement — never argue with the homeowner. 'You're right, and...' 3) Close on the first visit whenever possible — time kills deals. 4) Treat every door like it's your ONLY door today. 5) Your certainty must exceed their doubt. If you're not 100% convinced solar is right, they'll feel it." },
+      { q: /sell.*or.*be.*sold|conviction|belief/i, a: "From 'Sell or Be Sold': You must believe in your product more than the customer doubts it. If a homeowner says 'I'm not sure,' and you hesitate — you've lost. Your response should carry absolute certainty: 'I understand the hesitation. But I've seen this transform hundreds of families' energy bills. Let me show you exactly what it looks like for YOUR house.' Conviction is contagious." }
+    ]
+  },
+
+  // ── State ──────────────────────────────────────────────────────────────
+  state: {
+    mode: 'roleplay', // 'roleplay' or 'agent'
+    scenario: null,
+    conversationHistory: [], // tracks full flow {role, text, topic}
+    currentObjectionTopic: null, // what the homeowner last asked about
+    awaitingAnswer: false, // homeowner asked something, waiting for rep's answer
+    messageCount: 0,
+    warmthLevel: 0,
+    usedObjections: new Set(),
+    usedReactions: new Set(),
+    speakerOn: false,
+    micActive: false,
+    recognizer: null,
+    sessionsCompleted: 0,
+    scoreGood: 0,
+    scoreWeak: 0,
+    selectedVoice: null
+  },
+
+  // ── Topic detection ────────────────────────────────────────────────────
+  detectTopic: function(message) {
+    var lower = (message || '').toLowerCase();
+    if (/cost|price|expensive|afford|\bpay\b|\bmoney\b|\$|dollar|thousand|cheap|budget|per month/.test(lower)) return 'cost';
+    if (/roof|damage|hole|drill|weight|structural|shingle|hail|mount/.test(lower)) return 'roof';
+    if (/lease|buy|purchase|\bown\b|loan|financ|ppa|\brent\b/.test(lower)) return 'lease_vs_buy';
+    if (/\btime\b|how long|install|week|month|schedule|when|fast|process|permit/.test(lower)) return 'timeline';
+    if (/sav|bill|electric|reduce|lower|kilowatt|kwh|usage|\brate\b|utility/.test(lower)) return 'savings';
+    if (/warrant|guarantee|break|repair|maintain|\blast\b|degrade|inverter/.test(lower)) return 'warranty';
+    if (/scam|trust|legit|trick|catch|fine print|fraud|shady|bankrupt/.test(lower)) return 'scam';
+    if (/neighbor|friend|told|heard|review|online|reddit|guy down/.test(lower)) return 'neighbor';
+    if (/spouse|wife|husband|partner|discuss|together|\bshe\b|\bhe\b/.test(lower)) return 'spouse';
+    if (/credit|score|check|fico|qualify|approved|hard pull|soft pull/.test(lower)) return 'credit';
+    if (/move|sell.*house|transfer|relocat/.test(lower)) return 'moving';
+    if (/grid|blackout|power out|battery|backup|outage|off.grid/.test(lower)) return 'grid';
+    if (/environment|green|carbon|planet|clean|eco|sustain/.test(lower)) return 'environment';
+    return 'generic';
+  },
+
+  // ── Score user's answer quality ────────────────────────────────────────
+  scoreAnswer: function(userMessage, topic) {
+    var checker = this.answerQuality[topic] || this.answerQuality.generic;
+    var lower = (userMessage || '').toLowerCase();
+    var wordCount = userMessage.trim().split(/\s+/).length;
+
+    // Very short answers are always weak
+    if (wordCount < 4) return 'brushoff';
+    // Single word or dismissive
+    if (wordCount < 8 && !/\?/.test(userMessage)) return 'weak';
+
+    // Check for strong answer patterns
+    if (checker.strong && checker.strong.test(lower)) return 'strong';
+    // Check for good answer patterns
+    if (checker.good && checker.good.test(lower)) return 'good';
+
+    // Moderate length with some substance
+    if (wordCount > 20) return 'good';
+    if (wordCount > 12) return 'okay';
+
+    return 'weak';
+  },
+
+  // ── Context-aware response engine ─────────────────────────────────────
+  getResponse: function(userMessage) {
+    var self = this;
+    var sc = this.scenarios[this.state.scenario];
+    if (!sc) return { text: "I need to think about that.", topic: 'generic' };
+
+    this.state.messageCount++;
+    var userTopic = this.detectTopic(userMessage);
+
+    // Track conversation
+    this.state.conversationHistory.push({ role: 'user', text: userMessage, topic: userTopic });
+
+    var response = '';
+    var responseTopic = 'generic';
+
+    // ─── PHASE 1: We asked an objection and are waiting for the user to address it ───
+    if (this.state.awaitingAnswer && this.state.currentObjectionTopic) {
+      var quality = this.scoreAnswer(userMessage, this.state.currentObjectionTopic);
+
+      if (quality === 'strong' || quality === 'good') {
+        // Good answer! React positively and maybe ask follow-up or new topic
+        this.state.scoreGood++;
+        var goodPool = (this.reactions.good[this.state.currentObjectionTopic] || this.reactions.good.generic).filter(function(r) { return !self.state.usedReactions.has(r); });
+        if (goodPool.length === 0) { this.state.usedReactions.clear(); goodPool = this.reactions.good[this.state.currentObjectionTopic] || this.reactions.good.generic; }
+        response = goodPool[Math.floor(Math.random() * goodPool.length)];
+        this.state.usedReactions.add(response);
+        responseTopic = this.state.currentObjectionTopic;
+
+        // Warmth increases on good answers
+        if (this.state.scoreGood >= 2 && this.state.warmthLevel < 1) this.state.warmthLevel = 1;
+        if (this.state.scoreGood >= 4 && this.state.warmthLevel < 2) this.state.warmthLevel = 2;
+        if (this.state.scoreGood >= 6 && this.state.warmthLevel < 3) this.state.warmthLevel = 3;
+
+        this.state.awaitingAnswer = false;
+        this.state.currentObjectionTopic = null;
+
+      } else if (quality === 'okay') {
+        // Mediocre answer — push back lightly then move on
+        this.state.scoreGood++;
+        var okResp = ["Okay, I guess. ", "Hmm, alright. ", "I mean, okay. "];
+        response = okResp[Math.floor(Math.random() * okResp.length)];
+        this.state.awaitingAnswer = false;
+        this.state.currentObjectionTopic = null;
+
+      } else if (quality === 'brushoff') {
+        // Very short/dismissive — homeowner calls it out
+        this.state.scoreWeak++;
+        response = this._pickWeakReaction(this.state.currentObjectionTopic);
+        responseTopic = this.state.currentObjectionTopic;
+        // Stay on the same topic — don't let them off the hook
+        // But don't double-await, give them a chance to recover
+        this.state.awaitingAnswer = false;
+        this.state.currentObjectionTopic = null;
+
+      } else {
+        // Weak answer — push back harder
+        this.state.scoreWeak++;
+        response = this._pickWeakReaction(this.state.currentObjectionTopic);
+        responseTopic = this.state.currentObjectionTopic;
+        // Warmth decreases on weak answers
+        if (this.state.warmthLevel > 0 && this.state.scoreWeak > this.state.scoreGood) {
+          this.state.warmthLevel = Math.max(0, this.state.warmthLevel - 1);
+        }
+        this.state.awaitingAnswer = false;
+        this.state.currentObjectionTopic = null;
+      }
+
+    // ─── PHASE 2: User is talking but we haven't asked anything specific ───
+    } else {
+      // If user is addressing a topic proactively, acknowledge it
+      if (userTopic !== 'generic' && this.scoreAnswer(userMessage, userTopic) !== 'weak') {
+        this.state.scoreGood++;
+        var proactivePool = (this.reactions.good[userTopic] || this.reactions.good.generic).filter(function(r) { return !self.state.usedReactions.has(r); });
+        if (proactivePool.length === 0) { this.state.usedReactions.clear(); proactivePool = this.reactions.good[userTopic] || this.reactions.good.generic; }
+        var ack = proactivePool[Math.floor(Math.random() * proactivePool.length)];
+        this.state.usedReactions.add(ack);
+        response = ack;
+        responseTopic = userTopic;
+        // Warmth bumps
+        if (this.state.scoreGood >= 2 && this.state.warmthLevel < 1) this.state.warmthLevel = 1;
+        if (this.state.scoreGood >= 4 && this.state.warmthLevel < 2) this.state.warmthLevel = 2;
+      }
+    }
+
+    // ─── PHASE 3: Decide whether to ask a NEW objection ───
+    // After reacting, sometimes throw a new objection
+    var shouldObjection = false;
+    if (!this.state.awaitingAnswer) {
+      // Higher chance of new objection early in conversation, lower as warmth grows
+      var objChance = this.state.warmthLevel >= 3 ? 0.2 : (this.state.warmthLevel >= 2 ? 0.5 : 0.75);
+      if (Math.random() < objChance || this.state.messageCount <= 2) {
+        shouldObjection = true;
+      }
+    }
+
+    if (shouldObjection) {
+      // Pick a topic biased toward the scenario's concerns
+      var nextTopic = this._pickNextObjectionTopic(sc);
+      if (nextTopic) {
+        var objection = this._pickObjection(nextTopic);
+        if (objection) {
+          response = response ? response + ' But let me ask you something — ' + objection : objection;
+          this.state.awaitingAnswer = true;
+          this.state.currentObjectionTopic = nextTopic;
+          responseTopic = nextTopic;
+        }
+      }
+    }
+
+    // ─── PHASE 4: Warmth-based responses when no objection ───
+    if (!response) {
+      if (this.state.warmthLevel >= 3) {
+        var closingPool = this.reactions.closing.filter(function(r) { return !self.state.usedReactions.has(r); });
+        if (closingPool.length === 0) { this.state.usedReactions.clear(); closingPool = this.reactions.closing; }
+        response = closingPool[Math.floor(Math.random() * closingPool.length)];
+        this.state.usedReactions.add(response);
+      } else if (this.state.warmthLevel >= 2) {
+        var warmPool = this.reactions.warmup.filter(function(r) { return !self.state.usedReactions.has(r); });
+        if (warmPool.length === 0) { this.state.usedReactions.clear(); warmPool = this.reactions.warmup; }
+        response = warmPool[Math.floor(Math.random() * warmPool.length)];
+        this.state.usedReactions.add(response);
+      } else {
+        // Brushoff/stall
+        var brushPool = this.reactions.brushoff.filter(function(r) { return !self.state.usedReactions.has(r); });
+        if (brushPool.length === 0) { this.state.usedReactions.clear(); brushPool = this.reactions.brushoff; }
+        response = brushPool[Math.floor(Math.random() * brushPool.length)];
+        this.state.usedReactions.add(response);
+      }
+    }
+
+    // Track
+    this.state.conversationHistory.push({ role: 'bot', text: response, topic: responseTopic });
+    this._updateWarmthUI();
+
+    return { text: response, topic: responseTopic };
+  },
+
+  _pickWeakReaction: function(topic) {
+    var self = this;
+    var pool = (this.reactions.weak[topic] || this.reactions.weak.generic).filter(function(r) { return !self.state.usedReactions.has(r); });
+    if (pool.length === 0) { this.state.usedReactions.clear(); pool = this.reactions.weak[topic] || this.reactions.weak.generic; }
+    var r = pool[Math.floor(Math.random() * pool.length)];
+    this.state.usedReactions.add(r);
+    return r;
+  },
+
+  _pickNextObjectionTopic: function(sc) {
+    // Bias toward scenario's preferred topics, then try others
+    var biasTopics = sc.topicBias || [];
+    var allTopics = ['cost','roof','lease_vs_buy','savings','warranty','scam','neighbor','spouse','timeline','credit','moving','grid','environment'];
+
+    // Try bias topics first
+    for (var i = 0; i < biasTopics.length; i++) {
+      if (this.objections[biasTopics[i]] && !this._allUsed(biasTopics[i])) return biasTopics[i];
+    }
+    // Then random from remaining
+    var remaining = allTopics.filter(function(t) { return !TrainerBot._allUsed(t); });
+    if (remaining.length === 0) { this.state.usedObjections.clear(); remaining = allTopics; }
+    return remaining[Math.floor(Math.random() * remaining.length)];
+  },
+
+  _allUsed: function(topic) {
+    var self = this;
+    var pool = this.objections[topic] || [];
+    return pool.every(function(o) { return self.state.usedObjections.has(o); });
+  },
+
+  _pickObjection: function(topic) {
+    var self = this;
+    var pool = (this.objections[topic] || []).filter(function(o) { return !self.state.usedObjections.has(o); });
+    if (pool.length === 0) return null;
+    var o = pool[Math.floor(Math.random() * pool.length)];
+    this.state.usedObjections.add(o);
+    return o;
+  },
+
+  // ── Live Agent Q&A engine ─────────────────────────────────────────────
+  getAgentResponse: function(question) {
+    var lower = (question || '').toLowerCase();
+    var bestMatch = null;
+    var allCategories = ['nepq','objections','closing','general'];
+
+    for (var c = 0; c < allCategories.length; c++) {
+      var entries = this.agentKB[allCategories[c]] || [];
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].q.test(lower)) {
+          bestMatch = entries[i].a;
+          break;
+        }
+      }
+      if (bestMatch) break;
+    }
+
+    if (!bestMatch) {
+      // Fallback: detect topic and give hint as answer
+      var topic = this.detectTopic(question);
+      if (topic !== 'generic' && this.hints[topic]) {
+        bestMatch = this.hints[topic];
+      } else {
+        bestMatch = "That's a great question. Here's my best advice: always lead with curiosity, not a pitch. Ask the homeowner about THEIR situation before you offer any solution. The person who asks the most questions controls the conversation. If you can get specific about your question, I can give you more targeted coaching.";
+      }
+    }
+
+    return bestMatch;
+  },
+
+  // ── UI Helpers ─────────────────────────────────────────────────────────
+  _updateWarmthUI: function() {
+    var fill = document.getElementById('trainer-warmth-fill');
+    var label = document.getElementById('trainer-warmth-label');
+    if (!fill || !label) return;
+    var pct = [0, 30, 60, 100][this.state.warmthLevel] || 0;
+    var names = ['Cold', 'Lukewarm', 'Warming Up', 'Interested!'];
+    fill.style.width = pct + '%';
+    label.textContent = names[this.state.warmthLevel] || 'Cold';
+  },
+
+  _addMessage: function(text, type) {
+    var container = document.getElementById('trainer-messages');
+    if (!container) return;
+    var div = document.createElement('div');
+    div.className = 'trainer-msg trainer-msg--' + type;
+    div.textContent = text;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  },
+
+  _addTypingIndicator: function() {
+    var container = document.getElementById('trainer-messages');
+    if (!container) return;
+    var div = document.createElement('div');
+    div.className = 'trainer-msg trainer-msg--bot trainer-typing';
+    div.id = 'trainer-typing';
+    div.innerHTML = '<div class="trainer-typing-dot"></div><div class="trainer-typing-dot"></div><div class="trainer-typing-dot"></div>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  },
+
+  _removeTypingIndicator: function() {
+    var el = document.getElementById('trainer-typing');
+    if (el) el.remove();
+  },
+
+  // ── Mode switching ────────────────────────────────────────────────────
+  switchMode: function(mode) {
+    this.state.mode = mode;
+    var roleBtn = document.getElementById('trainer-mode-roleplay');
+    var agentBtn = document.getElementById('trainer-mode-agent');
+    var roleSec = document.getElementById('trainer-roleplay-section');
+    var agentSec = document.getElementById('trainer-agent-section');
+    if (mode === 'agent') {
+      if (roleBtn) roleBtn.classList.remove('trainer-mode-tab--active');
+      if (agentBtn) agentBtn.classList.add('trainer-mode-tab--active');
+      if (roleSec) roleSec.style.display = 'none';
+      if (agentSec) agentSec.style.display = '';
+    } else {
+      if (roleBtn) roleBtn.classList.add('trainer-mode-tab--active');
+      if (agentBtn) agentBtn.classList.remove('trainer-mode-tab--active');
+      if (roleSec) roleSec.style.display = '';
+      if (agentSec) agentSec.style.display = 'none';
+    }
+  },
+
+  // ── Start Live Agent ──────────────────────────────────────────────────
+  startAgent: function() {
+    this.state.mode = 'agent';
+    this.state.scenario = null;
+    this.state.conversationHistory = [];
+    this.state.messageCount = 0;
+
+    document.getElementById('trainer-scenarios').style.display = 'none';
+    document.getElementById('trainer-chat').style.display = 'flex';
+
+    var peEl = document.getElementById('trainer-persona-emoji');
+    var pnEl = document.getElementById('trainer-persona-name');
+    if (peEl) peEl.textContent = '🧠';
+    if (pnEl) pnEl.textContent = 'Sales Coach';
+
+    // Hide warmth bar in agent mode (not relevant)
+    var warmth = document.querySelector('.trainer-warmth-indicator');
+    if (warmth) warmth.style.display = 'none';
+
+    var container = document.getElementById('trainer-messages');
+    if (container) container.innerHTML = '';
+
+    this._addMessage("Hey! I'm your sales coach. Ask me anything about solar sales — objection handling, NEPQ techniques, door openers, closing strategies, or how to handle specific situations you've run into. What's on your mind?", 'bot');
+
+    var input = document.getElementById('trainer-input');
+    if (input) { input.placeholder = 'Ask your coach anything...'; setTimeout(function() { input.focus(); }, 300); }
+  },
+
+  startAgentWith: function(question) {
+    this.startAgent();
+    var self = this;
+    setTimeout(function() {
+      self._addMessage(question, 'user');
+      self._addTypingIndicator();
+      setTimeout(function() {
+        self._removeTypingIndicator();
+        var answer = self.getAgentResponse(question);
+        self._addMessage(answer, 'bot');
+        if (self.state.speakerOn) self._speak(answer);
+      }, 800 + Math.random() * 600);
+    }, 600);
+  },
+
+  // ── Core actions ───────────────────────────────────────────────────────
+  startScenario: function(scenarioId) {
+    var sc = this.scenarios[scenarioId];
+    if (!sc) return;
+
+    this.state.mode = 'roleplay';
+    this.state.scenario = scenarioId;
+    this.state.conversationHistory = [];
+    this.state.currentObjectionTopic = null;
+    this.state.awaitingAnswer = false;
+    this.state.messageCount = 0;
+    this.state.warmthLevel = 0;
+    this.state.usedObjections = new Set();
+    this.state.usedReactions = new Set();
+    this.state.scoreGood = 0;
+    this.state.scoreWeak = 0;
+
+    document.getElementById('trainer-scenarios').style.display = 'none';
+    document.getElementById('trainer-chat').style.display = 'flex';
+
+    var peEl = document.getElementById('trainer-persona-emoji');
+    var pnEl = document.getElementById('trainer-persona-name');
+    if (peEl) peEl.textContent = sc.emoji;
+    if (pnEl) pnEl.textContent = sc.name;
+
+    // Show warmth bar in roleplay
+    var warmth = document.querySelector('.trainer-warmth-indicator');
+    if (warmth) warmth.style.display = '';
+
+    var container = document.getElementById('trainer-messages');
+    if (container) container.innerHTML = '';
+
+    this._updateWarmthUI();
+    this._addMessage('Scenario: ' + sc.name + ' — ' + sc.personality, 'system');
+
+    var self = this;
+    this._addTypingIndicator();
+    setTimeout(function() {
+      self._removeTypingIndicator();
+      self._addMessage(sc.greeting, 'bot');
+      self.state.conversationHistory.push({ role: 'bot', text: sc.greeting, topic: 'greeting' });
+      if (self.state.speakerOn) self._speak(sc.greeting);
+    }, 800 + Math.random() * 600);
+
+    var input = document.getElementById('trainer-input');
+    if (input) { input.placeholder = 'Type your pitch...'; setTimeout(function() { input.focus(); }, 500); }
+  },
+
+  sendMessage: function() {
+    var input = document.getElementById('trainer-input');
+    if (!input) return;
+    var text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+
+    this._addMessage(text, 'user');
+
+    var self = this;
+    this._addTypingIndicator();
+    var delay = 600 + Math.random() * 1200 + Math.min(text.length * 12, 1200);
+    setTimeout(function() {
+      self._removeTypingIndicator();
+      var result;
+      if (self.state.mode === 'agent') {
+        result = { text: self.getAgentResponse(text), topic: 'agent' };
+      } else {
+        result = self.getResponse(text);
+      }
+      self._addMessage(result.text, 'bot');
+      if (self.state.speakerOn) self._speak(result.text);
+    }, delay);
+  },
+
+  reset: function() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    this.stopMic();
+
+    if (this.state.messageCount > 2) {
+      this.state.sessionsCompleted++;
+      try {
+        var stats = JSON.parse(localStorage.getItem('ce_trainer_stats') || '{}');
+        stats.sessions = (stats.sessions || 0) + 1;
+        stats.topicsCovered = Math.max(stats.topicsCovered || 0, (this.state.conversationHistory.filter(function(m) { return m.role === 'bot'; }).map(function(m) { return m.topic; }).filter(function(v, i, a) { return v !== 'generic' && v !== 'greeting' && a.indexOf(v) === i; })).length);
+        stats.avgScore = Math.round(((stats.avgScore || 0) * ((stats.sessions || 1) - 1) + (this.state.scoreGood / Math.max(1, this.state.scoreGood + this.state.scoreWeak) * 100)) / (stats.sessions || 1));
+        localStorage.setItem('ce_trainer_stats', JSON.stringify(stats));
+      } catch(_) {}
+    }
+
+    document.getElementById('trainer-scenarios').style.display = '';
+    document.getElementById('trainer-chat').style.display = 'none';
+    document.getElementById('trainer-hint-banner').style.display = 'none';
+
+    var input = document.getElementById('trainer-input');
+    if (input) input.placeholder = 'Type your pitch...';
+
+    this._renderStats();
+  },
+
+  _renderStats: function() {
+    try {
+      var stats = JSON.parse(localStorage.getItem('ce_trainer_stats') || '{}');
+      var wrap = document.getElementById('trainer-stats-summary');
+      var sessEl = document.getElementById('trainer-stat-sessions');
+      var topicEl = document.getElementById('trainer-stat-topics');
+      if (stats.sessions > 0 && wrap) {
+        wrap.style.display = '';
+        if (sessEl) sessEl.textContent = stats.sessions;
+        if (topicEl) topicEl.textContent = stats.topicsCovered || 0;
+      }
+    } catch(_) {}
+  },
+
+  showHint: function() {
+    var topic = (this.state.currentObjectionTopic || this.state.conversationHistory.length > 0 && this.state.conversationHistory[this.state.conversationHistory.length - 1].topic) || 'generic';
+    var hint = this.hints[topic] || this.hints.generic;
+    var banner = document.getElementById('trainer-hint-banner');
+    var textEl = document.getElementById('trainer-hint-text');
+    if (banner && textEl) {
+      textEl.textContent = hint;
+      banner.style.display = 'flex';
+    }
+  },
+
+  // ── Speech synthesis (voice output) — improved voice selection ─────────
+  toggleSpeaker: function() {
+    this.state.speakerOn = !this.state.speakerOn;
+    var icon = document.getElementById('trainer-speaker-icon');
+    var label = document.getElementById('trainer-speaker-label');
+    var btn = document.getElementById('trainer-speaker-btn');
+    if (icon) icon.textContent = this.state.speakerOn ? '🔊' : '🔇';
+    if (label) label.textContent = this.state.speakerOn ? 'Voice On' : 'Voice Off';
+    if (btn) btn.classList.toggle('active', this.state.speakerOn);
+    if (!this.state.speakerOn && window.speechSynthesis) window.speechSynthesis.cancel();
+    // Pre-select best voice on first enable
+    if (this.state.speakerOn && !this.state.selectedVoice) this._selectBestVoice();
+  },
+
+  _selectBestVoice: function() {
+    if (!window.speechSynthesis) return;
+    var voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return;
+    // Priority: natural/enhanced voices first, then specific good voices
+    var priorities = [
+      function(v) { return /enhanced|premium|natural/i.test(v.name) && /en/i.test(v.lang); },
+      function(v) { return v.name === 'Karen' && v.lang.startsWith('en'); }, // macOS natural
+      function(v) { return v.name === 'Daniel' && v.lang.startsWith('en'); }, // macOS natural male
+      function(v) { return v.name === 'Samantha' && v.lang.startsWith('en'); }, // macOS
+      function(v) { return /Google US English|Google UK English Male/i.test(v.name); }, // Chrome
+      function(v) { return /Microsoft (David|Zira|Mark)/i.test(v.name); }, // Windows
+      function(v) { return v.lang.startsWith('en') && !v.localService; }, // any remote en voice
+      function(v) { return v.lang.startsWith('en'); } // any en voice
+    ];
+    for (var p = 0; p < priorities.length; p++) {
+      var match = voices.find(priorities[p]);
+      if (match) { this.state.selectedVoice = match; return; }
+    }
+  },
+
+  _speak: function(text) {
+    if (!window.speechSynthesis || !text) return;
+    window.speechSynthesis.cancel();
+    if (!this.state.selectedVoice) this._selectBestVoice();
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.92;
+    utterance.pitch = 1.05;
+    utterance.volume = 1.0;
+    if (this.state.selectedVoice) utterance.voice = this.state.selectedVoice;
+    // Re-enable mic after speaking in voice-to-voice mode
+    var self = this;
+    utterance.onend = function() {
+      if (self.state.speakerOn && self.state.micActive) {
+        setTimeout(function() { self.startMic(); }, 400);
+      }
+    };
+    window.speechSynthesis.speak(utterance);
+  },
+
+  // ── Speech recognition (voice input) ───────────────────────────────────
+  toggleMic: function() {
+    if (this.state.micActive) { this.stopMic(); } else { this.startMic(); }
+  },
+
+  startMic: function() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { showToast('Speech recognition not supported in this browser'); return; }
+    var self = this;
+    var recognizer = new SR();
+    recognizer.continuous = true;
+    recognizer.interimResults = false;
+    recognizer.lang = 'en-US';
+
+    recognizer.onresult = function(e) {
+      var final = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      }
+      if (final.trim()) {
+        var input = document.getElementById('trainer-input');
+        if (input) input.value = (input.value ? input.value + ' ' : '') + final.trim();
+      }
+    };
+
+    recognizer.onstart = function() {
+      self.state.micActive = true;
+      var btn = document.getElementById('trainer-mic-btn');
+      if (btn) btn.classList.add('recording');
+    };
+
+    recognizer.onend = function() {
+      if (self.state.speakerOn && self.state.micActive) {
+        var input = document.getElementById('trainer-input');
+        if (input && input.value.trim()) {
+          self.sendMessage();
+        }
+      }
+      self.state.micActive = false;
+      self.state.recognizer = null;
+      var btn = document.getElementById('trainer-mic-btn');
+      if (btn) btn.classList.remove('recording');
+    };
+
+    recognizer.onerror = function(e) {
+      if (e.error !== 'aborted' && e.error !== 'no-speech') showToast('Mic error: ' + e.error);
+      self.state.micActive = false;
+      self.state.recognizer = null;
+      var btn = document.getElementById('trainer-mic-btn');
+      if (btn) btn.classList.remove('recording');
+    };
+
+    try { recognizer.start(); this.state.recognizer = recognizer; } catch(e) { showToast('Could not start microphone'); }
+  },
+
+  stopMic: function() {
+    if (this.state.recognizer) { try { this.state.recognizer.stop(); } catch(_) {} this.state.recognizer = null; }
+    this.state.micActive = false;
+    var btn = document.getElementById('trainer-mic-btn');
+    if (btn) btn.classList.remove('recording');
+  }
+};
+
+// Preload voices for speech synthesis
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+}
+
 // ── Tab navigation ────────────────────────────────────────────────────────
 const navItems  = document.querySelectorAll('.nav-item');
 const panels    = document.querySelectorAll('.tab-panel');
@@ -10230,6 +11624,7 @@ function activateTab(tabId) {
   if (tabId === 'resources')   setTimeout(renderBookCovers, 80);
   if (tabId === 'leaderboard') renderLeaderboard();
   if (tabId === 'calendar')    renderCalendar();
+  if (tabId === 'trainer')     TrainerBot._renderStats();
 }
 
 navItems.forEach(btn => {
@@ -10318,7 +11713,7 @@ function _initApp() {
   const qTab    = params.get('tab');
   const stored  = localStorage.getItem('ce_active_tab');
   const initial = qTab || stored || 'dashboard';
-  const valid   = ['dashboard', 'log', 'map', 'installs', 'leaderboard', 'resources', 'admin', 'calendar'];
+  const valid   = ['dashboard', 'log', 'map', 'installs', 'leaderboard', 'resources', 'admin', 'calendar', 'trainer'];
   activateTab(valid.includes(initial) ? initial : 'dashboard');
 
   // Dismiss splash — skip delay on first run so setup modal is immediately visible
@@ -16341,10 +17736,31 @@ function loadAdminSettings() {
   document.getElementById('admin-review-url').value    = s.reviewUrl   || ADMIN_DEFAULTS.reviewUrl;
 
   // Role selector — show current role (not master_admin)
+  // v95: canvassers cannot change their own role — only a manager can upgrade them
   const roleEl = document.getElementById('admin-role-select');
   if (roleEl) {
     const curRole = localStorage.getItem('ce_user_role');
     if (curRole && curRole !== 'master_admin') roleEl.value = curRole;
+    const effectiveRole = localStorage.getItem('ce_impersonate_role') || curRole || 'canvasser';
+    if (effectiveRole === 'canvasser') {
+      roleEl.disabled = true;
+      roleEl.title = 'Role locked — ask your manager to upgrade your access';
+      roleEl.style.opacity = '0.6';
+      // Add lock hint below
+      let lockHint = document.getElementById('admin-role-lock-hint');
+      if (!lockHint) {
+        lockHint = document.createElement('p');
+        lockHint.id = 'admin-role-lock-hint';
+        lockHint.style.cssText = 'font-size:11px;color:var(--text-3);margin:4px 0 0;';
+        lockHint.textContent = '🔒 Role locked. Ask your manager to change your account type.';
+        roleEl.parentNode.appendChild(lockHint);
+      }
+    } else {
+      roleEl.disabled = false;
+      roleEl.style.opacity = '1';
+      const existingHint = document.getElementById('admin-role-lock-hint');
+      if (existingHint) existingHint.remove();
+    }
   }
 
   // Restore custom logo if saved
@@ -16355,6 +17771,13 @@ function loadAdminSettings() {
     const headerLogoImg = document.getElementById('header-logo');
     if (headerLogoImg) { const img = headerLogoImg.querySelector('img'); if (img) img.src = logo; }
   }
+
+  // Font size slider
+  const fSlider = document.getElementById('admin-font-size');
+  const fVal = document.getElementById('admin-font-size-val');
+  const savedFs = localStorage.getItem('ce_font_size') || '16';
+  if (fSlider) { fSlider.value = savedFs; }
+  if (fVal) { fVal.textContent = savedFs + 'px'; }
 
   renderTeamList();
 }
@@ -16382,6 +17805,10 @@ function saveAdminSettings() {
   const roleEl = document.getElementById('admin-role-select');
   if (roleEl && roleEl.value) localStorage.setItem('ce_user_role', roleEl.value);
   applyRoleUI();
+
+  // Save font size
+  const fSlider = document.getElementById('admin-font-size');
+  if (fSlider) localStorage.setItem('ce_font_size', fSlider.value);
 
   const msg = document.getElementById('admin-success');
   if (msg) msg.classList.add('show');
@@ -16791,6 +18218,29 @@ document.getElementById('admin-ql-save-btn')?.addEventListener('click', () => {
 // ── v77: Seed test data REMOVED — was auto-populating fake reps on every fresh install ──
 
 document.getElementById('admin-save-btn').addEventListener('click', saveAdminSettings);
+
+// ── v95: Font size slider — live preview + persist ────────────────────────────
+(function() {
+  function applyFontSize(px) {
+    var scale = px / 16;
+    document.documentElement.style.setProperty('--fs-scale', scale);
+    document.documentElement.style.setProperty('--fs-base', px + 'px');
+  }
+  // Restore saved size on load
+  var saved = localStorage.getItem('ce_font_size');
+  if (saved) applyFontSize(parseInt(saved, 10));
+
+  var slider = document.getElementById('admin-font-size');
+  var valEl = document.getElementById('admin-font-size-val');
+  if (slider) {
+    slider.addEventListener('input', function() {
+      var px = parseInt(slider.value, 10);
+      if (valEl) valEl.textContent = px + 'px';
+      applyFontSize(px);
+      localStorage.setItem('ce_font_size', px);
+    });
+  }
+})();
 
 // ── Review URL — Test Link button ───────────────────────────────────────────
 document.getElementById('admin-review-test-btn').addEventListener('click', () => {
