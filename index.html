@@ -6386,6 +6386,23 @@
     box-shadow: 0 4px 16px rgba(59,10,10,0.5);
     min-width: 72px; flex: 0 0 auto;
   }
+  .otd-cam-btn--dropcall {
+    background: linear-gradient(145deg, #0a2e3b 0%, #061825 100%);
+    color: #7dd3fc; border: 1.5px solid rgba(125,211,252,0.25);
+    box-shadow: 0 4px 16px rgba(10,46,59,0.5);
+    min-width: 72px; flex: 0 0 auto;
+  }
+  .otd-dropcall-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; background: var(--g2);
+    border: 1px solid var(--g-border); border-radius: 14px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    text-decoration: none; color: var(--text);
+    transition: background 0.15s;
+  }
+  .otd-dropcall-item:active { background: var(--g3); }
+  .otd-dropcall-label { font-size: 14px; font-weight: 600; flex: 1; }
+  .otd-dropcall-number { font-size: 12px; color: var(--text-3); }
   .otd-cam-btn--voice.otd-voice-btn--rec {
     background: linear-gradient(145deg, #b91c1c 0%, #991b1b 100%);
     color: #fff; border-color: #ef4444;
@@ -8936,6 +8953,21 @@
     </div>
 
     <!-- Developer Quick Links -->
+    <!-- Drop Call Numbers (OTD Mode) -->
+    <div class="ma-section">
+      <div class="ma-section-title">📞 Drop Call Numbers</div>
+      <div class="ma-field">
+        <label class="ma-label">NUMBERS (one per line — label: number)</label>
+        <textarea class="ma-input" id="ma-drop-call-numbers" rows="5"
+          placeholder="Office: +16025550100&#10;Leads: +16025550101&#10;Manager: +16025550102"
+          style="font-family:monospace;font-size:12px;resize:vertical"></textarea>
+      </div>
+      <div class="ma-field">
+        <div style="font-size:11px;color:var(--text-3);margin-bottom:8px">Format: <code>Label: +1XXXXXXXXXX</code> — shows as a list in OTD mode's Drop Call button.</div>
+        <button class="ma-btn" id="ma-save-drop-call-btn">💾 Save Drop Call Numbers</button>
+      </div>
+    </div>
+
     <div class="ma-section">
       <div class="ma-section-title">🔗 Developer Quick Links</div>
       <div class="ma-field">
@@ -9391,7 +9423,19 @@
           <span class="otd-cam-emoji" id="otd-voice-emoji">🎙️</span>
           <span id="otd-voice-label">Memo</span>
         </button>
+        <button class="otd-cam-btn otd-cam-btn--dropcall" id="otd-drop-call-btn" onclick="otdOpenDropCall()" style="display:none">
+          <span class="otd-cam-emoji">📞</span>
+          Drop Call
+        </button>
       </div>
+    </div>
+
+    <!-- Drop Call sheet (slides up inside OTD) -->
+    <div id="otd-dropcall-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9050;background:var(--g1);border-radius:20px 20px 0 0;padding:16px;box-shadow:0 -8px 32px rgba(0,0,0,0.5)">
+      <div style="width:36px;height:4px;background:var(--g-border);border-radius:2px;margin:0 auto 14px"></div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;text-align:center">📞 Drop Call</div>
+      <div id="otd-dropcall-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button onclick="otdCloseDropCall()" style="margin-top:14px;width:100%;padding:12px;background:rgba(255,255,255,0.06);border:1px solid var(--g-border);border-radius:12px;color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer">Cancel</button>
     </div>
 
     <!-- HO Info card (shown when Made Contact) -->
@@ -13074,11 +13118,29 @@ document.getElementById('log-list').addEventListener('click', e => {
     return;
   }
 
-  // Toggle expand on row tap
+  // Toggle expand on row tap — second tap on already-expanded entry opens customer record
   if (e.target.closest('.log-entry-main')) {
     const isExpanded = entryEl.classList.contains('expanded');
+    if (isExpanded) {
+      // Second tap: navigate to customer record in CRM
+      const entry = loadEntries().find(x => x.id === id);
+      if (entry) {
+        closeExpandedEntries();
+        const normPhone = p => (p || '').replace(/\D/g,'').slice(-10);
+        const normAddr  = a => (a || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20);
+        const custKey   = normPhone(entry.phone) || normAddr(entry.address) || ('log-' + entry.id);
+        switchCrmPane('customers');
+        setTimeout(() => {
+          const customers = buildCustomers();
+          window._custListCache = customers;
+          const idx = customers.findIndex(c => c.id === custKey);
+          if (idx >= 0) openCustomerDetail(idx);
+        }, 120);
+      }
+      return;
+    }
     closeExpandedEntries();
-    if (!isExpanded) entryEl.classList.add('expanded');
+    entryEl.classList.add('expanded');
   }
 });
 
@@ -13824,7 +13886,7 @@ function openCalDaySheet(dateStr) {
           const g = ev.data;
           const name = g.name || g.address || 'Go-Back';
           const note = g.notes || g.goBackNote || '';
-          return `<div class="cal-hour-goback-card">
+          return `<div class="cal-hour-goback-card" data-goback-id="${escHtml(g.id || '')}">
             <div class="cal-hour-goback-name">🔁 ${escHtml(name)}</div>
             <div class="cal-hour-goback-time">${timeStr} · Go-Back</div>
             ${note ? `<div class="cal-hour-appt-meta">${escHtml(note)}</div>` : ''}
@@ -13838,39 +13900,6 @@ function openCalDaySheet(dateStr) {
     }).join('')}</div>`;
   }
 
-  // Wire up click on appointment cards to open customer detail
-  document.getElementById('cal-day-sheet-body').addEventListener('click', e => {
-    const card = e.target.closest('[data-appt-id]');
-    if (!card) return;
-    const apptId = card.dataset.apptId;
-    // Find appointment and open customer detail
-    const appts = loadAppointments();
-    const appt = appts.find(a => a.id === apptId);
-    if (!appt) return;
-    // Close day sheet first
-    closeCalDaySheet();
-    // Navigate to CRM → Customers, find matching customer
-    setTimeout(() => {
-      activateTab('log');
-      setTimeout(() => {
-        switchCrmPane('customers');
-        setTimeout(() => {
-          // Build customers and find the one matching this appointment
-          const customers = buildCustomers();
-          const phone = (appt.phone || '').replace(/\D/g,'').slice(-10);
-          const idx = customers.findIndex(c => {
-            const cp = (c.phone || '').replace(/\D/g,'').slice(-10);
-            return cp && cp === phone;
-          });
-          if (idx !== -1) {
-            window._custListCache = customers;
-            openCustomerDetail(idx);
-          }
-        }, 200);
-      }, 150);
-    }, 400);
-  });
-
   overlay.classList.add('cal-overlay-open');
   requestAnimationFrame(() => sheet.classList.add('cal-day-sheet--open'));
 }
@@ -13882,6 +13911,40 @@ function closeCalDaySheet() {
   sheet.classList.remove('cal-day-sheet--open');
   if (overlay) overlay.classList.remove('cal-overlay-open');
 }
+
+// Single delegated listener for cal day sheet — set up once, never duplicated
+document.getElementById('cal-day-sheet-body').addEventListener('click', e => {
+  // Appointment card tap → open customer record
+  const apptCard = e.target.closest('[data-appt-id]');
+  if (apptCard && apptCard.dataset.apptId) {
+    closeCalDaySheet();
+    setTimeout(() => openCustomerByApptId(apptCard.dataset.apptId), 350);
+    return;
+  }
+  // Go-back card tap → open customer record via entry ID
+  const gbCard = e.target.closest('[data-goback-id]');
+  if (gbCard && gbCard.dataset.gobackId) {
+    const entryId = gbCard.dataset.gobackId;
+    closeCalDaySheet();
+    setTimeout(() => {
+      const entry = loadEntries().find(x => x.id === entryId);
+      if (!entry) return;
+      const normPhone = p => (p || '').replace(/\D/g,'').slice(-10);
+      const normAddr  = a => (a || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20);
+      const custKey   = normPhone(entry.phone) || normAddr(entry.address) || ('log-' + entry.id);
+      activateTab('log');
+      setTimeout(() => {
+        switchCrmPane('customers');
+        setTimeout(() => {
+          const customers = buildCustomers();
+          window._custListCache = customers;
+          const idx = customers.findIndex(c => c.id === custKey);
+          if (idx >= 0) openCustomerDetail(idx);
+        }, 150);
+      }, 200);
+    }, 350);
+  }
+});
 
 function renderCalAppts() {
   const label = document.getElementById('cal-appt-label');
@@ -14295,6 +14358,10 @@ function openMasterAdmin() {
   if (maGoSolo)     maGoSolo.value     = s.gosoloUrl || 'https://phx.gosolo.io/';
   if (maGrid)       maGrid.value       = s.gridUrl   || 'https://procfu.com/widgets/mcapp/qWhbwtv797R7';
 
+  // Drop call numbers
+  const maDropCall = document.getElementById('ma-drop-call-numbers');
+  if (maDropCall) maDropCall.value = localStorage.getItem('ce_drop_call_numbers') || '';
+
   // Storage info
   refreshStorageInfo();
 
@@ -14302,8 +14369,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v81\n` +
-      `SW cache:      capital-energy-v81\n` +
+      `App version:   capital-energy-v82\n` +
+      `SW cache:      capital-energy-v82\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -14444,6 +14511,61 @@ document.getElementById('ma-save-links-btn').addEventListener('click', () => {
   btn.textContent = '✓ Saved!';
   setTimeout(() => { btn.textContent = '💾 Save Quick Links'; }, 1500);
 });
+
+// ── Drop Call: save from master admin ──────────────────────────────────────
+document.getElementById('ma-save-drop-call-btn').addEventListener('click', () => {
+  const raw = (document.getElementById('ma-drop-call-numbers').value || '').trim();
+  localStorage.setItem('ce_drop_call_numbers', raw);
+  _otdSyncDropCallBtn();
+  const btn = document.getElementById('ma-save-drop-call-btn');
+  btn.textContent = '✓ Saved!';
+  setTimeout(() => { btn.textContent = '💾 Save Drop Call Numbers'; }, 1500);
+});
+
+// Populate textarea when master admin opens
+const _maDropCallOriginalOpen = openMasterAdmin;
+// Patch in-place: populate drop call textarea on open
+const _origOpenMA = openMasterAdmin;
+// (handled inline in openMasterAdmin below — see init call)
+
+// ── Drop Call: OTD button visibility + sheet ───────────────────────────────
+function _otdSyncDropCallBtn() {
+  const raw = localStorage.getItem('ce_drop_call_numbers') || '';
+  const btn = document.getElementById('otd-drop-call-btn');
+  if (btn) btn.style.display = raw.trim() ? '' : 'none';
+}
+
+function _parseDropCallNumbers() {
+  const raw = localStorage.getItem('ce_drop_call_numbers') || '';
+  return raw.split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx < 0) return { label: line, number: line };
+      return { label: line.slice(0, colonIdx).trim(), number: line.slice(colonIdx + 1).trim() };
+    })
+    .filter(x => x.number);
+}
+
+function otdOpenDropCall() {
+  const numbers = _parseDropCallNumbers();
+  const list = document.getElementById('otd-dropcall-list');
+  const sheet = document.getElementById('otd-dropcall-sheet');
+  if (!list || !sheet) return;
+  list.innerHTML = numbers.map(n => `
+    <a class="otd-dropcall-item" href="tel:${encodeURIComponent(n.number)}" onclick="otdCloseDropCall()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l1.58-1.58a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span class="otd-dropcall-label">${escHtml(n.label)}</span>
+      <span class="otd-dropcall-number">${escHtml(n.number)}</span>
+    </a>`).join('');
+  sheet.style.display = 'block';
+}
+
+function otdCloseDropCall() {
+  const sheet = document.getElementById('otd-dropcall-sheet');
+  if (sheet) sheet.style.display = 'none';
+}
 
 // Master Admin logo upload (legacy)
 document.getElementById('ma-logo-upload').addEventListener('change', e => {
@@ -14640,16 +14762,18 @@ document.getElementById('ma-remove-pin-btn').addEventListener('click', () => {
 });
 
 // Lock / Exit
-document.getElementById('ma-lock-btn').addEventListener('click', () => {
+function _exitMasterAdmin() {
   closeMasterAdmin();
-  localStorage.setItem('ce_user_role', _prevRole || 'canvasser');
-  applyRoleUI();
-});
-document.getElementById('master-admin-close-btn').addEventListener('click', () => {
-  closeMasterAdmin();
-  localStorage.setItem('ce_user_role', _prevRole || 'canvasser');
-  applyRoleUI();
-});
+  // v82: delay role restore until after the 350ms slide-out transition completes
+  // — prevents white flash caused by DOM updates while sheet is still animating
+  setTimeout(() => {
+    localStorage.setItem('ce_user_role', _prevRole || 'canvasser');
+    applyRoleUI();
+  }, 380);
+}
+
+document.getElementById('ma-lock-btn').addEventListener('click', _exitMasterAdmin);
+document.getElementById('master-admin-close-btn').addEventListener('click', _exitMasterAdmin);
 
 // Swipe-down-to-close on master admin sheet
 (function () {
@@ -14660,11 +14784,7 @@ document.getElementById('master-admin-close-btn').addEventListener('click', () =
   }, { passive: true });
   sheet.addEventListener('touchend', e => {
     const dy = e.changedTouches[0].clientY - _startY;
-    if (dy > 80) {
-      closeMasterAdmin();
-      localStorage.setItem('ce_user_role', _prevRole || 'canvasser');
-      applyRoleUI();
-    }
+    if (dy > 80) _exitMasterAdmin();
   }, { passive: true });
 })();
 
@@ -17749,6 +17869,8 @@ function openOTD() {
   _otdUpdateCounters();
   ov.classList.add('otd-open');
   document.body.style.overflow = 'hidden';
+  // v82: sync drop call button visibility based on manager-configured numbers
+  _otdSyncDropCallBtn();
   // Mark toggle card active
   var card = document.getElementById('otd-toggle-card');
   if (card) {
@@ -17934,6 +18056,57 @@ function _otdSaveEntry(entry) {
   _otdSessionDoors++;
   if (entry.status === 'made-contact') _otdSessionContact++;
   _otdUpdateCounters();
+
+  // v82: persist voice memo blob + transcript to customer CRM files
+  if (_otdVoiceBlob) {
+    (function(blob) {
+      try {
+        var normPhone = function(p) { return (p || '').replace(/\D/g,'').slice(-10); };
+        var normAddr  = function(a) { return (a || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20); };
+        var custKey   = normPhone(entry.phone) || normAddr(entry.address) || ('log-' + entry.id);
+        var uploaderName = localStorage.getItem('ce_user_name') || 'Rep';
+        var now = new Date();
+        var ds  = now.toISOString().slice(0,16).replace('T',' ');
+        var mimeType = blob.type || 'audio/webm';
+        var ext = mimeType.includes('mp4') || mimeType.includes('m4a') ? 'mp4' : 'webm';
+        var baseName = 'OTD Voice Memo ' + ds;
+        var fr = new FileReader();
+        fr.onloadend = function() {
+          var audioFile = {
+            id: 'otdvm_' + Date.now().toString(36),
+            name: baseName + '.' + ext,
+            ext: ext, type: mimeType,
+            size: blob.size,
+            uploadedBy: uploaderName,
+            uploadedAt: Date.now(),
+            dataUrl: fr.result,
+            isVoiceMemo: true,
+          };
+          try {
+            var existing = JSON.parse(localStorage.getItem('ce_cust_files_' + custKey) || '[]');
+            existing.unshift(audioFile);
+            // Also add notes as text file if present
+            if (entry.notes) {
+              var noteText = '[OTD Note – ' + ds + ']\nStatus: ' + (entry.status || '') + '\n\n' + entry.notes;
+              existing.unshift({
+                id: 'otdn_' + Date.now().toString(36),
+                name: 'OTD Note ' + ds + '.txt',
+                ext: 'txt', type: 'text/plain',
+                size: noteText.length,
+                uploadedBy: uploaderName,
+                uploadedAt: Date.now(),
+                dataUrl: 'data:text/plain;charset=utf-8,' + encodeURIComponent(noteText),
+              });
+            }
+            localStorage.setItem('ce_cust_files_' + custKey, JSON.stringify(existing.slice(0, 20)));
+          } catch(e) {}
+        };
+        fr.readAsDataURL(blob);
+      } catch(e) {}
+    })(_otdVoiceBlob);
+    _otdVoiceBlob = null;
+  }
+
   var banner = document.getElementById('otd-saved-banner');
   if (banner) banner.classList.add('otd-visible');
   var body = document.querySelector('.otd-body');
@@ -17947,9 +18120,6 @@ function _otdSaveEntry(entry) {
 function otdQuickSave() {
   if (!_otdStatus) return;
   var entry = _otdBuildEntry();
-  if (_otdVoiceBlob) {
-    entry.notes = (entry.notes ? entry.notes + '\n' : '') + '[Voice memo recorded]';
-  }
   _otdSaveEntry(entry);
 }
 
