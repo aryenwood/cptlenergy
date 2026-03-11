@@ -6299,34 +6299,57 @@
   }
   .otd-exit-btn:active { background: rgba(255,255,255,0.13); }
 
-  /* ── GPS / Address bar ── */
+  /* ── GPS / Address bar — redesigned ── */
   .otd-addr-row {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(0,200,215,0.16);
-    border-radius: 12px; padding: 8px 12px;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(0,200,215,0.07);
+    border: 1.5px solid rgba(0,200,215,0.22);
+    border-radius: 16px; padding: 11px 14px;
+    transition: border-color .2s;
   }
-  .otd-addr-icon { font-size: 14px; flex-shrink: 0; }
+  .otd-addr-row:has(.otd-addr-text:not(.otd-addr-scanning)) { border-color: rgba(0,200,215,0.35); }
+  /* GPS dot — pulsing when scanning */
+  .otd-addr-gps-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    background: #22d3ee; position: relative;
+  }
+  .otd-addr-gps-dot::after {
+    content: ''; position: absolute; inset: -4px;
+    border-radius: 50%; border: 2px solid rgba(34,211,238,0.4);
+    animation: otd-gps-ping 1.5s ease infinite;
+  }
+  @keyframes otd-gps-ping {
+    0% { transform: scale(0.6); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  .otd-addr-gps-dot--fixed { background: #4ade80; }
+  .otd-addr-gps-dot--fixed::after { border-color: rgba(74,222,128,0.35); animation: none; opacity: 0; }
+  /* Address content */
+  .otd-addr-content { flex: 1; min-width: 0; cursor: pointer; }
+  .otd-addr-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(0,200,215,0.7); line-height: 1; margin-bottom: 3px;
+  }
   .otd-addr-text {
-    flex: 1; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    cursor: pointer;
+    font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1;
   }
-  .otd-addr-text.otd-addr-scanning { color: #22d3ee; animation: otd-blink .9s ease infinite alternate; }
+  .otd-addr-text.otd-addr-scanning { color: rgba(34,211,238,0.7); font-weight: 500; font-style: italic; }
   @keyframes otd-blink { from{opacity:.5} to{opacity:1} }
+  /* Action buttons — inline right */
   .otd-addr-actions { display: flex; gap: 5px; flex-shrink: 0; }
   .otd-addr-icon-btn {
-    width: 28px; height: 28px; border-radius: 8px; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-size: 13px;
+    width: 32px; height: 32px; border-radius: 10px; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
     background: rgba(255,255,255,0.07); -webkit-tap-highlight-color: transparent;
     transition: background .14s;
   }
   .otd-addr-icon-btn:active { background: rgba(255,255,255,0.16); }
-
   /* Manual address edit input */
   .otd-addr-edit {
-    display: none; width: 100%; padding: 9px 12px; border-radius: 10px;
-    border: 1.5px solid rgba(0,200,215,0.4); background: rgba(0,0,0,0.3);
-    font-size: 14px; color: #fff; font-family: var(--font-body);
+    display: none; width: 100%; padding: 11px 14px; border-radius: 14px;
+    border: 1.5px solid rgba(0,200,215,0.45); background: rgba(0,200,215,0.06);
+    font-size: 15px; font-weight: 600; color: #fff; font-family: var(--font-body);
     box-sizing: border-box; outline: none;
   }
   .otd-addr-edit.otd-edit-open { display: block; }
@@ -6410,50 +6433,115 @@
     box-shadow: 0 0 0 2px currentColor;
   }
 
-  /* ── Floating capture bar (fixed bottom) ── */
+  /* ── Floating capture bar ── */
   .otd-capture-bar {
     position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 14px);
-    background: linear-gradient(to top, #070f1a 60%, rgba(7,15,26,0));
-    display: flex; gap: 8px;
+    padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 16px);
+    background: linear-gradient(to top, #070f1a 55%, rgba(7,15,26,0));
+    display: flex; align-items: flex-end; justify-content: center; gap: 14px;
   }
+  /* Side tile buttons (Bill + Drop Call) */
   .otd-cam-btn {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 5px; padding: 12px 8px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);
+    gap: 5px; border-radius: 18px; border: 1.5px solid rgba(255,255,255,0.11);
     cursor: pointer; font-family: var(--font-body); font-size: 11px; font-weight: 700;
-    transition: transform .13s var(--spring); -webkit-tap-highlight-color: transparent;
-    flex: 1; background: rgba(255,255,255,0.06);
+    transition: transform .14s var(--spring); -webkit-tap-highlight-color: transparent;
+    background: rgba(255,255,255,0.07);
   }
-  .otd-cam-btn:active { transform: scale(0.91); }
+  .otd-cam-btn:active { transform: scale(0.90); }
   .otd-cam-emoji { font-size: 22px; line-height: 1; }
-  .otd-cam-btn--bill { color: #7dd3fc; border-color: rgba(125,211,252,0.2); }
+  /* Side tiles — equal square shape */
+  .otd-cam-btn--bill,
+  .otd-cam-btn--dropcall {
+    width: 70px; height: 70px; gap: 4px;
+  }
+  .otd-cam-btn--bill { color: #7dd3fc; border-color: rgba(125,211,252,0.22); }
+  .otd-cam-btn--dropcall { color: #a78bfa; border-color: rgba(167,139,250,0.22); }
+  /* Full form button (inside info card) */
   .otd-cam-btn--form {
     background: linear-gradient(145deg, #148f98 0%, #0d7882 100%);
     color: #fff; border-color: rgba(20,143,152,0.4);
     box-shadow: 0 4px 16px rgba(20,143,152,0.3);
+    padding: 14px 16px;
   }
-  .otd-cam-btn--voice { color: #fca5a5; border-color: rgba(252,165,165,0.2); flex: 0 0 auto; min-width: 70px; }
-  .otd-cam-btn--dropcall { color: #7dd3fc; border-color: rgba(125,211,252,0.2); flex: 0 0 auto; min-width: 70px; }
-  .otd-cam-btn--voice.otd-voice-btn--rec {
-    background: linear-gradient(145deg, #b91c1c 0%, #991b1b 100%);
-    color: #fff; border-color: #ef4444;
-    animation: otd-rec-pulse 1s ease infinite;
+
+  /* ── Big center record button ── */
+  .otd-record-btn {
+    width: 80px; height: 80px; border-radius: 50%; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; flex-shrink: 0;
+    background: rgba(255,255,255,0.1); border: 2.5px solid rgba(255,255,255,0.18);
+    transition: transform .15s var(--spring), background .2s, border-color .2s;
+    -webkit-tap-highlight-color: transparent; position: relative; z-index: 1;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
   }
-  @keyframes otd-rec-pulse {
-    0%,100%{ box-shadow: 0 0 0 0 rgba(185,28,28,.5); }
-    50%    { box-shadow: 0 0 0 10px rgba(185,28,28,0); }
+  .otd-record-btn:active { transform: scale(0.90); }
+  .otd-record-btn svg { width: 30px; height: 30px; stroke: rgba(255,255,255,0.85); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .otd-record-btn-lbl { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; text-transform: uppercase; }
+  /* Recording state */
+  .otd-record-btn--recording {
+    background: #b91c1c; border-color: #ef4444;
+    box-shadow: 0 0 0 0 rgba(239,68,68,0.7), 0 4px 24px rgba(185,28,28,0.5);
+    animation: otd-rec-ring 1.2s ease infinite;
   }
+  .otd-record-btn--recording svg { stroke: #fff; }
+  .otd-record-btn--recording .otd-record-btn-lbl { color: rgba(255,255,255,0.8); }
+  @keyframes otd-rec-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.65), 0 4px 24px rgba(185,28,28,0.5); }
+    70%  { box-shadow: 0 0 0 14px rgba(239,68,68,0), 0 4px 24px rgba(185,28,28,0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), 0 4px 24px rgba(185,28,28,0.5); }
+  }
+  /* Saved state */
+  .otd-record-btn--saved { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.4); }
+  .otd-record-btn--saved svg { stroke: #4ade80; }
+  /* Timer label inside button */
+  .otd-record-timer { font-size: 14px; font-weight: 800; color: #fff; font-family: var(--font-display); letter-spacing: -0.01em; }
+
+  /* ─ Voice btn legacy compat ─ */
+  .otd-cam-btn--voice { display: none; } /* voice moved to center record btn */
+
+  /* Drop Call sheet */
   .otd-dropcall-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 13px 16px; background: var(--g2);
-    border: 1px solid var(--g-border); border-radius: 14px;
+    padding: 13px 16px; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
     cursor: pointer; -webkit-tap-highlight-color: transparent;
-    text-decoration: none; color: var(--text);
+    text-decoration: none; color: #fff;
     transition: background 0.15s;
   }
-  .otd-dropcall-item:active { background: var(--g3); }
+  .otd-dropcall-item:active { background: rgba(255,255,255,0.12); }
   .otd-dropcall-label { font-size: 14px; font-weight: 600; flex: 1; }
-  .otd-dropcall-number { font-size: 12px; color: var(--text-3); }
+  .otd-dropcall-number { font-size: 12px; color: rgba(255,255,255,0.45); }
+
+  /* Interaction complete sheet (slides up after stopping recording) */
+  #otd-interaction-sheet {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9060;
+    background: #0d1e2e; border-radius: 24px 24px 0 0;
+    padding: 0 18px calc(env(safe-area-inset-bottom, 0px) + 18px);
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.6);
+    transform: translateY(100%); transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  #otd-interaction-sheet.otd-sheet-open { display: block; transform: translateY(0); }
+  .otd-int-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 14px auto 18px; }
+  .otd-int-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 4px; font-family: var(--font-display); }
+  .otd-int-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+  .otd-int-actions { display: flex; flex-direction: column; gap: 10px; }
+  .otd-int-btn {
+    width: 100%; padding: 15px 18px; border-radius: 16px; border: none; cursor: pointer;
+    font-size: 15px; font-weight: 800; font-family: var(--font-body);
+    -webkit-tap-highlight-color: transparent; transition: transform .13s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .otd-int-btn:active { transform: scale(0.97); }
+  .otd-int-btn--dispo {
+    background: linear-gradient(135deg, #148f98 0%, #0d7882 100%);
+    color: #fff; box-shadow: 0 4px 18px rgba(20,143,152,0.35);
+  }
+  .otd-int-btn--continue {
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .otd-int-btn-icon { font-size: 20px; }
 
   /* ── Save & next door button (inline with dispo, shown when status selected) ── */
   #otd-quick-save-btn {
@@ -9454,16 +9542,23 @@
 
     <!-- GPS / Address row -->
     <div class="otd-addr-row" id="otd-addr-row">
-      <span class="otd-addr-icon">📍</span>
-      <span class="otd-addr-text otd-addr-scanning" id="otd-addr-text" onclick="otdStartManualAddr()" title="Tap to edit address">Scanning GPS…</span>
+      <div class="otd-addr-gps-dot" id="otd-gps-dot"></div>
+      <div class="otd-addr-content" onclick="otdStartManualAddr()" title="Tap to edit address">
+        <div class="otd-addr-label" id="otd-addr-label">Locating…</div>
+        <div class="otd-addr-text otd-addr-scanning" id="otd-addr-text">Scanning GPS…</div>
+      </div>
       <div class="otd-addr-actions">
-        <button class="otd-addr-icon-btn" title="Re-scan GPS" onclick="otdRefreshGPS()">🔄</button>
-        <button class="otd-addr-icon-btn" title="Edit address manually" onclick="otdStartManualAddr()">✏️</button>
+        <button class="otd-addr-icon-btn" title="Re-scan GPS" onclick="otdRefreshGPS()">
+          <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:rgba(255,255,255,0.6);fill:none;stroke-width:2;stroke-linecap:round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="otd-addr-icon-btn" title="Edit address manually" onclick="otdStartManualAddr()">
+          <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:rgba(255,255,255,0.6);fill:none;stroke-width:2;stroke-linecap:round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
       </div>
     </div>
-    <!-- Manual address input (hidden by default) -->
+    <!-- Manual address input -->
     <input class="otd-addr-edit" id="otd-addr-edit"
-      type="text" placeholder="Type address or intersection…"
+      type="text" placeholder="Enter address or intersection…"
       onkeydown="if(event.key==='Enter'){otdCommitManualAddr();}"
       style="margin-top:8px">
   </div>
@@ -9536,18 +9631,57 @@
 
   <!-- Floating capture bar -->
   <div class="otd-capture-bar">
+    <!-- Snap Bill -->
     <button class="otd-cam-btn otd-cam-btn--bill" onclick="otdSnapBill()">
-      <span class="otd-cam-emoji">📷</span>
-      Snap Bill
+      <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#7dd3fc;fill:none;stroke-width:1.8;stroke-linecap:round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span style="font-size:10px;font-weight:700;color:#7dd3fc">Snap Bill</span>
     </button>
-    <button class="otd-cam-btn otd-cam-btn--voice" id="otd-voice-btn" onclick="otdToggleVoice()">
-      <span class="otd-cam-emoji" id="otd-voice-emoji">🎙️</span>
-      <span id="otd-voice-label">Memo</span>
+
+    <!-- Big center record button -->
+    <button class="otd-record-btn" id="otd-record-btn" onclick="otdToggleVoice()">
+      <!-- idle: mic icon -->
+      <svg id="otd-record-icon" viewBox="0 0 24 24">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+      <span class="otd-record-btn-lbl" id="otd-voice-label">Record</span>
+      <!-- Hidden legacy emoji span for JS compat -->
+      <span id="otd-voice-emoji" style="display:none">🎙️</span>
     </button>
+
+    <!-- Drop Call (shown when configured) -->
     <button class="otd-cam-btn otd-cam-btn--dropcall" id="otd-drop-call-btn" onclick="otdOpenDropCall()" style="display:none">
-      <span class="otd-cam-emoji">📞</span>
-      Drop Call
+      <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#a78bfa;fill:none;stroke-width:1.8;stroke-linecap:round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l1.58-1.58a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span style="font-size:10px;font-weight:700;color:#a78bfa">Drop Call</span>
     </button>
+
+    <!-- Legacy voice btn (hidden, kept for JS compat) -->
+    <button class="otd-cam-btn otd-cam-btn--voice" id="otd-voice-btn" style="display:none"></button>
+  </div>
+
+  <!-- Interaction complete sheet -->
+  <div id="otd-interaction-sheet">
+    <div class="otd-int-handle"></div>
+    <div class="otd-int-title">Interaction complete?</div>
+    <div class="otd-int-sub">Your memo was saved. What would you like to do next?</div>
+    <div class="otd-int-actions">
+      <button class="otd-int-btn otd-int-btn--dispo" onclick="otdInteractionDispo()">
+        <span class="otd-int-btn-icon">📋</span>
+        <div>
+          <div style="font-size:15px;font-weight:800">Yes — dispo this door</div>
+          <div style="font-size:11px;font-weight:500;opacity:0.7;margin-top:2px">Mark result and move on</div>
+        </div>
+      </button>
+      <button class="otd-int-btn otd-int-btn--continue" onclick="otdInteractionContinue()">
+        <span class="otd-int-btn-icon">🎙️</span>
+        <div>
+          <div style="font-size:15px;font-weight:800">No — keep recording</div>
+          <div style="font-size:11px;font-weight:500;opacity:0.7;margin-top:2px">Continue the conversation</div>
+        </div>
+      </button>
+    </div>
   </div>
 
   <!-- Drop Call sheet (slides up inside OTD) -->
@@ -14522,8 +14656,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v85\n` +
-      `SW cache:      capital-energy-v85\n` +
+      `App version:   capital-energy-v86\n` +
+      `SW cache:      capital-energy-v86\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
@@ -18107,13 +18241,15 @@ function _resetOTDUI() {
   });
   var banner = document.getElementById('otd-saved-banner');
   if (banner) banner.classList.remove('otd-visible');
-  // Reset voice button display
-  var vBtn = document.getElementById('otd-voice-btn');
-  if (vBtn) vBtn.classList.remove('otd-voice-btn--rec');
-  var vEmoji = document.getElementById('otd-voice-emoji');
-  if (vEmoji) vEmoji.textContent = '🎙️';
+  // Reset record button
+  var recBtn = document.getElementById('otd-record-btn');
+  var recIcon = document.getElementById('otd-record-icon');
   var vLabel = document.getElementById('otd-voice-label');
-  if (vLabel) vLabel.textContent = 'Memo';
+  if (recBtn) recBtn.classList.remove('otd-record-btn--recording', 'otd-record-btn--saved');
+  if (recIcon) recIcon.innerHTML = '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>';
+  if (vLabel) vLabel.textContent = 'Record';
+  // Also close interaction sheet if open
+  _otdCloseInteractionSheet && _otdCloseInteractionSheet();
 }
 
 /* ─── Counters ─── */
@@ -18131,14 +18267,25 @@ function _otdUpdateCounters() {
 }
 
 /* ─── GPS / Address ─── */
+function _otdSetAddr(text, isScanning) {
+  var el  = document.getElementById('otd-addr-text');
+  var lbl = document.getElementById('otd-addr-label');
+  var dot = document.getElementById('otd-gps-dot');
+  if (el) { el.textContent = text; el.className = isScanning ? 'otd-addr-text otd-addr-scanning' : 'otd-addr-text'; }
+  if (lbl) lbl.textContent = isScanning ? 'Locating…' : 'Current Location';
+  if (dot) { dot.classList.toggle('otd-addr-gps-dot--fixed', !isScanning); }
+}
+
 function otdRefreshGPS() {
-  var el = document.getElementById('otd-addr-text');
-  if (el) { el.textContent = 'Scanning GPS…'; el.className = 'otd-addr-text otd-addr-scanning'; }
+  _otdSetAddr('Scanning GPS…', true);
   // Hide manual edit
   var edit = document.getElementById('otd-addr-edit');
   if (edit) edit.classList.remove('otd-edit-open');
+  // Also restore addr text visibility
+  var el = document.getElementById('otd-addr-text');
+  if (el) el.style.display = '';
   if (!navigator.geolocation) {
-    if (el) { el.textContent = 'GPS unavailable — tap ✏️ to enter manually'; el.className = 'otd-addr-text'; }
+    _otdSetAddr('GPS unavailable — tap ✏️ to enter manually', false);
     return;
   }
   navigator.geolocation.getCurrentPosition(
@@ -18151,15 +18298,15 @@ function otdRefreshGPS() {
           var a = d.address || {};
           var short = [a.house_number, a.road, a.city || a.town || a.village].filter(Boolean).join(' ');
           _otdAddr = short || d.display_name || (_otdLat.toFixed(5) + ', ' + _otdLng.toFixed(5));
-          if (el) { el.textContent = _otdAddr; el.className = 'otd-addr-text'; }
+          _otdSetAddr(_otdAddr, false);
         })
         .catch(function() {
           _otdAddr = _otdLat.toFixed(5) + ', ' + _otdLng.toFixed(5);
-          if (el) { el.textContent = _otdAddr; el.className = 'otd-addr-text'; }
+          _otdSetAddr(_otdAddr, false);
         });
     },
     function() {
-      if (el) { el.textContent = 'Location unavailable — tap ✏️ to enter manually'; el.className = 'otd-addr-text'; }
+      _otdSetAddr('Location unavailable — tap ✏️ to enter', false);
     },
     { enableHighAccuracy: true, timeout: 12000 }
   );
@@ -18185,9 +18332,13 @@ function otdCommitManualAddr() {
   var val = edit.value.trim();
   if (val) {
     _otdAddr = val;
-    _otdLat  = null; _otdLng = null; // coords unknown for manual
+    _otdLat  = null; _otdLng = null;
+    _otdSetAddr(_otdAddr, false);
     var el = document.getElementById('otd-addr-text');
-    if (el) { el.textContent = _otdAddr; el.style.display = ''; el.className = 'otd-addr-text'; }
+    if (el) el.style.display = '';
+    // Update addr label to show it's manual
+    var lbl = document.getElementById('otd-addr-label');
+    if (lbl) lbl.textContent = 'Manual Entry';
   } else {
     var el = document.getElementById('otd-addr-text');
     if (el) el.style.display = '';
@@ -18355,19 +18506,32 @@ function otdSnapBill() {
   });
 }
 
-/* ─── Voice memo ─── */
+/* ─── Voice memo — big record button ─── */
 function otdToggleVoice() {
-  var btn   = document.getElementById('otd-voice-btn');
-  var emoji = document.getElementById('otd-voice-emoji');
-  var lbl   = document.getElementById('otd-voice-label');
-  if (!btn) return;
+  var recBtn = document.getElementById('otd-record-btn');
+  var recIcon = document.getElementById('otd-record-icon');
+  var lbl = document.getElementById('otd-voice-label');
+  if (!recBtn) return;
 
+  // Stop recording
   if (_otdVoiceRec && _otdVoiceRec.state === 'recording') {
     _otdVoiceRec.stop();
     clearInterval(_otdVoiceTimer); _otdVoiceTimer = null;
-    btn.classList.remove('otd-voice-btn--rec');
-    if (emoji) emoji.textContent = '🎙️';
-    if (lbl) lbl.textContent = 'Saved ✓';
+    recBtn.classList.remove('otd-record-btn--recording');
+    recBtn.classList.add('otd-record-btn--saved');
+    // Swap to stop/check icon
+    if (recIcon) recIcon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+    if (lbl) lbl.textContent = 'Saved';
+    // Show interaction complete sheet after brief delay
+    setTimeout(function() {
+      var sheet = document.getElementById('otd-interaction-sheet');
+      if (sheet) {
+        sheet.style.display = 'block';
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() { sheet.classList.add('otd-sheet-open'); });
+        });
+      }
+    }, 400);
     return;
   }
 
@@ -18389,8 +18553,10 @@ function otdToggleVoice() {
     });
     _otdVoiceRec.start();
     _otdVoiceSecs = 0;
-    btn.classList.add('otd-voice-btn--rec');
-    if (emoji) emoji.textContent = '⏹';
+    recBtn.classList.remove('otd-record-btn--saved');
+    recBtn.classList.add('otd-record-btn--recording');
+    // Show stop/square icon when recording
+    if (recIcon) recIcon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2"/>';
     if (lbl) lbl.textContent = '0:00';
     _otdVoiceTimer = setInterval(function() {
       _otdVoiceSecs++;
@@ -18400,6 +18566,36 @@ function otdToggleVoice() {
   }).catch(function() {
     if (lbl) lbl.textContent = 'Denied';
   });
+}
+
+/* Close interaction sheet helpers */
+function _otdCloseInteractionSheet() {
+  var sheet = document.getElementById('otd-interaction-sheet');
+  if (!sheet) return;
+  sheet.classList.remove('otd-sheet-open');
+  setTimeout(function() { sheet.style.display = 'none'; }, 350);
+  // Reset record button
+  var recBtn = document.getElementById('otd-record-btn');
+  var recIcon = document.getElementById('otd-record-icon');
+  var lbl = document.getElementById('otd-voice-label');
+  if (recBtn) { recBtn.classList.remove('otd-record-btn--saved', 'otd-record-btn--recording'); }
+  if (recIcon) recIcon.innerHTML = '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>';
+  if (lbl) lbl.textContent = 'Record';
+}
+
+/* "Yes — dispo this door" — close sheet, scroll dispo into view */
+function otdInteractionDispo() {
+  _otdCloseInteractionSheet();
+  // Scroll the dispo grid into view
+  setTimeout(function() {
+    var grid = document.querySelector('.otd-dispo-grid');
+    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+/* "No — keep recording" — just close and reset so user can record again */
+function otdInteractionContinue() {
+  _otdCloseInteractionSheet();
 }
 
 // ── F3: Route Optimization ────────────────────────────────────────────────
