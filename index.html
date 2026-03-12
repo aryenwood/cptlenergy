@@ -6970,7 +6970,6 @@
     display:flex; flex-direction:column;
     height:calc(100vh - var(--header-h) - var(--nav-h) - var(--safe-bottom) - 24px);
     position:relative;
-    overflow:hidden;
   }
 
   .trainer-chat-header {
@@ -9337,17 +9336,12 @@
       <span class="nav-label">Hub</span>
     </button>
 
-    <!-- v94: Trainer nav item -->
-    <button class="nav-item" data-tab="trainer" aria-label="Trainer" aria-selected="false">
+    <!-- v99: AI Brain nav item (was mic icon) -->
+    <button class="nav-item" data-tab="trainer" aria-label="AI Brain" aria-selected="false">
       <div class="nav-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-          <line x1="12" y1="19" x2="12" y2="23"/>
-          <line x1="8" y1="23" x2="16" y2="23"/>
-        </svg>
+        <span style="font-size:20px;line-height:1;position:relative;z-index:1">🧠</span>
       </div>
-      <span class="nav-label">Trainer</span>
+      <span class="nav-label">AI</span>
     </button>
 
     <!-- Spacer reserves center space for the absolutely-positioned home button -->
