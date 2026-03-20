@@ -5971,6 +5971,22 @@
   #onboard-next { flex: 2; padding: 12px; border-radius: 12px; border: none; background: var(--amber); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   #onboard-skip:active { opacity: 0.7; }
   #onboard-next:active { opacity: 0.85; transform: scale(0.97); }
+  .onboard-input {
+    width: 100%; padding: 11px 14px; border-radius: 12px;
+    border: 1px solid var(--g-border-hi); background: var(--g1);
+    color: var(--text); font-size: 15px; font-family: inherit;
+    outline: none; -webkit-appearance: none; box-sizing: border-box;
+    transition: border-color 0.15s;
+  }
+  .onboard-input:focus { border-color: var(--amber); }
+  .onboard-photo-label {
+    display: flex; align-items: center; justify-content: center;
+    padding: 11px 14px; border-radius: 12px; cursor: pointer;
+    border: 1px dashed var(--g-border-hi); color: var(--text-2);
+    font-size: 14px; font-weight: 500; background: var(--g1);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .onboard-photo-label:active { opacity: 0.75; }
 
   /* F6: SMS Handoff sheet */
   #handoff-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none; transition: opacity .25s; }
@@ -9613,6 +9629,19 @@
       <div class="onboard-desc">Your dashboard shows doors knocked, contacts made, appointments set, and your live conversion rate.</div>
     </div>
     <div class="onboard-step onboard-hidden" data-step="3">
+      <div class="onboard-emoji">📋</div>
+      <div class="onboard-title">Quick intro</div>
+      <div class="onboard-desc">So your rep card and team profile are ready from day one.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-top:4px">
+        <input id="onboard-phone" type="tel" inputmode="tel" class="onboard-input" placeholder="Phone number (required)" autocomplete="tel" />
+        <input id="onboard-region" type="text" class="onboard-input" placeholder="City / Region you work in (required)" autocomplete="address-level2" />
+        <label class="onboard-photo-label">
+          <input type="file" id="onboard-photo" accept="image/*" style="display:none" />
+          <span id="onboard-photo-status">📷 Upload profile photo (optional)</span>
+        </label>
+      </div>
+    </div>
+    <div class="onboard-step onboard-hidden" data-step="4">
       <div class="onboard-emoji">🏆</div>
       <div class="onboard-title">Go earn it!</div>
       <div class="onboard-desc">The leaderboard updates in real-time. Stay consistent and climb to the top of your team.</div>
@@ -19577,6 +19606,18 @@ function _bcardRefreshStaticView(d) {
 }
 
 function openBcard() {
+  // Fix 8: auto-populate from onboarding ce_user_* keys if rep card fields are still empty
+  (function() {
+    const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+    let changed = false;
+    if (!s.repName  && localStorage.getItem('ce_user_name'))  { s.repName  = localStorage.getItem('ce_user_name');  changed = true; }
+    if (!s.repPhone && localStorage.getItem('ce_user_phone')) { s.repPhone = localStorage.getItem('ce_user_phone'); changed = true; }
+    if (changed) localStorage.setItem('ce_admin', JSON.stringify(s));
+    if (!localStorage.getItem('ce_headshot') && localStorage.getItem('ce_user_headshot')) {
+      localStorage.setItem('ce_headshot', localStorage.getItem('ce_user_headshot'));
+    }
+  })();
+
   const d = _bcardCurrentData();
   _bcardRefreshStaticView(d);
 
@@ -21083,7 +21124,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
 // ── F9: Onboarding Walkthrough ────────────────────────────────────────────
 ;(function() {
   let _step = 0;
-  const TOTAL = 4;
+  const TOTAL = 5; // steps 0-4 (step 3 = contact info, step 4 = go earn it)
 
   function _render() {
     document.querySelectorAll('.onboard-step').forEach((el, i) => {
@@ -21097,7 +21138,32 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     }
     const nb = document.getElementById('onboard-next');
     if (nb) nb.textContent = _step < TOTAL - 1 ? 'Next →' : "Let's Go! 🏆";
-    if (_step === 3) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
+    if (_step === 4) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
+  }
+
+  function _saveContactInfo() {
+    const phone  = (document.getElementById('onboard-phone')?.value  || '').trim();
+    const region = (document.getElementById('onboard-region')?.value || '').trim();
+    if (phone)  localStorage.setItem('ce_user_phone',  phone);
+    if (region) localStorage.setItem('ce_user_region', region);
+    // Mirror into ce_admin so rep card picks it up immediately
+    const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+    if (phone  && !s.repPhone)  { s.repPhone  = phone; }
+    if (region && !s.repRegion) { s.repRegion = region; }
+    if (!s.repName) { s.repName = localStorage.getItem('ce_user_name') || ''; }
+    localStorage.setItem('ce_admin', JSON.stringify(s));
+    // Sync phone+region to Firestore users/{uid}
+    try {
+      if (window.fbAuth && window.fbDb) {
+        const user = fbAuth.currentUser;
+        if (user && (phone || region)) {
+          fbDb.collection('users').doc(user.uid).set(
+            Object.assign({}, phone ? {phone} : {}, region ? {region} : {}),
+            { merge: true }
+          ).catch(e => console.warn('[onboard] user Firestore:', e));
+        }
+      }
+    } catch(e) {}
   }
 
   window.showOnboarding = function() {
@@ -21108,27 +21174,75 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     _render();
     ov.classList.add('open');
   };
+
   window.hideOnboarding = function() {
     const ov = document.getElementById('onboarding-overlay');
     if (ov) ov.classList.remove('open');
     localStorage.setItem('ce_onboarding_done', '1');
-    // Auto-add manager to team on first login
-    (function() {
-      const role = localStorage.getItem('ce_user_role') || '';
-      if (role !== 'manager' && role !== 'master_admin') return;
-      const name = localStorage.getItem('ce_user_name') || '';
-      if (!name) return;
+
+    const role = localStorage.getItem('ce_user_role') || '';
+    const name = localStorage.getItem('ce_user_name') || '';
+    const phone = localStorage.getItem('ce_user_phone') || '';
+
+    // Fix 5 + Fix 9: auto-add manager (manager role) + closer (closer role) to local team
+    if ((role === 'manager' || role === 'master_admin') && name) {
       const team = DataStore.loadTeam();
-      if (team.some(m => m.name === name)) return;
-      team.push({ name, role: 'manager' });
+      if (!team.some(m => m.name === name && m.role === 'manager')) {
+        team.push({ name, role: 'manager', phone });
+      }
+      if (!team.some(m => m.name === name && m.role === 'closer')) {
+        team.push({ name, role: 'closer', phone });
+      }
       DataStore.saveTeam(team);
-    })();
+    }
+
+    // Fix 9: write manager as closer to Firestore organizations/{uid}/team
+    try {
+      if ((role === 'manager' || role === 'master_admin') && name && window.fbAuth && window.fbDb) {
+        const user = fbAuth.currentUser;
+        if (user) {
+          const docId = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || ('rep_' + Date.now());
+          fbDb.collection('organizations').doc(user.uid)
+            .collection('team').doc(docId)
+            .set({ name, email: user.email || '', phone, role: 'closer' }, { merge: true })
+            .catch(e => console.warn('[onboard] team Firestore:', e));
+        }
+      }
+    } catch(e) {}
   };
 
   document.addEventListener('DOMContentLoaded', function() {
     const nb = document.getElementById('onboard-next');
     const sb = document.getElementById('onboard-skip');
+
+    // Photo upload handler for onboarding step
+    const photoInput = document.getElementById('onboard-photo');
+    if (photoInput) {
+      photoInput.addEventListener('change', e => {
+        const file = e.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          const dataUrl = ev.target.result;
+          localStorage.setItem('ce_headshot',       dataUrl);
+          localStorage.setItem('ce_user_headshot',  dataUrl);
+          const statusEl = document.getElementById('onboard-photo-status');
+          if (statusEl) statusEl.textContent = '✓ ' + file.name;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     if (nb) nb.addEventListener('click', function() {
+      // Validate contact info step
+      if (_step === 3) {
+        const phone  = (document.getElementById('onboard-phone')?.value  || '').trim();
+        const region = (document.getElementById('onboard-region')?.value || '').trim();
+        if (!phone || !region) {
+          try { showToast('Please enter your phone number and city/region.'); } catch(_) {}
+          return;
+        }
+        _saveContactInfo();
+      }
       if (_step < TOTAL - 1) { _step++; _render(); }
       else hideOnboarding();
     });
