@@ -10931,6 +10931,76 @@ async function drainToFirestore() {
   }
 }
 
+// ── Phase 3: Org settings sync ────────────────────────────────────────────
+// Writes branding / config fields to organizations/{uid}.
+// Never touches base64 logos, personal rep fields, or ce_chat_api_url.
+function saveOrgSettingsToFirestore() {
+  var user = (typeof fbAuth !== 'undefined') ? fbAuth.currentUser : null;
+  if (!user || !navigator.onLine) return;
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem('ce_admin') || '{}'); } catch(_) {}
+  var payload = {
+    companyName:  s.companyName  || '',
+    tagline:      s.tagline      || '',
+    gosoloUrl:    s.gosoloUrl    || '',
+    gridUrl:      s.gridUrl      || '',
+    themePrimary: localStorage.getItem('ce_theme_primary') || '',
+    glassColor:   localStorage.getItem('ce_glass_color')   || '',
+    appName:      localStorage.getItem('ce_app_name')      || '',
+    updatedAt:    firebase.firestore.FieldValue.serverTimestamp()
+  };
+  fbDb.collection('organizations').doc(user.uid).set(payload, { merge: true })
+    .then(function() {
+      console.log('[Firestore] Org settings saved to organizations/' + user.uid);
+    })
+    .catch(function(e) {
+      console.warn('[Firestore] Org settings save failed:', e.code, e.message);
+    });
+}
+
+// Applies a Firestore organizations/{uid} document to localStorage + live UI.
+// Falls back silently for any missing field — never overwrites with empty strings.
+function applyOrgSettings(data) {
+  if (!data) return;
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem('ce_admin') || '{}'); } catch(_) {}
+
+  if (data.companyName) s.companyName = data.companyName;
+  if (data.tagline)     s.tagline     = data.tagline;
+  if (data.gosoloUrl)   s.gosoloUrl   = data.gosoloUrl;
+  if (data.gridUrl)     s.gridUrl     = data.gridUrl;
+  try { localStorage.setItem('ce_admin', JSON.stringify(s)); } catch(_) {}
+
+  if (data.appName) {
+    try { localStorage.setItem('ce_app_name', data.appName); } catch(_) {}
+    document.title = data.appName;
+  }
+  if (data.themePrimary && /^#[0-9a-fA-F]{6}$/.test(data.themePrimary)) {
+    try { localStorage.setItem('ce_theme_primary', data.themePrimary); } catch(_) {}
+    if (typeof applyThemePrimary === 'function') applyThemePrimary(data.themePrimary);
+  }
+  if (data.glassColor && /^#[0-9a-fA-F]{6}$/.test(data.glassColor)) {
+    try { localStorage.setItem('ce_glass_color', data.glassColor); } catch(_) {}
+    if (typeof applyGlassColor === 'function') applyGlassColor(data.glassColor);
+  }
+
+  // Keep hidden admin form fields in sync so Save still reads the right values
+  var fieldMap = {
+    'admin-company-name': data.companyName,
+    'admin-tagline':      data.tagline,
+    'admin-gosolo-url':   data.gosoloUrl,
+    'admin-grid-url':     data.gridUrl
+  };
+  Object.keys(fieldMap).forEach(function(id) {
+    if (!fieldMap[id]) return;
+    var el = document.getElementById(id);
+    if (el) el.value = fieldMap[id];
+  });
+
+  console.log('[Firestore] Org settings applied from organizations/' +
+    ((typeof fbAuth !== 'undefined' && fbAuth.currentUser) ? fbAuth.currentUser.uid : '?'));
+}
+
 // ── Login screen logic ────────────────────────────────────────────────────
 (function() {
   var loginScreen = document.getElementById('login-screen');
@@ -10973,7 +11043,23 @@ async function drainToFirestore() {
       // 4. Drain any queued entities to Firestore (online only)
       if (navigator.onLine) drainToFirestore();
 
-      // 5. First-time user: show role setup, which then triggers onboarding
+      // 5. Read org settings from Firestore → apply to this device (falls back to
+      //    localStorage if offline or doc not found yet)
+      if (navigator.onLine) {
+        fbDb.collection('organizations').doc(user.uid).get()
+          .then(function(doc) {
+            if (doc.exists) {
+              applyOrgSettings(doc.data());
+            } else {
+              console.log('[Firestore] No org settings doc yet for', user.uid, '— using localStorage defaults');
+            }
+          })
+          .catch(function(e) {
+            console.warn('[Firestore] Org settings read failed (using localStorage):', e.code, e.message);
+          });
+      }
+
+      // 6. First-time user: show role setup, which then triggers onboarding
       if (!localStorage.getItem('ce_user_role')) {
         setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
       }
@@ -17590,6 +17676,9 @@ document.getElementById('ma-save-brand-btn').addEventListener('click', () => {
     localStorage.setItem('ce_glass_color', glassHex);
     applyGlassColor(glassHex);
   }
+  // Sync org-level branding to Firestore
+  if (typeof saveOrgSettingsToFirestore === 'function') saveOrgSettingsToFirestore();
+
   const btn = document.getElementById('ma-save-brand-btn');
   btn.textContent = '✓ Saved!';
   setTimeout(() => { btn.textContent = '💾 Save White-Label Settings'; }, 1500);
@@ -17644,6 +17733,9 @@ document.getElementById('ma-save-links-btn').addEventListener('click', () => {
     localStorage.removeItem('ce_chat_api_url');
     if (window.TrainerBot) TrainerBot._apiUrl = 'http://localhost:8080/api/chat';
   }
+  // Sync org-level URLs to Firestore
+  if (typeof saveOrgSettingsToFirestore === 'function') saveOrgSettingsToFirestore();
+
   const btn = document.getElementById('ma-save-links-btn');
   btn.textContent = '✓ Saved!';
   setTimeout(() => { btn.textContent = '💾 Save Quick Links'; }, 1500);
@@ -18866,6 +18958,9 @@ function saveAdminSettings() {
   // Save font size
   const fSlider = document.getElementById('admin-font-size');
   if (fSlider) localStorage.setItem('ce_font_size', fSlider.value);
+
+  // Sync org-level fields to Firestore
+  if (typeof saveOrgSettingsToFirestore === 'function') saveOrgSettingsToFirestore();
 
   // v99: instant close — no delay
   showToast('Settings saved!');
