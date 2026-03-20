@@ -2016,6 +2016,34 @@
       height: 1px; background: var(--g-border); margin: 0 12px;
     }
 
+    /* ── Firebase user identity in header + dropdown ─────────────────────── */
+    .profile-photo-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      object-fit: cover; display: block; flex-shrink: 0;
+    }
+    .profile-dropdown-identity {
+      padding: 12px 16px 11px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--g-border);
+    }
+    .profile-dropdown-identity-photo {
+      width: 38px; height: 38px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0; background: var(--g1);
+    }
+    .profile-dropdown-identity-info {
+      display: flex; flex-direction: column; gap: 2px; min-width: 0;
+    }
+    .profile-dropdown-identity-name {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .profile-dropdown-identity-email {
+      font-size: 11px; color: var(--text-3);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .profile-dropdown-item--danger { color: #dc2626; }
+    .profile-dropdown-item--danger svg { stroke: #dc2626; }
+
     /* ── Resources panel ─────────────────────────────────────────────────── */
     .training-toggle-row {
       display: flex; gap: 8px; margin-bottom: 20px;
@@ -7272,7 +7300,8 @@
           <svg id="dark-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
         <button class="icon-btn" id="profile-menu-btn" aria-label="Profile & Admin" title="Profile">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <img id="profile-photo-avatar" class="profile-photo-avatar" src="" alt="Profile" style="display:none" />
+          <svg id="profile-default-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </button>
       </div>
     </div>
@@ -7281,6 +7310,14 @@
   <!-- ── Profile / Admin dropdown ──────────────────────────────────────── -->
   <div id="profile-dropdown" style="display:none">
     <div class="profile-dropdown-arrow"></div>
+    <!-- Firebase identity header — shown when signed in -->
+    <div class="profile-dropdown-identity" id="pdd-identity" style="display:none">
+      <img class="profile-dropdown-identity-photo" id="pdd-identity-photo" src="" alt="" />
+      <div class="profile-dropdown-identity-info">
+        <div class="profile-dropdown-identity-name" id="pdd-identity-name"></div>
+        <div class="profile-dropdown-identity-email" id="pdd-identity-email"></div>
+      </div>
+    </div>
     <div class="profile-dropdown-item" id="pdd-admin">
       <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Admin Settings
@@ -7289,6 +7326,11 @@
     <div class="profile-dropdown-item" id="pdd-resources">
       <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
       Sales Resources
+    </div>
+    <div class="profile-dropdown-divider"></div>
+    <div class="profile-dropdown-item profile-dropdown-item--danger" id="pdd-signout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
     </div>
   </div>
 
@@ -10700,6 +10742,46 @@ firebase.initializeApp(firebaseConfig);
 const fbAuth = firebase.auth();
 const fbDb   = firebase.firestore();
 
+// ── Firebase identity helpers ─────────────────────────────────────────────
+function _applyFirebaseIdentity(user) {
+  // Header avatar: swap SVG for photo if available
+  var photoAvatar  = document.getElementById('profile-photo-avatar');
+  var defaultIcon  = document.getElementById('profile-default-icon');
+  if (user.photoURL && photoAvatar) {
+    photoAvatar.src          = user.photoURL;
+    photoAvatar.style.display = '';
+    if (defaultIcon) defaultIcon.style.display = 'none';
+  }
+
+  // Dropdown identity header
+  var pddIdentity      = document.getElementById('pdd-identity');
+  var pddIdentityPhoto = document.getElementById('pdd-identity-photo');
+  var pddIdentityName  = document.getElementById('pdd-identity-name');
+  var pddIdentityEmail = document.getElementById('pdd-identity-email');
+  if (pddIdentity) {
+    pddIdentity.style.display = '';
+    if (pddIdentityPhoto && user.photoURL) pddIdentityPhoto.src = user.photoURL;
+    if (pddIdentityName)  pddIdentityName.textContent  = user.displayName || '';
+    if (pddIdentityEmail) pddIdentityEmail.textContent = user.email || '';
+  }
+
+  // Dashboard greeting — update immediately (also re-run on _updateDashboard)
+  var greetEl = document.getElementById('dash-greeting-text');
+  if (greetEl && typeof greetingText === 'function') {
+    var firstName = (user.displayName || localStorage.getItem('ce_user_name') || '').split(' ')[0];
+    greetEl.textContent = greetingText() + (firstName ? ', ' + firstName : '');
+  }
+}
+
+function _clearFirebaseIdentity() {
+  var photoAvatar = document.getElementById('profile-photo-avatar');
+  var defaultIcon = document.getElementById('profile-default-icon');
+  if (photoAvatar) { photoAvatar.src = ''; photoAvatar.style.display = 'none'; }
+  if (defaultIcon) defaultIcon.style.display = '';
+  var pddIdentity = document.getElementById('pdd-identity');
+  if (pddIdentity) pddIdentity.style.display = 'none';
+}
+
 // ── Login screen logic ────────────────────────────────────────────────────
 (function() {
   var loginScreen = document.getElementById('login-screen');
@@ -10715,13 +10797,34 @@ const fbDb   = firebase.firestore();
     if (user) {
       loginScreen.classList.add('hidden');
       appEl.style.display = '';
-      // First-time user: show role setup, which then triggers onboarding
+
+      // 1. Write user profile to Firestore users/{uid}
+      fbDb.collection('users').doc(user.uid).set({
+        uid:         user.uid,
+        name:        user.displayName || '',
+        email:       user.email || '',
+        photoURL:    user.photoURL || '',
+        lastSignIn:  firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(function(e) {
+        console.warn('[Firebase] users write failed:', e);
+      });
+
+      // 2. Seed ce_user_name from Google display name (only if not yet set)
+      if (user.displayName && !localStorage.getItem('ce_user_name')) {
+        try { localStorage.setItem('ce_user_name', user.displayName); } catch(_) {}
+      }
+
+      // 3. Wire photo + name into UI
+      _applyFirebaseIdentity(user);
+
+      // 4. First-time user: show role setup, which then triggers onboarding
       if (!localStorage.getItem('ce_user_role')) {
         setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
       }
     } else {
       loginScreen.classList.remove('hidden');
       appEl.style.display = 'none';
+      _clearFirebaseIdentity();
     }
   });
 
@@ -12319,6 +12422,7 @@ navItems.forEach(btn => {
   const dropdown   = document.getElementById('profile-dropdown');
   const pddAdmin   = document.getElementById('pdd-admin');
   const pddRes     = document.getElementById('pdd-resources');
+  const pddSignout = document.getElementById('pdd-signout');
   if (!menuBtn || !dropdown) return;
 
   function closeDropdown() { if (dropdown) dropdown.style.display = 'none'; }
@@ -12339,6 +12443,10 @@ navItems.forEach(btn => {
   if (pddRes) pddRes.addEventListener('click', () => {
     closeDropdown();
     activateTab('resources');
+  });
+  if (pddSignout) pddSignout.addEventListener('click', () => {
+    closeDropdown();
+    if (typeof fbAuth !== 'undefined') fbAuth.signOut();
   });
 })();
 
@@ -12572,8 +12680,10 @@ function renderDashboard() {
   const convBase     = rangeEntries.length;
   const rate         = convBase ? Math.round(appts.length / convBase * 100) : 0;
 
-  // Greeting + date
-  document.getElementById('dash-greeting-text').textContent = greetingText();
+  // Greeting + date (include first name when available)
+  var _firstName = (getActiveName() || '').split(' ')[0];
+  document.getElementById('dash-greeting-text').textContent =
+    greetingText() + (_firstName ? ', ' + _firstName : '');
   document.getElementById('dash-date').textContent = formatDate();
 
   // Streak — animated
