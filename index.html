@@ -7109,6 +7109,76 @@
   html.dark-mode .trainer-hint-banner { background:rgba(245,158,11,0.08); border-color:rgba(245,158,11,0.2); }
   html.dark-mode .trainer-mic-btn.recording { background:rgba(239,68,68,0.12); }
 
+  /* ── Login Screen ───────────────────────────────────────────────────────── */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 9000;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+    transition: opacity 0.3s ease;
+  }
+  #login-screen.hidden { opacity: 0; pointer-events: none; }
+
+  .login-card {
+    width: min(400px, 92vw);
+    background: var(--g3);
+    border: 1px solid var(--g-border);
+    border-radius: 20px;
+    padding: 36px 32px 32px;
+    display: flex; flex-direction: column; gap: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  }
+  .login-logo {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .login-logo img { width: 56px; height: 56px; border-radius: 14px; }
+  .login-logo-title { font-family: 'Outfit', sans-serif; font-size: var(--fs-2xl); font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+  .login-logo-sub { font-size: var(--fs-sm); color: var(--text-2); }
+
+  .login-divider {
+    display: flex; align-items: center; gap: 10px;
+    font-size: var(--fs-xs); color: var(--text-3);
+  }
+  .login-divider::before, .login-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--g-border);
+  }
+
+  .login-field { display: flex; flex-direction: column; gap: 6px; }
+  .login-field label { font-size: var(--fs-xs); font-weight: 600; color: var(--text-2); letter-spacing: 0.4px; text-transform: uppercase; }
+  .login-field input {
+    padding: 10px 14px; border-radius: 10px;
+    border: 1px solid var(--g-border);
+    background: var(--g1);
+    font-size: var(--fs-md); color: var(--text);
+    outline: none; transition: border-color 0.15s;
+  }
+  .login-field input:focus { border-color: var(--amber); }
+
+  .login-btn {
+    padding: 12px; border-radius: 12px; border: none; cursor: pointer;
+    font-size: var(--fs-md); font-weight: 600; transition: opacity 0.15s, transform 0.1s;
+  }
+  .login-btn:active { transform: scale(0.98); }
+  .login-btn--primary { background: var(--amber); color: #fff; }
+  .login-btn--primary:hover { opacity: 0.88; }
+  .login-btn--google {
+    background: #fff; color: #3c4043;
+    border: 1px solid #dadce0;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .login-btn--google:hover { background: #f8f9fa; }
+  .login-btn--google svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .login-error {
+    font-size: var(--fs-xs); color: #dc2626; text-align: center;
+    min-height: 16px;
+  }
+
+  html.dark-mode #login-screen { background: var(--bg); }
+  html.dark-mode .login-card { background: rgba(15,25,35,0.92); border-color: rgba(255,255,255,0.06); }
+  html.dark-mode .login-field input { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.10); color: var(--text); }
+  html.dark-mode .login-btn--google { background: rgba(255,255,255,0.08); color: #e8eaed; border-color: rgba(255,255,255,0.12); }
+  html.dark-mode .login-btn--google:hover { background: rgba(255,255,255,0.13); }
+
   </style>
 </head>
 
@@ -7134,7 +7204,39 @@
   </div>
 </div>
 
-<div id="app">
+<!-- ── Login Screen ─────────────────────────────────────────────────────── -->
+<div id="login-screen" class="hidden">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="icons/icon-192.png" alt="Capital Energy" />
+      <div class="login-logo-title">Capital Energy</div>
+      <div class="login-logo-sub">Solar Sales Hub — sign in to continue</div>
+    </div>
+
+    <!-- Google -->
+    <button class="login-btn login-btn--google" id="login-google-btn">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="login-divider">or sign in with email</div>
+
+    <div class="login-field">
+      <label for="login-email">Email</label>
+      <input id="login-email" type="email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+    <div class="login-field">
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="login-btn login-btn--primary" id="login-email-btn">Sign In</button>
+
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
 
   <!-- ── v78: Offline banner — shows only when device loses internet ─────── -->
   <div id="offline-banner" aria-live="polite" aria-atomic="true">
@@ -10580,6 +10682,71 @@
 <script src="installs.js" onerror="window.INSTALL_DATA=[]"></script>
 <!-- PDF.js for book cover thumbnails -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin=""></script>
+<!-- Firebase SDK (compat — no bundler required) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// ── Firebase: init ────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyAmteFppQ6c5f4DWcTk0S0ZWopQ3d5oqMs",
+  authDomain: "wc-app-alpha.firebaseapp.com",
+  projectId: "wc-app-alpha",
+  storageBucket: "wc-app-alpha.firebasestorage.app",
+  messagingSenderId: "932560435629",
+  appId: "1:932560435629:web:30bebca383c94811638924"
+};
+firebase.initializeApp(firebaseConfig);
+const fbAuth = firebase.auth();
+const fbDb   = firebase.firestore();
+
+// ── Login screen logic ────────────────────────────────────────────────────
+(function() {
+  var loginScreen = document.getElementById('login-screen');
+  var appEl       = document.getElementById('app');
+  var errorEl     = document.getElementById('login-error');
+
+  function showError(msg) {
+    if (errorEl) errorEl.textContent = msg;
+  }
+
+  // Auth state — show login or app
+  fbAuth.onAuthStateChanged(function(user) {
+    if (user) {
+      loginScreen.classList.add('hidden');
+      appEl.style.display = '';
+    } else {
+      loginScreen.classList.remove('hidden');
+      appEl.style.display = 'none';
+    }
+  });
+
+  // Google sign-in
+  document.getElementById('login-google-btn').addEventListener('click', function() {
+    showError('');
+    var provider = new firebase.auth.GoogleAuthProvider();
+    fbAuth.signInWithPopup(provider).catch(function(err) {
+      showError(err.message);
+    });
+  });
+
+  // Email / password sign-in
+  document.getElementById('login-email-btn').addEventListener('click', function() {
+    showError('');
+    var email    = document.getElementById('login-email').value.trim();
+    var password = document.getElementById('login-password').value;
+    if (!email || !password) { showError('Please enter email and password.'); return; }
+    fbAuth.signInWithEmailAndPassword(email, password).catch(function(err) {
+      showError(err.message);
+    });
+  });
+
+  // Allow Enter key in password field
+  document.getElementById('login-password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('login-email-btn').click();
+  });
+})();
+</script>
 
 <script>
 // ══════════════════════════════════════════════════════════════════════════
