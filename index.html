@@ -10782,6 +10782,155 @@ function _clearFirebaseIdentity() {
   if (pddIdentity) pddIdentity.style.display = 'none';
 }
 
+// ── Phase 2: Drain sync queue to Firestore ────────────────────────────────
+// Reads ce_sync_queue, writes each dirty entity to its Firestore collection,
+// then clears the queue only on full success. localStorage is untouched.
+// Collections:
+//   log_entries  → addresses/{sanitizedAddress}
+//   appointments → appointments/{appt.id}  (+ addressId cross-ref)
+//   team         → organizations/{uid}/team/{sanitizedName}
+//   wins         → wins/{win.id}
+async function drainToFirestore() {
+  const user = fbAuth.currentUser;
+  if (!user) { console.log('[Firestore] Drain skipped — not signed in'); return; }
+  if (!navigator.onLine) { console.log('[Firestore] Drain skipped — offline'); return; }
+
+  let queue;
+  try { queue = JSON.parse(localStorage.getItem('ce_sync_queue') || '[]'); } catch(_) { queue = []; }
+  if (!queue.length) { console.log('[Firestore] Drain skipped — queue empty'); return; }
+
+  const uid      = user.uid;
+  const entities = [...new Set(queue.map(function(q) { return q.entity; }))];
+  console.log('[Firestore] Drain starting — entities: ' + entities.join(', '));
+
+  // Firestore doc IDs may not contain '/'; strip media to stay under 1 MB per doc
+  function toDocId(str) {
+    return (String(str || 'unknown')).replace(/\//g, '_').replace(/^\.+/, '').trim().slice(0, 500) || 'unknown';
+  }
+  function stripMedia(obj) {
+    var out = Object.assign({}, obj);
+    delete out.photo;
+    delete out.ubPhoto;
+    return out;
+  }
+  // Commit a batch only if it has writes; return promise resolving to write count
+  function flushBatch(batch, n) {
+    return n > 0 ? batch.commit().then(function() { return n; }) : Promise.resolve(0);
+  }
+
+  var totalWritten = 0;
+  var writes = [];
+
+  // ── addresses (log_entries) ──────────────────────────────────────────────
+  if (entities.includes('log_entries')) {
+    var entries = DataStore.loadEntries();
+    if (entries.length) {
+      var batch = fbDb.batch(); var n = 0;
+      for (var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        var docId = toDocId(entry.address);
+        batch.set(
+          fbDb.collection('addresses').doc(docId),
+          Object.assign(stripMedia(entry), { repUid: uid, syncedAt: Date.now() }),
+          { merge: true }
+        );
+        totalWritten++; n++;
+        if (n >= 499) { writes.push(flushBatch(batch, n)); batch = fbDb.batch(); n = 0; }
+      }
+      writes.push(flushBatch(batch, n));
+    }
+  }
+
+  // ── appointments ─────────────────────────────────────────────────────────
+  if (entities.includes('appointments')) {
+    var appts = DataStore.loadAppointments();
+    if (appts.length) {
+      var batch2 = fbDb.batch(); var n2 = 0;
+      for (var j = 0; j < appts.length; j++) {
+        var appt = appts[j];
+        var addressId = toDocId([appt.street, appt.city, appt.state].filter(Boolean).join(', '));
+        batch2.set(
+          fbDb.collection('appointments').doc(appt.id),
+          Object.assign(stripMedia(appt), { addressId: addressId, repUid: uid, syncedAt: Date.now() }),
+          { merge: true }
+        );
+        totalWritten++; n2++;
+        if (n2 >= 499) { writes.push(flushBatch(batch2, n2)); batch2 = fbDb.batch(); n2 = 0; }
+      }
+      writes.push(flushBatch(batch2, n2));
+    }
+  }
+
+  // ── organizations/{uid}/team ─────────────────────────────────────────────
+  if (entities.includes('team')) {
+    var team = DataStore.loadTeam();
+    if (team.length) {
+      var batch3 = fbDb.batch(); var n3 = 0;
+      for (var k = 0; k < team.length; k++) {
+        var member = team[k];
+        var memberDocId = toDocId(member.name);
+        batch3.set(
+          fbDb.collection('organizations').doc(uid).collection('team').doc(memberDocId),
+          Object.assign({}, member, { repUid: uid, syncedAt: Date.now() }),
+          { merge: true }
+        );
+        totalWritten++; n3++;
+        if (n3 >= 499) { writes.push(flushBatch(batch3, n3)); batch3 = fbDb.batch(); n3 = 0; }
+      }
+      writes.push(flushBatch(batch3, n3));
+    }
+  }
+
+  // ── wins ─────────────────────────────────────────────────────────────────
+  if (entities.includes('wins')) {
+    var wins = DataStore.loadWins();
+    if (wins.length) {
+      var batch4 = fbDb.batch(); var n4 = 0;
+      for (var m = 0; m < wins.length; m++) {
+        var win = wins[m];
+        batch4.set(
+          fbDb.collection('wins').doc(win.id),
+          Object.assign({}, win, { repUid: uid, syncedAt: Date.now() }),
+          { merge: true }
+        );
+        totalWritten++; n4++;
+        if (n4 >= 499) { writes.push(flushBatch(batch4, n4)); batch4 = fbDb.batch(); n4 = 0; }
+      }
+      writes.push(flushBatch(batch4, n4));
+    }
+  }
+
+  if (!writes.length) {
+    console.log('[Firestore] Drain complete — 0 writes (entity data arrays were empty; queue cleared)');
+    try { localStorage.removeItem('ce_sync_queue'); } catch(_) {}
+    return;
+  }
+
+  console.log('[Firestore] Committing ' + writes.length + ' batch(es) — ' + totalWritten + ' documents across: ' + entities.join(', '));
+
+  try {
+    await Promise.all(writes);
+    console.log('[Firestore] Drain complete — ' + totalWritten + ' documents written (' + entities.join(', ') + ')');
+    // Clear queue only after all writes succeed — preserves it for retry on failure
+    try { localStorage.removeItem('ce_sync_queue'); } catch(_) {}
+  } catch (err) {
+    if (err && err.code === 'permission-denied') {
+      console.error(
+        '[Firestore] Drain blocked by security rules — no documents written, queue preserved.\n' +
+        'Fix: open Firebase Console → Firestore Database → Rules and allow authenticated writes.\n' +
+        'Minimum rules needed:\n' +
+        '  match /addresses/{d}    { allow write: if request.auth != null; }\n' +
+        '  match /appointments/{d} { allow write: if request.auth != null; }\n' +
+        '  match /wins/{d}         { allow write: if request.auth != null; }\n' +
+        '  match /organizations/{uid}/team/{d} { allow write: if request.auth.uid == uid; }\n' +
+        'Raw error:', err.message
+      );
+    } else {
+      console.warn('[Firestore] Drain failed — queue preserved for retry. Code:', (err && err.code) || 'unknown', '| Message:', err && err.message || err);
+    }
+  }
+}
+
 // ── Login screen logic ────────────────────────────────────────────────────
 (function() {
   var loginScreen = document.getElementById('login-screen');
@@ -10806,7 +10955,11 @@ function _clearFirebaseIdentity() {
         photoURL:    user.photoURL || '',
         lastSignIn:  firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true }).catch(function(e) {
-        console.warn('[Firebase] users write failed:', e);
+        if (e && e.code === 'permission-denied') {
+          console.error('[Firestore] users write blocked — Firestore security rules are denying writes. Open Firebase Console → Firestore → Rules and allow authenticated users to write to users/{uid}. Raw error:', e.message);
+        } else {
+          console.warn('[Firebase] users write failed:', e);
+        }
       });
 
       // 2. Seed ce_user_name from Google display name (only if not yet set)
@@ -10817,7 +10970,10 @@ function _clearFirebaseIdentity() {
       // 3. Wire photo + name into UI
       _applyFirebaseIdentity(user);
 
-      // 4. First-time user: show role setup, which then triggers onboarding
+      // 4. Drain any queued entities to Firestore (online only)
+      if (navigator.onLine) drainToFirestore();
+
+      // 5. First-time user: show role setup, which then triggers onboarding
       if (!localStorage.getItem('ce_user_role')) {
         setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
       }
@@ -10828,13 +10984,26 @@ function _clearFirebaseIdentity() {
     }
   });
 
-  // Google sign-in
+  // Google sign-in — redirect flow (signInWithPopup blocked by COOP on Netlify PWAs)
   document.getElementById('login-google-btn').addEventListener('click', function() {
     showError('');
+    var btn = document.getElementById('login-google-btn');
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
     var provider = new firebase.auth.GoogleAuthProvider();
-    fbAuth.signInWithPopup(provider).catch(function(err) {
+    fbAuth.signInWithRedirect(provider).catch(function(err) {
       showError(err.message);
+      if (btn) { btn.disabled = false; btn.style.opacity = ''; }
     });
+  });
+
+  // Pick up the result when the page returns from the Google redirect
+  fbAuth.getRedirectResult().then(function(result) {
+    if (result && result.user) {
+      console.log('[Firebase] Redirect sign-in complete:', result.user.email);
+    }
+  }).catch(function(err) {
+    console.warn('[Firebase] Redirect result error:', err.code, err.message);
+    showError(err.message);
   });
 
   // Email / password sign-in
@@ -11292,7 +11461,15 @@ const DataStore = (() => {
     saveAppointments(a)  { _write(KEYS.appointments, a); },
     loadTeam()           { return _read(KEYS.team, []); },
     saveTeam(t)          { _write(KEYS.team, t); },
-    drainSyncQueue()     { localStorage.removeItem('ce_sync_queue'); _updateBadge(); },
+    drainSyncQueue() {
+      // Phase 2: delegate to Firestore drain if available; fall back to local clear
+      if (typeof drainToFirestore === 'function') {
+        drainToFirestore(); // async — clears queue only on success
+      } else {
+        localStorage.removeItem('ce_sync_queue');
+      }
+      _updateBadge();
+    },
     updateSyncBadge()    { _updateBadge(); },
     // v76: Wall of Wins
     loadWins()           { return _read(KEYS.wins, []); },
