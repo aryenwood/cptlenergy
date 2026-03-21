@@ -5962,6 +5962,69 @@
     font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
   }
 
+  /* ── Invite System ─────────────────────────────────────────────────────── */
+  #invite-overlay {
+    position: fixed; inset: 0; z-index: 9300;
+    background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  #invite-overlay.open { opacity: 1; pointer-events: auto; }
+  #invite-sheet, #invite-code-sheet {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9301;
+    background: #0d1e2c; border-radius: 24px 24px 0 0;
+    border-top: 1px solid rgba(20,145,153,0.2);
+    padding: 0 20px calc(env(safe-area-inset-bottom,0px) + 28px);
+    transform: translateY(110%); transition: transform .35s var(--spring);
+  }
+  #invite-sheet.open, #invite-code-sheet.open { transform: translateY(0); }
+  .invite-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 14px auto 20px; }
+  .invite-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .invite-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+  .invite-field { margin-bottom: 14px; }
+  .invite-label { display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .invite-generate-btn {
+    width: 100%; padding: 15px; border-radius: 16px; border: none; cursor: pointer;
+    background: var(--amber); color: #fff;
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    margin-top: 6px; transition: transform .13s var(--spring);
+  }
+  .invite-generate-btn:active { transform: scale(0.97); }
+  .invite-generate-btn:disabled { opacity: 0.5; }
+  .invite-cancel-btn {
+    width: 100%; padding: 13px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600; cursor: pointer;
+    margin-top: 8px; font-family: var(--font-body);
+  }
+  .invite-code-display {
+    font-family: var(--font-display); font-size: 52px; font-weight: 800;
+    color: var(--amber); letter-spacing: 0.18em; text-align: center;
+    padding: 22px 0 8px; line-height: 1;
+  }
+  .invite-code-sub { font-size: 12px; color: rgba(255,255,255,0.35); text-align: center; margin-bottom: 22px; letter-spacing: 0.04em; }
+  .invite-copy-btn {
+    width: 100%; padding: 15px; border-radius: 16px; border: 1.5px solid rgba(20,145,153,0.4);
+    background: rgba(20,145,153,0.1); color: var(--amber);
+    font-family: var(--font-display); font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: transform .13s var(--spring);
+  }
+  .invite-copy-btn:active { transform: scale(0.97); }
+  .invite-sms-btn {
+    width: 100%; padding: 15px; border-radius: 16px; border: none; cursor: pointer;
+    background: var(--amber); color: #fff;
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    margin-top: 8px; transition: transform .13s var(--spring);
+  }
+  .invite-sms-btn:active { transform: scale(0.97); }
+  .invite-rep-btn {
+    width: 100%; padding: 13px 16px; border-radius: 14px;
+    border: 1.5px solid rgba(20,145,153,0.3); background: rgba(20,145,153,0.08);
+    color: var(--amber); font-size: 14px; font-weight: 700; cursor: pointer;
+    margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font-display); transition: background .14s;
+  }
+  .invite-rep-btn:active { background: rgba(20,145,153,0.18); }
+
   /* F9: Onboarding walkthrough */
   #onboarding-overlay {
     position: fixed; inset: 0; z-index: 9999;
@@ -9318,6 +9381,10 @@
             <input class="admin-input" type="tel" id="admin-new-phone" placeholder="Phone #" style="flex:0 0 95px;min-width:0" inputmode="tel" />
             <button class="team-add-btn" id="admin-add-member">Add</button>
           </div>
+          <button class="invite-rep-btn" onclick="openInviteSheet()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.95 3.4 2 2 0 0 1 3.93 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/><line x1="18" y1="2" x2="22" y2="6"/><line x1="22" y1="2" x2="18" y2="6"/></svg>
+            Invite Rep
+          </button>
         </div>
       </details>
 
@@ -9832,6 +9899,15 @@
       </div>
     </div>
     <div class="onboard-step onboard-hidden" data-step="4">
+      <div class="onboard-emoji">🔗</div>
+      <div class="onboard-title">Have an invite code?</div>
+      <div class="onboard-desc">If your manager gave you an invite code, enter it to join their team. You can skip this if you don't have one.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-top:12px">
+        <input id="onboard-invite-code" type="text" class="onboard-input" placeholder="Enter code (e.g. WC4X9K)" autocomplete="off" maxlength="8" style="text-transform:uppercase;letter-spacing:0.12em;font-size:20px;text-align:center;font-weight:700" />
+        <div id="onboard-invite-status" style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;min-height:18px"></div>
+      </div>
+    </div>
+    <div class="onboard-step onboard-hidden" data-step="5">
       <div class="onboard-emoji">🏆</div>
       <div class="onboard-title">Go earn it!</div>
       <div class="onboard-desc">The leaderboard updates in real-time. Stay consistent and climb to the top of your team.</div>
@@ -9842,6 +9918,40 @@
       <button id="onboard-next">Next →</button>
     </div>
   </div>
+</div>
+
+<!-- ── Invite System ──────────────────────────────────────────────────── -->
+<div id="invite-overlay" onclick="closeInviteSheet()"></div>
+
+<!-- Generate invite sheet -->
+<div id="invite-sheet">
+  <div class="invite-handle"></div>
+  <div class="invite-title">📨 Invite a Rep</div>
+  <div class="invite-sub">Generate a 7-day single-use invite code</div>
+  <div class="invite-field">
+    <label class="invite-label">Role</label>
+    <select class="admin-input" id="invite-role" style="width:100%">
+      <option value="canvasser">🚪 Canvasser</option>
+      <option value="closer">🤝 Closer</option>
+    </select>
+  </div>
+  <div class="invite-field">
+    <label class="invite-label">Rep's Name (optional)</label>
+    <input class="admin-input" type="text" id="invite-rep-name" placeholder="e.g. John Smith" autocomplete="off" style="width:100%;box-sizing:border-box" />
+  </div>
+  <button class="invite-generate-btn" id="invite-generate-btn" onclick="generateInviteCode()">Generate Invite Code</button>
+  <button class="invite-cancel-btn" onclick="closeInviteSheet()">Cancel</button>
+</div>
+
+<!-- Code display sheet -->
+<div id="invite-code-sheet">
+  <div class="invite-handle"></div>
+  <div class="invite-title">✅ Invite Ready</div>
+  <div class="invite-code-display" id="invite-code-display">——</div>
+  <div class="invite-code-sub">Expires in 7 days · Single use</div>
+  <button class="invite-copy-btn" id="invite-copy-btn" onclick="copyInviteCode()">📋 Copy Code</button>
+  <button class="invite-sms-btn" onclick="shareInviteViaMessage()">💬 Share via Message</button>
+  <button class="invite-cancel-btn" onclick="closeInviteCodeSheet()">Done</button>
 </div>
 
 <!-- ── PIN Overlay (Master Admin access) ──────────────────────────────── -->
@@ -21384,7 +21494,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
 // ── F9: Onboarding Walkthrough ────────────────────────────────────────────
 ;(function() {
   let _step = 0;
-  const TOTAL = 5; // steps 0-4 (step 3 = contact info, step 4 = go earn it)
+  const TOTAL = 6; // steps 0-5 (step 3 = contact info, step 4 = invite code, step 5 = go earn it!)
 
   function _render() {
     document.querySelectorAll('.onboard-step').forEach((el, i) => {
@@ -21398,7 +21508,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     }
     const nb = document.getElementById('onboard-next');
     if (nb) nb.textContent = _step < TOTAL - 1 ? 'Next →' : "Let's Go! 🏆";
-    if (_step === 4) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
+    if (_step === 5) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
   }
 
   function _saveContactInfo() {
@@ -21503,12 +21613,189 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
         }
         _saveContactInfo();
       }
+      // Invite code step — optional, attempt redemption if code entered
+      if (_step === 4) {
+        const codeInput = document.getElementById('onboard-invite-code');
+        const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
+        if (code) {
+          nb.disabled = true;
+          nb.textContent = 'Joining…';
+          const statusEl = document.getElementById('onboard-invite-status');
+          _redeemInviteCode(code).then(function(data) {
+            nb.disabled = false;
+            if (statusEl) statusEl.textContent = '✅ Joined ' + (data.orgName || 'team') + ' as ' + data.role;
+            setTimeout(function() { _step++; _render(); }, 600);
+          }).catch(function(err) {
+            nb.disabled = false;
+            nb.textContent = 'Next →';
+            if (statusEl) statusEl.textContent = '❌ ' + err.message;
+          });
+          return;
+        }
+        // No code entered — skip silently
+      }
       if (_step < TOTAL - 1) { _step++; _render(); }
       else hideOnboarding();
     });
     if (sb) sb.addEventListener('click', hideOnboarding);
   });
 })();
+
+// ── Invite System ────────────────────────────────────────────────────────
+
+var _currentInviteCode = '';
+
+function _genInviteCode() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // omit 0/O and 1/I to avoid confusion
+  var code = 'WC';
+  for (var i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+function openInviteSheet() {
+  var ov = document.getElementById('invite-overlay');
+  var sh = document.getElementById('invite-sheet');
+  var nameInput = document.getElementById('invite-rep-name');
+  if (nameInput) nameInput.value = '';
+  var btn = document.getElementById('invite-generate-btn');
+  if (btn) { btn.disabled = false; btn.textContent = 'Generate Invite Code'; }
+  if (ov) ov.classList.add('open');
+  if (sh) sh.classList.add('open');
+}
+
+function closeInviteSheet() {
+  var ov = document.getElementById('invite-overlay');
+  var sh = document.getElementById('invite-sheet');
+  if (sh) sh.classList.remove('open');
+  if (ov) ov.classList.remove('open');
+}
+
+function closeInviteCodeSheet() {
+  var sh = document.getElementById('invite-code-sheet');
+  if (sh) sh.classList.remove('open');
+  var ov = document.getElementById('invite-overlay');
+  if (ov) ov.classList.remove('open');
+}
+
+function generateInviteCode() {
+  if (typeof fbDb === 'undefined' || !fbAuth || !fbAuth.currentUser) {
+    try { showToast('You must be signed in to generate invites.'); } catch(_) {}
+    return;
+  }
+  var btn = document.getElementById('invite-generate-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }
+
+  var role = (document.getElementById('invite-role') || {}).value || 'canvasser';
+  var user = fbAuth.currentUser;
+  var uid  = user.uid;
+  var s    = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+  var orgName   = s.companyName || 'Capital Energy';
+  var repName   = localStorage.getItem('ce_user_name') || user.displayName || '';
+  var code      = _genInviteCode();
+  var now       = new Date();
+  var expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  fbDb.collection('invites').doc(code).set({
+    code:          code,
+    orgId:         uid,
+    orgName:       orgName,
+    role:          role,
+    createdBy:     uid,
+    createdByName: repName,
+    createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
+    expiresAt:     firebase.firestore.Timestamp.fromDate(expiresAt),
+    used:          false,
+    usedBy:        null
+  }).then(function() {
+    _currentInviteCode = code;
+    closeInviteSheet();
+    var display = document.getElementById('invite-code-display');
+    if (display) display.textContent = code;
+    var codeSheet = document.getElementById('invite-code-sheet');
+    var ov = document.getElementById('invite-overlay');
+    if (ov) ov.classList.add('open');
+    if (codeSheet) codeSheet.classList.add('open');
+  }).catch(function(err) {
+    console.error('[Invite] Firestore write failed:', err);
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate Invite Code'; }
+    try { showToast('Failed to generate invite. Check your connection.'); } catch(_) {}
+  });
+}
+
+function copyInviteCode() {
+  if (!_currentInviteCode) return;
+  var btn = document.getElementById('invite-copy-btn');
+  navigator.clipboard.writeText(_currentInviteCode).then(function() {
+    if (btn) { btn.textContent = '✅ Copied!'; setTimeout(function(){ btn.textContent = '📋 Copy Code'; }, 2000); }
+  }).catch(function() {
+    // Fallback for older mobile browsers
+    var ta = document.createElement('textarea');
+    ta.value = _currentInviteCode;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); if (btn) { btn.textContent = '✅ Copied!'; setTimeout(function(){ btn.textContent = '📋 Copy Code'; }, 2000); } } catch(_) {}
+    document.body.removeChild(ta);
+  });
+}
+
+function shareInviteViaMessage() {
+  if (!_currentInviteCode) return;
+  var s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+  var orgName = s.companyName || 'Capital Energy';
+  var msg = "You've been invited to join " + orgName + " on WC App. " +
+            "Download the app at cptlenergy.netlify.app and use invite code: " + _currentInviteCode;
+  window.open('sms:?body=' + encodeURIComponent(msg), '_self');
+}
+
+function _redeemInviteCode(code) {
+  return new Promise(function(resolve, reject) {
+    if (!code) { reject(new Error('Enter a code')); return; }
+    if (typeof fbDb === 'undefined' || !fbAuth || !fbAuth.currentUser) {
+      reject(new Error('Not signed in')); return;
+    }
+    var user = fbAuth.currentUser;
+    fbDb.collection('invites').doc(code).get().then(function(snap) {
+      if (!snap.exists) { reject(new Error('Invalid code')); return; }
+      var data = snap.data();
+      if (data.used) { reject(new Error('Code already used')); return; }
+      var expiry = data.expiresAt && data.expiresAt.toDate ? data.expiresAt.toDate() : null;
+      if (expiry && expiry < new Date()) { reject(new Error('Code has expired')); return; }
+
+      var role    = data.role || 'canvasser';
+      var orgId   = data.orgId;
+      var orgName = data.orgName || '';
+      var repName = localStorage.getItem('ce_user_name') || user.displayName || '';
+
+      // Set role + org locally
+      localStorage.setItem('ce_user_role', role);
+      localStorage.setItem('ce_org_id', orgId);
+
+      // Add rep to org team in Firestore
+      fbDb.collection('organizations').doc(orgId)
+        .collection('team').doc(user.uid)
+        .set({
+          name:       repName,
+          email:      user.email || '',
+          role:       role,
+          repUid:     user.uid,
+          joinedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+          inviteCode: code
+        }, { merge: true })
+        .catch(function(e) { console.warn('[Invite] team write:', e); });
+
+      // Mark invite as used
+      fbDb.collection('invites').doc(code).update({
+        used:   true,
+        usedBy: user.uid,
+        usedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(function(e) { console.warn('[Invite] mark used:', e); });
+
+      resolve({ role: role, orgName: orgName, orgId: orgId });
+    }).catch(function(err) {
+      reject(new Error('Could not verify code'));
+    });
+  });
+}
 
 // ── F6: SMS Handoff Card ──────────────────────────────────────────────────
 function showHandoffCard(appt) {
