@@ -22380,8 +22380,9 @@ function otdToggleVoice() {
     }
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
       _otdSessStream = stream;
-      var mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
-                     MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+      var mimeType = MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' :
+                     MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
+                     MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
       _otdSessRec = new MediaRecorder(stream, mimeType ? { mimeType: mimeType } : {});
       _otdSessRec.addEventListener('dataavailable', function(e) {
         if (e.data && e.data.size > 0) _otdDoorChunks.push(e.data);
@@ -22437,8 +22438,9 @@ function _otdStartSessionRecording() {
   _otdSessActive = false;
   navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
     _otdSessStream = stream;
-    var mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
-                   MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+    var mimeType = MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' :
+                   MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
+                   MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
     _otdDoorChunks = [];
     _otdDoorRecStart = Date.now();
     _otdSessRec = new MediaRecorder(stream, mimeType ? { mimeType: mimeType } : {});
