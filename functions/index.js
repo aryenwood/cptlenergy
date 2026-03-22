@@ -7,13 +7,7 @@ const { getMessaging } = require('firebase-admin/messaging');
 initializeApp();
 
 // Send push notification to a specific user by uid
-exports.wcSendPush = onCall({
-  cors: [
-    'https://cptlenergy.netlify.app',
-    'https://testcptlapp.netlify.app',
-    'http://localhost'
-  ]
-}, async (request) => {
+exports.wcSendPush = onCall({ cors: true }, async (request) => {
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Must be signed in');
   }
