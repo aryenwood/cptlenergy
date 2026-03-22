@@ -7495,6 +7495,25 @@
   </div>
 </div>
 
+<!-- ── Pre-login invite gate ───────────────────────────────────────────── -->
+<div id="invite-gate-screen" class="hidden">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="icons/icon-192.png" alt="Capital Energy" />
+      <div class="login-logo-title">Capital Energy</div>
+      <div class="login-logo-sub">Do you have an invite code?</div>
+    </div>
+    <button class="login-btn login-btn--primary" id="invite-gate-yes-btn">Yes — Enter Code</button>
+    <button class="login-btn login-btn--google" id="invite-gate-no-btn" style="margin-top:10px">No — Create Account</button>
+    <div id="invite-gate-code-wrap" class="hidden" style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+      <input id="invite-gate-code" type="text" placeholder="Enter code (e.g. WC4X9K)" maxlength="8" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.12em;font-size:22px;text-align:center;font-weight:700;width:100%;padding:14px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;outline:none;box-sizing:border-box" />
+      <div id="invite-gate-status" style="font-size:13px;text-align:center;min-height:18px;color:rgba(255,255,255,0.5)"></div>
+      <button class="login-btn login-btn--primary" id="invite-gate-submit-btn">Verify Code →</button>
+      <button id="invite-gate-skip-btn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;padding:8px 0;text-align:center;width:100%">Skip — I don't have a code</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Login Screen ─────────────────────────────────────────────────────── -->
 <div id="login-screen" class="hidden">
   <div class="login-card">
@@ -9899,15 +9918,6 @@
       </div>
     </div>
     <div class="onboard-step onboard-hidden" data-step="4">
-      <div class="onboard-emoji">🔗</div>
-      <div class="onboard-title">Have an invite code?</div>
-      <div class="onboard-desc">If your manager gave you an invite code, enter it to join their team. You can skip this if you don't have one.</div>
-      <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-top:12px">
-        <input id="onboard-invite-code" type="text" class="onboard-input" placeholder="Enter code (e.g. WC4X9K)" autocomplete="off" maxlength="8" style="text-transform:uppercase;letter-spacing:0.12em;font-size:20px;text-align:center;font-weight:700" />
-        <div id="onboard-invite-status" style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;min-height:18px"></div>
-      </div>
-    </div>
-    <div class="onboard-step onboard-hidden" data-step="5">
       <div class="onboard-emoji">🏆</div>
       <div class="onboard-title">Go earn it!</div>
       <div class="onboard-desc">The leaderboard updates in real-time. Stay consistent and climb to the top of your team.</div>
@@ -11407,14 +11417,48 @@ function applyOrgSettings(data) {
           });
       }
 
-      // 6. First-time user: show role setup, which then triggers onboarding
+      // 6. First-time user: apply pending invite (pre-auth) or show role setup
       if (!localStorage.getItem('ce_user_role')) {
-        setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
+        if (_pendingInvite) {
+          var pi = _pendingInvite;
+          _pendingInvite = null;
+          localStorage.setItem('ce_user_role', pi.role);
+          if (pi.orgId) localStorage.setItem('ce_org_id', pi.orgId);
+          var _piRepName = user.displayName || localStorage.getItem('ce_user_name') || '';
+          if (pi.orgId) {
+            fbDb.collection('organizations').doc(pi.orgId)
+              .collection('team').doc(user.uid)
+              .set({
+                name:       _piRepName,
+                email:      user.email || '',
+                role:       pi.role,
+                repUid:     user.uid,
+                joinedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+                inviteCode: pi.code
+              }, { merge: true })
+              .catch(function(e) { console.warn('[Invite] team write:', e); });
+            fbDb.collection('invites').doc(pi.code).update({
+              used:   true,
+              usedBy: user.uid,
+              usedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(function(e) { console.warn('[Invite] mark used:', e); });
+          }
+          setTimeout(function() { showOnboarding && showOnboarding(); }, 100);
+        } else {
+          setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
+        }
       }
     } else {
-      loginScreen.classList.remove('hidden');
       appEl.style.display = 'none';
       _clearFirebaseIdentity();
+      // New users see the invite gate first; returning users (onboarding done) go straight to login
+      if (!localStorage.getItem('ce_onboarding_done')) {
+        var gateScr = document.getElementById('invite-gate-screen');
+        if (gateScr) { gateScr.classList.remove('hidden'); }
+        else { loginScreen.classList.remove('hidden'); }
+      } else {
+        loginScreen.classList.remove('hidden');
+      }
     }
   });
 
@@ -21494,7 +21538,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
 // ── F9: Onboarding Walkthrough ────────────────────────────────────────────
 ;(function() {
   let _step = 0;
-  const TOTAL = 6; // steps 0-5 (step 3 = contact info, step 4 = invite code, step 5 = go earn it!)
+  const TOTAL = 5; // steps 0-4 (step 3 = contact info, step 4 = go earn it!)
 
   function _render() {
     document.querySelectorAll('.onboard-step').forEach((el, i) => {
@@ -21508,7 +21552,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     }
     const nb = document.getElementById('onboard-next');
     if (nb) nb.textContent = _step < TOTAL - 1 ? 'Next →' : "Let's Go! 🏆";
-    if (_step === 5) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
+    if (_step === 4) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
   }
 
   function _saveContactInfo() {
@@ -21613,27 +21657,6 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
         }
         _saveContactInfo();
       }
-      // Invite code step — optional, attempt redemption if code entered
-      if (_step === 4) {
-        const codeInput = document.getElementById('onboard-invite-code');
-        const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
-        if (code) {
-          nb.disabled = true;
-          nb.textContent = 'Joining…';
-          const statusEl = document.getElementById('onboard-invite-status');
-          _redeemInviteCode(code).then(function(data) {
-            nb.disabled = false;
-            if (statusEl) statusEl.textContent = '✅ Joined ' + (data.orgName || 'team') + ' as ' + data.role;
-            setTimeout(function() { _step++; _render(); }, 600);
-          }).catch(function(err) {
-            nb.disabled = false;
-            nb.textContent = 'Next →';
-            if (statusEl) statusEl.textContent = '❌ ' + err.message;
-          });
-          return;
-        }
-        // No code entered — skip silently
-      }
       if (_step < TOTAL - 1) { _step++; _render(); }
       else hideOnboarding();
     });
@@ -21644,6 +21667,79 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
 // ── Invite System ────────────────────────────────────────────────────────
 
 var _currentInviteCode = '';
+var _pendingInvite = null; // set pre-auth, applied after onAuthStateChanged
+
+// Lookup an invite code WITHOUT requiring auth (Firestore rules: allow read: if true on invites)
+function _lookupInvitePreAuth(code) {
+  return new Promise(function(resolve, reject) {
+    if (!code) { reject(new Error('Enter a code')); return; }
+    if (typeof fbDb === 'undefined') { reject(new Error('App not ready')); return; }
+    fbDb.collection('invites').doc(code).get().then(function(snap) {
+      if (!snap.exists) { reject(new Error('Invalid code')); return; }
+      var data = snap.data();
+      if (data.used) { reject(new Error('Code already used')); return; }
+      var expiry = data.expiresAt && data.expiresAt.toDate ? data.expiresAt.toDate() : null;
+      if (expiry && expiry < new Date()) { reject(new Error('Code has expired')); return; }
+      resolve({ code: code, role: data.role || 'canvasser', orgId: data.orgId, orgName: data.orgName || '' });
+    }).catch(function() { reject(new Error('Could not verify code')); });
+  });
+}
+
+// ── Pre-login invite gate ─────────────────────────────────────────────────
+;(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var gateScreen  = document.getElementById('invite-gate-screen');
+    var loginScr    = document.getElementById('login-screen');
+    var yesBtn      = document.getElementById('invite-gate-yes-btn');
+    var noBtn       = document.getElementById('invite-gate-no-btn');
+    var codeWrap    = document.getElementById('invite-gate-code-wrap');
+    var codeInput   = document.getElementById('invite-gate-code');
+    var statusEl    = document.getElementById('invite-gate-status');
+    var submitBtn   = document.getElementById('invite-gate-submit-btn');
+    var skipBtn     = document.getElementById('invite-gate-skip-btn');
+    if (!gateScreen) return;
+
+    function goToLogin() {
+      if (gateScreen) gateScreen.classList.add('hidden');
+      if (loginScr)   loginScr.classList.remove('hidden');
+    }
+
+    if (yesBtn) yesBtn.addEventListener('click', function() {
+      yesBtn.style.display = 'none';
+      noBtn.style.display  = 'none';
+      if (codeWrap) codeWrap.classList.remove('hidden');
+      if (codeInput) codeInput.focus();
+    });
+    if (noBtn)   noBtn.addEventListener('click', goToLogin);
+    if (skipBtn) skipBtn.addEventListener('click', goToLogin);
+
+    if (codeInput) codeInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+
+    if (submitBtn) submitBtn.addEventListener('click', function() {
+      var code = codeInput ? codeInput.value.trim() : '';
+      if (!code) {
+        if (statusEl) { statusEl.style.color = '#ef4444'; statusEl.textContent = 'Please enter a code.'; }
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying…';
+      if (statusEl) statusEl.textContent = '';
+      _lookupInvitePreAuth(code).then(function(data) {
+        _pendingInvite = data;
+        if (statusEl) { statusEl.style.color = '#4ade80'; statusEl.textContent = '✅ Code verified! Proceed to sign in.'; }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue →';
+        submitBtn.onclick = goToLogin;
+      }).catch(function(err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Verify Code →';
+        if (statusEl) { statusEl.style.color = '#ef4444'; statusEl.textContent = '❌ ' + err.message; }
+      });
+    });
+  });
+})();
 
 function _genInviteCode() {
   var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // omit 0/O and 1/I to avoid confusion
