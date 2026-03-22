@@ -1,62 +1,41 @@
-const { onCall, HttpsError } = require('firebase-functions/v2/https');
-const { onDocumentUpdated } = require('firebase-functions/v2/firestore');
+const { onDocumentUpdated, onDocumentCreated } = require('firebase-functions/v2/firestore');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
-const cors = require('cors')({ origin: true });
 
 initializeApp();
 
-// Send push notification to a specific user by uid
-exports.wcSendPush = onCall({
-  cors: true,
-  invoker: 'public'
-}, async (request) => {
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Must be signed in');
-  }
-
-  const { targetUid, title, body, data: notifData } = request.data;
-
-  if (!targetUid || !title || !body) {
-    throw new HttpsError('invalid-argument', 'Missing required fields');
-  }
+// Triggered by client writing to notifications/{notifId} — sends push then deletes the doc.
+// No direct HTTP call from client = no CORS issues.
+exports.wcProcessNotification = onDocumentCreated('notifications/{notifId}', async (event) => {
+  const data = event.data.data();
+  const { targetUid, title, body, notifData } = data;
 
   const db = getFirestore();
   const userDoc = await db.collection('users').doc(targetUid).get();
-
-  if (!userDoc.exists) {
-    throw new HttpsError('not-found', 'Target user not found');
-  }
+  if (!userDoc.exists) return null;
 
   const fcmToken = userDoc.data().fcmToken;
-  if (!fcmToken) {
-    console.log(`[FCM] No token for user ${targetUid}`);
-    return { success: false, reason: 'no_token' };
-  }
+  if (!fcmToken) return null;
 
   const message = {
     token: fcmToken,
     notification: { title, body },
     data: notifData || {},
     webpush: {
-      fcmOptions: {
-        link: 'https://cptlenergy.netlify.app'
-      }
+      fcmOptions: { link: 'https://cptlenergy.netlify.app' }
     }
   };
 
-  try {
-    const response = await getMessaging().send(message);
-    console.log(`[FCM] Sent to ${targetUid}:`, response);
-    return { success: true, messageId: response };
-  } catch (err) {
-    console.error('[FCM] Send failed:', err);
-    throw new HttpsError('internal', err.message);
-  }
+  await getMessaging().send(message);
+
+  // Delete the notification request after sending
+  await event.data.ref.delete();
+
+  return null;
 });
 
-// Triggered when a rep redeems an invite
+// Triggered when a rep redeems an invite — notifies the manager directly via FCM
 exports.wcInviteRedeemed = onDocumentUpdated('invites/{code}', async (event) => {
   const before = event.data.before.data();
   const after = event.data.after.data();

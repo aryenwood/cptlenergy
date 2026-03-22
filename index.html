@@ -21752,16 +21752,23 @@ async function _initFCM() {
 // ── Push notification sender ──────────────────────────────────────────────
 // Reads the target user's FCM token from Firestore and logs what would be sent.
 // IMPORTANT: Actual FCM delivery requires a server-side call — implement a
-// Firebase Cloud Function that calls the FCM HTTP v1 API:
-//   POST https://fcm.googleapis.com/v1/projects/wc-app-alpha/messages:send
-// This client-side function is a placeholder stub until that function exists.
+// Queues a push notification by writing to Firestore notifications/{notifId}.
+// The wcProcessNotification Cloud Function picks it up, sends the push, and
+// deletes the document — no direct HTTP call, no CORS issues.
 async function sendNotification(targetUid, title, body, data) {
   try {
-    var sendPush = firebase.functions().httpsCallable('wcSendPush');
-    var result = await sendPush({ targetUid, title, body, data: data || {} });
-    console.log('[FCM] Notification sent:', result);
+    if (!fbAuth.currentUser) return;
+    await fbDb.collection('notifications').add({
+      targetUid,
+      title,
+      body,
+      notifData: data || {},
+      createdBy: fbAuth.currentUser.uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    console.log('[FCM] Notification queued');
   } catch (err) {
-    console.error('[FCM] Send failed:', err);
+    console.error('[FCM] Queue failed:', err);
   }
 }
 
