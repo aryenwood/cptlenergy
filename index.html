@@ -10140,6 +10140,10 @@
     <input id="role-setup-name" type="text" placeholder="Your full name (e.g. Alex Rivera)" autocomplete="name" />
   </div>
   <button id="role-setup-go">Let's Go →</button>
+  <p style="margin-top:10px;font-size:12px;color:rgba(0,0,0,0.38);text-align:center;line-height:1.4">
+    Already have an invite code?
+    <a href="#" onclick="showInviteGateFromRolePicker();return false;" style="color:var(--amber);font-weight:600;text-decoration:none">→ Use it here</a>
+  </p>
 </div>
 
 <!-- v71: Onboarding walkthrough -->
@@ -11506,7 +11510,7 @@ function superAdminShareInvite() {
     'Get started here:\n' +
     'https://tritonenergy.netlify.app?org=' + _saLastOrgId + '\n\n' +
     'Code expires in 30 days.\n— Aryen, WC App';
-  window.open('sms:?body=' + encodeURIComponent(msg));
+  window.location.href = 'sms:?body=' + encodeURIComponent(msg);
 }
 
 // ── Firebase identity helpers ─────────────────────────────────────────────
@@ -11828,6 +11832,12 @@ if (_urlOrgId) {
   // Auth state — show login or app
   fbAuth.onAuthStateChanged(function(user) {
     if (user) {
+      // 0. Super admin: stamp role FIRST before any other logic can run
+      if (user.uid === SUPER_ADMIN_UID) {
+        try { localStorage.setItem('ce_user_role', 'super_admin'); } catch(_) {}
+        try { localStorage.removeItem('ce_impersonate_role'); } catch(_) {} // never let impersonation override SA
+      }
+
       loginScreen.classList.add('hidden');
       var _gateEl = document.getElementById('invite-gate-screen');
       if (_gateEl) _gateEl.classList.add('hidden');
@@ -12457,6 +12467,7 @@ if (!localStorage.getItem('ce_device_id')) {
 
 // ── Identity helpers — supports impersonation (F10) ───────────────────────
 function getActiveRole() {
+  if (window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID) return 'super_admin';
   return localStorage.getItem('ce_impersonate_role') || localStorage.getItem('ce_user_role') || 'canvasser';
 }
 function getActiveName() {
@@ -18587,9 +18598,27 @@ function applyRoleUI() {
 
 // ── First-Run Modal ─────────────────────────────────────────────────────────
 function showFirstRunModal() {
+  if (window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID) return;
   const overlay = document.getElementById('role-setup-overlay');
   if (!overlay) return;
   overlay.classList.add('open');
+}
+
+function showInviteGateFromRolePicker() {
+  const overlay = document.getElementById('role-setup-overlay');
+  if (overlay) overlay.classList.remove('open');
+  // Sign out so the invite flow re-authenticates cleanly and _pendingInvite is applied
+  fbAuth.signOut().then(function() {
+    var gate  = document.getElementById('invite-gate-screen');
+    var login = document.getElementById('login-screen');
+    if (gate)  gate.classList.remove('hidden');
+    if (login) login.classList.add('hidden');
+    // Pre-open the code entry
+    setTimeout(function() {
+      var yesBtn = document.getElementById('invite-gate-yes-btn');
+      if (yesBtn) yesBtn.click();
+    }, 80);
+  });
 }
 
 function hideFirstRunModal() {
@@ -22307,6 +22336,14 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     if (!ov) return;
     _step = 0;
     _render();
+    // Skip button: only super admin can bypass onboarding
+    const sb = document.getElementById('onboard-skip');
+    const isSA = window.fbAuth && window.fbAuth.currentUser &&
+                 window.fbAuth.currentUser.uid === 'yyyDjhfDgDSQIxJEq9xRd5dLbw42';
+    if (sb) {
+      if (isSA) { sb.style.display = ''; sb.textContent = 'Skip Setup ×'; }
+      else       { sb.style.display = 'none'; }
+    }
     ov.classList.add('open');
   };
 
