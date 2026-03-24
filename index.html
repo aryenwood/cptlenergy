@@ -11776,7 +11776,12 @@ function applyOrgSettings(data) {
   var s = {};
   try { s = JSON.parse(localStorage.getItem('ce_admin') || '{}'); } catch(_) {}
 
-  if (data.companyName)    s.companyName    = data.companyName;
+  if (data.companyName) {
+    s.companyName = data.companyName;
+    document.title = data.companyName;
+    var _hbAlt = document.getElementById('header-brand-img');
+    if (_hbAlt) _hbAlt.alt = data.companyName;
+  }
   if (data.tagline)        s.tagline        = data.tagline;
   if (data.gosoloUrl)      s.gosoloUrl      = data.gosoloUrl;
   if (data.gridUrl)        s.gridUrl        = data.gridUrl;
@@ -14062,13 +14067,26 @@ function _initApp() {
     if (brandImg) brandImg.alt = savedName;
   }
 
-  // Apply cached org logo to header and pre-login screens (covers returning users before auth)
+  // Apply cached org branding immediately (covers returning users before auth resolves)
   const _cachedAdmin = JSON.parse(localStorage.getItem('ce_admin') || '{}');
   const _cachedLogo = _cachedAdmin.logoUrl || _cachedAdmin.customLogo;
   if (_cachedLogo) {
     const _hbl = document.getElementById('header-brand-img');
     if (_hbl) _hbl.src = _cachedLogo;
+    const _splashLogoEl = document.getElementById('splash-logo');
+    if (_splashLogoEl) _splashLogoEl.src = _cachedLogo;
     document.querySelectorAll('.login-logo img').forEach(function(img) { img.src = _cachedLogo; });
+  }
+  const _cachedIcon = _cachedAdmin.iconUrl;
+  if (_cachedIcon) {
+    const _hli = document.getElementById('header-logo');
+    if (_hli) { const _hliImg = _hli.querySelector('img'); if (_hliImg) _hliImg.src = _cachedIcon; }
+  }
+  const _cachedCompany = _cachedAdmin.companyName;
+  if (_cachedCompany) {
+    document.title = _cachedCompany;
+    const _brandImg = document.getElementById('header-brand-img');
+    if (_brandImg) _brandImg.alt = _cachedCompany;
   }
 
   // Role UI applied after auth now — see onAuthStateChanged in Firebase block
