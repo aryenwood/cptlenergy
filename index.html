@@ -7485,217 +7485,202 @@
   .trainer-header { text-align:center; margin-bottom:24px; }
   .trainer-header-icon { font-size:48px; margin-bottom:8px; }
 
-  /* v99: AI Brain orb element */
-  .ai-brain-orb {
-    position:relative; width:72px; height:72px; margin:0 auto 12px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .ai-brain-ring {
-    position:absolute; inset:0; border-radius:50%;
-    border:2px solid rgba(26,157,184,0.25);
-    animation:brainPulse 3s ease-in-out infinite;
-  }
-  .ai-brain-ring::before {
-    content:''; position:absolute; inset:-4px; border-radius:50%;
-    border:1px solid rgba(26,157,184,0.10);
-    animation:brainPulse 3s ease-in-out infinite 0.5s;
-  }
-  .ai-brain-core { font-size:36px; position:relative; z-index:1; }
-  @keyframes brainPulse {
-    0%, 100% { transform:scale(1); opacity:0.6; }
-    50% { transform:scale(1.08); opacity:1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .ai-brain-ring, .ai-brain-ring::before { animation:none; }
+  /* ── AI Brain / Trainer — Full Screen Chat UI ─────────────────────────── */
+  #panel-trainer { padding: 0; background: #0d1117; overflow: hidden; }
+  #panel-trainer.active {
+    display: flex !important; flex-direction: column;
+    position: fixed; inset: 0; z-index: 400;
   }
 
-  .trainer-title { font-family:'Outfit',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.02em; color:var(--text); margin:0; }
-  .trainer-subtitle { font-size:13px; color:var(--text-2); margin:8px 0 0; line-height:1.4; }
-
-  /* Mode tabs */
-  .trainer-mode-tabs { display:flex; gap:8px; margin:16px 0 12px; background:var(--g0); border-radius:12px; padding:4px; }
-  .trainer-mode-tab { flex:1; padding:10px 8px; border:none; background:transparent; border-radius:12px; font-size:14px; font-weight:600; color:var(--text-2); cursor:pointer; transition:all 0.2s; font-family:inherit; }
-  .trainer-mode-tab--active { background:var(--amber); color:#fff; box-shadow:0 2px 8px rgba(26,157,184,0.3); }
-
-  /* Live Agent section */
-  .trainer-agent-intro { text-align:center; padding:24px 16px; }
-  .trainer-agent-avatar { font-size:56px; margin-bottom:12px; }
-  .trainer-agent-intro h3 { font-family:'Outfit',sans-serif; font-size:20px; font-weight:700; margin:0 0 8px; color:var(--text); }
-  .trainer-agent-intro p { font-size:14px; color:var(--text-2); line-height:1.5; margin:0 0 16px; }
-  .trainer-agent-start-btn { background:var(--amber); color:#fff; border:none; border-radius:12px; padding:12px 28px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(26,157,184,0.3); transition:transform 0.15s, box-shadow 0.15s; }
-  .trainer-agent-start-btn:active { transform:scale(0.96); }
-  .trainer-agent-topics { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:0 16px 16px; }
-  .trainer-agent-chip { background:var(--g1); border:1px solid var(--g-border); border-radius:24px; padding:8px 14px; font-size:12px; color:var(--text-2); cursor:pointer; transition:all 0.2s; }
-  .trainer-agent-chip:active { background:rgba(26,157,184,0.1); color:var(--amber); }
-
-  .trainer-scenario-grid { display:flex; flex-direction:column; gap:12px; }
-  .trainer-scenario-card {
-    display:flex; align-items:center; gap:14px;
-    background:var(--g1); border:1px solid var(--g-border);
-    border-radius:var(--r-md); padding:16px 18px;
-    cursor:pointer; font-family:inherit; text-align:left;
-    box-shadow:0 2px 8px var(--g-shadow), 0 1px 0 var(--g-shine) inset;
-    transition:transform 0.15s var(--spring), border-color 0.2s, box-shadow 0.2s;
-    -webkit-tap-highlight-color:transparent;
+  /* Top bar */
+  #trainer-topbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; padding-top: max(12px, env(safe-area-inset-top));
+    background: #0d1117; border-bottom: 1px solid rgba(26,157,184,0.15);
+    flex-shrink: 0;
   }
-  .trainer-scenario-card:active { transform:scale(0.97); }
-  .trainer-scenario-card:hover { border-color:var(--g-border-hi); box-shadow:0 4px 16px rgba(26,157,184,0.15), 0 1px 0 var(--g-shine) inset; }
-  .trainer-scenario-emoji { font-size:36px; flex-shrink:0; }
-  .trainer-scenario-info h3 { font-family:'Outfit',sans-serif; font-size:16px; font-weight:700; color:var(--text); margin:0 0 3px; }
-  .trainer-scenario-info p { font-size:13px; color:var(--text-2); margin:0; line-height:1.4; }
-
-  /* Stats summary */
-  .trainer-stats-summary {
-    margin-top:24px; padding:16px 18px;
-    background:var(--g1); border:1px solid var(--g-border); border-radius:var(--r-md);
+  #trainer-back-btn {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .trainer-stats-summary h3 { font-size:15px; font-weight:700; margin:0 0 12px; color:var(--text); }
-  .trainer-stats-row { display:flex; justify-content:space-between; padding:6px 0; font-size:14px; color:var(--text-2); }
-  .trainer-stats-row strong { color:var(--amber); }
+  #trainer-back-btn:active { opacity: 0.6; }
 
-  /* Chat area */
-  .trainer-chat-wrap {
-    display:flex; flex-direction:column;
-    height:calc(100vh - var(--header-h) - var(--nav-h) - var(--safe-bottom) - 24px);
-    position:relative;
+  /* Mode toggle */
+  #trainer-mode-toggle {
+    display: flex; gap: 3px; flex: 1;
+    background: rgba(255,255,255,0.07); border-radius: 10px; padding: 3px;
+  }
+  .trainer-mode-btn {
+    flex: 1; background: none; border: none;
+    color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 700;
+    cursor: pointer; padding: 7px 8px; border-radius: 8px;
+    transition: all 0.2s; font-family: inherit; letter-spacing: 0.02em;
+  }
+  .trainer-mode-btn.active { background: rgba(26,157,184,0.22); color: #20d8ec; }
+
+  /* Persona button */
+  #trainer-persona-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(26,157,184,0.1); border: 1px solid rgba(26,157,184,0.3);
+    border-radius: 20px; color: #20d8ec; font-size: 12px; font-weight: 700;
+    cursor: pointer; padding: 6px 11px; white-space: nowrap; flex-shrink: 0; max-width: 130px;
+  }
+  #trainer-persona-btn .tpb-emoji { font-size: 15px; }
+  #trainer-persona-btn .tpb-name { overflow: hidden; text-overflow: ellipsis; }
+  #trainer-persona-btn .tpb-chevron { font-size: 9px; opacity: 0.6; }
+
+  /* Messages area */
+  #trainer-messages {
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 16px 14px 8px; display: flex; flex-direction: column;
+    gap: 12px; min-height: 0;
   }
 
-  .trainer-chat-header {
-    display:flex; align-items:center; gap:12px;
-    padding:12px 16px; flex-shrink:0;
-    background:var(--g1); border-bottom:1px solid var(--g-border);
-  }
-  .trainer-back-btn {
-    width:32px; height:32px; border-radius:8px;
-    background:var(--g2); border:1px solid var(--g-border);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; color:var(--text-2);
-    transition:background 0.15s, transform 0.12s var(--spring);
-  }
-  .trainer-back-btn:active { transform:scale(0.88); background:var(--g3); }
-  .trainer-back-btn svg { stroke:var(--text-2); }
-  .trainer-chat-persona { display:flex; align-items:center; gap:8px; flex:1; }
-  .trainer-chat-persona span:first-child { font-size:22px; }
-  .trainer-chat-persona span:last-child { font-size:15px; font-weight:700; color:var(--text); }
-  .trainer-warmth-indicator { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
-  .trainer-warmth-bar { width:60px; height:6px; background:var(--g2); border-radius:3px; overflow:hidden; }
-  .trainer-warmth-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#3b82f6,#22c55e,#f59e0b); transition:width 0.6s var(--ease-out); }
-  .trainer-warmth-label { font-size:10px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.04em; }
-
-  /* Messages */
-  .trainer-messages {
-    flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
-    padding:16px 14px 8px; display:flex; flex-direction:column; gap:12px;
-  }
-
+  /* Message bubbles */
   .trainer-msg {
-    max-width:82%; padding:11px 15px; border-radius:16px;
-    font-size:14px; line-height:1.55; word-wrap:break-word;
-    animation:trainerBubbleIn 0.28s var(--ease-out) both;
+    display: flex; flex-direction: column; max-width: 82%;
+    animation: trainerBubbleIn 0.25s ease-out both;
   }
-  .trainer-msg--bot {
-    align-self:flex-start;
-    background:var(--g1); border:1px solid var(--g-border);
-    color:var(--text); border-bottom-left-radius:4px;
-  }
-  .trainer-msg--user {
-    align-self:flex-end;
-    background:linear-gradient(135deg,var(--amber) 0%,var(--amber-bright) 100%);
-    color:#fff; border-bottom-right-radius:4px;
-    box-shadow:0 2px 10px rgba(26,157,184,0.25);
-  }
-  .trainer-msg--system {
-    align-self:center; max-width:90%;
-    font-size:12px; color:var(--text-3); font-style:italic; text-align:center;
-    padding:8px 14px; background:transparent;
-  }
-  .trainer-msg-time { font-size:10px; opacity:0.6; margin-top:4px; display:block; }
+  .trainer-msg--user  { align-self: flex-end;  align-items: flex-end; }
+  .trainer-msg--bot   { align-self: flex-start; align-items: flex-start; }
+  .trainer-msg--system { align-self: center; max-width: 92%; }
 
-  @keyframes trainerBubbleIn {
-    from { opacity:0; transform:translateY(10px) scale(0.92); }
-    to   { opacity:1; transform:translateY(0) scale(1); }
+  .trainer-bubble {
+    padding: 11px 15px; border-radius: 18px;
+    font-size: 14px; line-height: 1.55; word-wrap: break-word;
   }
+  .trainer-msg--user .trainer-bubble {
+    background: linear-gradient(135deg, #1a9db8 0%, #20d8ec 100%);
+    color: #fff; border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 10px rgba(26,157,184,0.3);
+  }
+  .trainer-msg--bot .trainer-bubble {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.09);
+    color: rgba(255,255,255,0.9); border-bottom-left-radius: 4px;
+  }
+  .trainer-msg--system .trainer-bubble {
+    background: rgba(26,157,184,0.08); border: 1px solid rgba(26,157,184,0.18);
+    color: rgba(255,255,255,0.45); font-size: 12px; font-style: italic;
+    text-align: center; border-radius: 10px;
+  }
+
+  /* AI avatar header */
+  .trainer-ai-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .trainer-ai-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(26,157,184,0.15); border: 1px solid rgba(26,157,184,0.25);
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .trainer-ai-name {
+    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+
+  /* Timestamps */
+  .trainer-msg-time {
+    font-size: 10px; color: rgba(255,255,255,0.22); margin-top: 3px;
+    padding: 0 4px; opacity: 0; transition: opacity 0.2s;
+  }
+  .trainer-msg:hover .trainer-msg-time { opacity: 1; }
 
   /* Typing indicator */
-  .trainer-typing { display:flex; gap:4px; padding:11px 15px; }
+  .trainer-typing-bubble {
+    display: flex; gap: 5px; padding: 13px 16px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 18px; border-bottom-left-radius: 4px;
+  }
   .trainer-typing-dot {
-    width:7px; height:7px; border-radius:50%;
-    background:var(--text-3); animation:trainerTypingBounce 1.4s ease-in-out infinite;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    animation: trainerDotPulse 1.4s infinite ease-in-out both;
   }
-  .trainer-typing-dot:nth-child(2) { animation-delay:0.16s; }
-  .trainer-typing-dot:nth-child(3) { animation-delay:0.32s; }
-  @keyframes trainerTypingBounce {
-    0%,60%,100% { transform:translateY(0); opacity:0.4; }
-    30% { transform:translateY(-6px); opacity:1; }
+  .trainer-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .trainer-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes trainerDotPulse {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes trainerBubbleIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Hint banner */
-  .trainer-hint-banner {
-    padding:10px 14px; margin:0 14px 6px;
-    background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25);
-    border-radius:var(--r-sm); display:flex; align-items:flex-start; gap:8px;
-    animation:trainerBubbleIn 0.25s var(--ease-out);
+  /* Input bar */
+  #trainer-input-bar {
+    display: flex; align-items: flex-end; gap: 8px;
+    padding: 10px 14px; padding-bottom: max(14px, env(safe-area-inset-bottom));
+    background: rgba(13,17,23,0.97);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(26,157,184,0.15); flex-shrink: 0;
   }
-  .trainer-hint-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
-  .trainer-hint-text { font-size:13px; color:var(--text); line-height:1.5; flex:1; }
-  .trainer-hint-close { background:none; border:none; cursor:pointer; font-size:14px; color:var(--text-3); padding:0 2px; }
+  #trainer-mic-btn {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.6); font-size: 17px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  #trainer-mic-btn.recording {
+    background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.5);
+    color: #ef4444; animation: pulse-dictate 1.2s ease infinite;
+  }
+  #trainer-input {
+    flex: 1; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px; color: #fff; font-size: 15px; font-family: inherit;
+    padding: 10px 16px; outline: none; resize: none;
+    max-height: 100px; min-height: 42px; line-height: 1.4; transition: border-color 0.18s;
+  }
+  #trainer-input:focus { border-color: rgba(26,157,184,0.5); }
+  #trainer-input::placeholder { color: rgba(255,255,255,0.28); }
+  #trainer-send-btn {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #1a9db8 0%, #20d8ec 100%);
+    border: none; color: #fff; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 12px rgba(26,157,184,0.4); transition: transform 0.12s, box-shadow 0.15s;
+  }
+  #trainer-send-btn:active { transform: scale(0.88); box-shadow: none; }
 
-  /* Input area */
-  .trainer-input-area {
-    flex-shrink:0; padding:8px 16px 4px;
-    background:var(--g1); border-top:1px solid var(--g-border);
-    backdrop-filter:var(--blur-md); -webkit-backdrop-filter:var(--blur-md);
+  /* Persona bottom sheet */
+  #trainer-persona-sheet {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px); align-items: flex-end; display: none;
   }
-  .trainer-controls-row { display:flex; gap:8px; margin-bottom:8px; justify-content:center; }
-  .trainer-control-pill {
-    padding:6px 14px; border-radius:50px; font-size:12px; font-weight:600;
-    border:1px solid var(--g-border); background:var(--g2); color:var(--text-2);
-    cursor:pointer; font-family:inherit; transition:background 0.15s, border-color 0.15s, color 0.15s;
-    -webkit-tap-highlight-color:transparent;
+  #trainer-persona-sheet.open { display: flex; }
+  #trainer-persona-sheet-inner {
+    width: 100%; background: #161b22;
+    border-radius: 20px 20px 0 0; border-top: 1px solid rgba(26,157,184,0.25);
+    max-height: 80vh; overflow-y: auto;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    animation: sheetUp 0.28s ease-out both;
   }
-  .trainer-control-pill:active { transform:scale(0.95); }
-  .trainer-control-pill.active { background:rgba(26,157,184,0.14); border-color:rgba(26,157,184,0.32); color:var(--amber); }
-
-  .trainer-input-bar { display:flex; align-items:flex-end; gap:8px; }
-  .trainer-mic-btn {
-    width:40px; height:40px; border-radius:50%; flex-shrink:0;
-    background:var(--g2); border:1.5px solid var(--g-border);
-    display:flex; align-items:center; justify-content:center; cursor:pointer;
-    transition:all 0.2s; -webkit-tap-highlight-color:transparent;
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .tps-header {
+    padding: 18px 20px 14px; font-size: 16px; font-weight: 700; color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.07); letter-spacing: -0.01em;
   }
-  .trainer-mic-btn svg { stroke:var(--text-2); }
-  .trainer-mic-btn:active { transform:scale(0.9); }
-  .trainer-mic-btn.recording {
-    background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.5);
-    animation:pulse-dictate 1.2s ease infinite;
+  .tps-item {
+    width: 100%; display: flex; align-items: center; gap: 14px;
+    padding: 14px 20px; background: none; border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer; text-align: left; transition: background 0.15s;
   }
-  .trainer-mic-btn.recording svg { stroke:#ef4444; }
-
-  .trainer-input {
-    flex:1; background:var(--g2); border:1px solid var(--g-border);
-    border-radius:24px; padding:8px 16px; font-size:14px;
-    font-family:inherit; color:var(--text); resize:none;
-    max-height:80px; min-height:40px; line-height:1.4;
-    transition:border-color 0.18s; outline:none;
+  .tps-item:active, .tps-item.active { background: rgba(26,157,184,0.08); }
+  .tps-emoji {
+    font-size: 24px; width: 44px; height: 44px;
+    background: rgba(26,157,184,0.1); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .trainer-input:focus { border-color:rgba(26,157,184,0.5); }
-  .trainer-input::placeholder { color:var(--text-3); }
-
-  .trainer-send-btn {
-    width:40px; height:40px; border-radius:50%; flex-shrink:0;
-    background:linear-gradient(135deg,var(--amber) 0%,var(--amber-bright) 100%);
-    border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;
-    box-shadow:0 2px 12px rgba(26,157,184,0.35);
-    transition:transform 0.12s var(--spring), box-shadow 0.15s;
-    -webkit-tap-highlight-color:transparent;
+  .tps-info { flex: 1; }
+  .tps-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .tps-desc { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.3; }
+  #tps-random-btn {
+    width: 100%; padding: 16px 20px; background: none; border: none;
+    border-top: 1px solid rgba(26,157,184,0.18); color: #20d8ec;
+    font-size: 15px; font-weight: 700; cursor: pointer; text-align: left;
   }
-  .trainer-send-btn:active { transform:scale(0.88); box-shadow:0 1px 6px rgba(26,157,184,0.15); }
-
-  /* Dark mode overrides */
-  html.dark-mode .trainer-scenario-card:hover { box-shadow:0 4px 20px rgba(26,157,184,0.12), 0 1px 0 rgba(26,157,184,0.04) inset; }
-  html.dark-mode .trainer-msg--user { box-shadow:0 2px 14px rgba(26,157,184,0.2); }
-  html.dark-mode .trainer-hint-banner { background:rgba(245,158,11,0.08); border-color:rgba(245,158,11,0.2); }
-  html.dark-mode .trainer-mic-btn.recording { background:rgba(239,68,68,0.12); }
 
   /* ── Login Screen ───────────────────────────────────────────────────────── */
   #login-screen, #invite-gate-screen {
@@ -9930,155 +9915,93 @@
     </section>
 
     <!-- ── v94: Sales Trainer Panel ──────────────────────────────────────── -->
-    <section id="panel-trainer" class="tab-panel" role="tabpanel" aria-label="Sales Trainer">
+    <section id="panel-trainer" class="tab-panel" role="tabpanel" aria-label="AI Brain">
 
-      <!-- Scenario selector (shown before chat starts) -->
-      <div id="trainer-scenarios" class="trainer-scenarios-wrap">
-        <div class="trainer-header">
-          <!-- v99: AI Brain custom element -->
-          <div class="ai-brain-orb" id="ai-brain-orb">
-            <div class="ai-brain-ring"></div>
-            <div class="ai-brain-core">🧠</div>
-          </div>
-          <h2 class="trainer-title">AI Sales Brain</h2>
-          <p class="trainer-subtitle">Your personal AI coach — roleplay scenarios or ask anything</p>
+      <!-- Fixed top bar -->
+      <div id="trainer-topbar">
+        <button id="trainer-back-btn" onclick="TrainerBot.exitToNav()" aria-label="Exit trainer">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div id="trainer-mode-toggle">
+          <button class="trainer-mode-btn" data-mode="roleplay" onclick="TrainerBot.switchMode('roleplay')">🎭 Roleplay</button>
+          <button class="trainer-mode-btn active" data-mode="agent" onclick="TrainerBot.switchMode('agent')">🧠 Ask AI</button>
         </div>
-
-        <!-- Mode tabs: Roleplay vs Live Agent -->
-        <div class="trainer-mode-tabs">
-          <button class="trainer-mode-tab trainer-mode-tab--active" id="trainer-mode-roleplay" onclick="TrainerBot.switchMode('roleplay')">
-            🎭 Roleplay
-          </button>
-          <button class="trainer-mode-tab" id="trainer-mode-agent" onclick="TrainerBot.switchMode('agent')">
-            🧠 Ask AI
-          </button>
-        </div>
-
-        <!-- Roleplay scenarios -->
-        <div id="trainer-roleplay-section">
-          <div class="trainer-scenario-grid">
-            <button class="trainer-scenario-card" data-scenario="skeptical" onclick="TrainerBot.startScenario('skeptical')">
-              <div class="trainer-scenario-emoji">🤨</div>
-              <div class="trainer-scenario-info">
-                <h3>The Skeptic</h3>
-                <p>Doubts savings claims, worried about scams</p>
-              </div>
-            </button>
-            <button class="trainer-scenario-card" data-scenario="budget" onclick="TrainerBot.startScenario('budget')">
-              <div class="trainer-scenario-emoji">💰</div>
-              <div class="trainer-scenario-info">
-                <h3>Budget-Conscious</h3>
-                <p>Interested but fixated on upfront cost</p>
-              </div>
-            </button>
-            <button class="trainer-scenario-card" data-scenario="researcher" onclick="TrainerBot.startScenario('researcher')">
-              <div class="trainer-scenario-emoji">🔍</div>
-              <div class="trainer-scenario-info">
-                <h3>The Researcher</h3>
-                <p>Knows some facts, asks technical questions</p>
-              </div>
-            </button>
-            <button class="trainer-scenario-card" data-scenario="spouse" onclick="TrainerBot.startScenario('spouse')">
-              <div class="trainer-scenario-emoji">👫</div>
-              <div class="trainer-scenario-info">
-                <h3>Need to Ask Spouse</h3>
-                <p>Interested but won't commit without partner</p>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Live Agent section — AI Brain -->
-        <div id="trainer-agent-section" style="display:none;">
-          <div class="trainer-agent-intro">
-            <div class="trainer-agent-avatar">🧠</div>
-            <h3>AI Sales Brain</h3>
-            <p>Objection handling, NEPQ techniques, closing strategies, door openers — ask me anything about solar sales.</p>
-            <button class="trainer-agent-start-btn" onclick="TrainerBot.startAgent()">Start Conversation</button>
-          </div>
-          <div class="trainer-agent-topics">
-            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('How do I handle the \"I need to talk to my spouse\" objection?')">Spouse objection</span>
-            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('What is the NEPQ method and how do I use it at the door?')">NEPQ basics</span>
-            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('How do I create urgency without being pushy?')">Creating urgency</span>
-            <span class="trainer-agent-chip" onclick="TrainerBot.startAgentWith('What should I say in the first 30 seconds at the door?')">Door opener</span>
-          </div>
-        </div>
-
-        <div class="trainer-stats-summary" id="trainer-stats-summary" style="display:none">
-          <h3>📊 Your Training Stats</h3>
-          <div class="trainer-stats-row">
-            <span>Sessions completed</span>
-            <strong id="trainer-stat-sessions">0</strong>
-          </div>
-          <div class="trainer-stats-row">
-            <span>Topics mastered</span>
-            <strong id="trainer-stat-topics">0</strong>
-          </div>
-        </div>
+        <button id="trainer-persona-btn" onclick="TrainerBot.openPersonaSheet()">
+          <span id="trainer-persona-emoji" class="tpb-emoji">🧠</span>
+          <span id="trainer-persona-name" class="tpb-name">AI Coach</span>
+          <span class="tpb-chevron">▾</span>
+        </button>
       </div>
 
-      <!-- Chat area (hidden until scenario starts) -->
-      <div id="trainer-chat" class="trainer-chat-wrap" style="display:none;">
-        <div class="trainer-chat-header">
-          <button class="trainer-back-btn" onclick="TrainerBot.reset()" aria-label="Back to scenarios">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <div class="trainer-chat-persona">
-            <span id="trainer-persona-emoji">🤨</span>
-            <span id="trainer-persona-name">The Skeptic</span>
-          </div>
-          <div class="trainer-warmth-indicator">
-            <div class="trainer-warmth-bar">
-              <div class="trainer-warmth-fill" id="trainer-warmth-fill" style="width:0%"></div>
-            </div>
-            <span class="trainer-warmth-label" id="trainer-warmth-label">Cold</span>
-          </div>
-        </div>
+      <!-- Messages -->
+      <div id="trainer-messages"></div>
 
-        <div id="trainer-messages" class="trainer-messages"></div>
-
-        <!-- Hint banner (hidden by default) -->
-        <div id="trainer-hint-banner" class="trainer-hint-banner" style="display:none;">
-          <span class="trainer-hint-icon">💡</span>
-          <span id="trainer-hint-text" class="trainer-hint-text"></span>
-          <button class="trainer-hint-close" onclick="document.getElementById('trainer-hint-banner').style.display='none'">✕</button>
-        </div>
-
-        <div class="trainer-input-area">
-          <div class="trainer-controls-row">
-            <button id="trainer-speaker-btn" class="trainer-control-pill" onclick="TrainerBot.toggleSpeaker()">
-              <span id="trainer-speaker-icon">🔇</span> <span id="trainer-speaker-label">Voice Off</span>
-            </button>
-            <button id="trainer-hint-btn" class="trainer-control-pill" onclick="TrainerBot.showHint()">
-              💡 Hint
-            </button>
-            <button id="trainer-reset-btn" class="trainer-control-pill" onclick="TrainerBot.reset()">
-              🔄 New
-            </button>
-          </div>
-          <div class="trainer-input-bar">
-            <button id="trainer-mic-btn" class="trainer-mic-btn" onclick="TrainerBot.toggleMic()" aria-label="Voice input">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8" y1="23" x2="16" y2="23"/>
-              </svg>
-            </button>
-            <textarea id="trainer-input" class="trainer-input" placeholder="Type your pitch..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();TrainerBot.sendMessage();}"></textarea>
-            <button id="trainer-send-btn" class="trainer-send-btn" onclick="TrainerBot.sendMessage()" aria-label="Send">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
-            </button>
-          </div>
-        </div>
+      <!-- Input bar -->
+      <div id="trainer-input-bar">
+        <button id="trainer-mic-btn" onclick="TrainerBot.toggleMic()" aria-label="Voice input">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <textarea id="trainer-input" placeholder="Ask your coach anything..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();TrainerBot.sendMessage();}"></textarea>
+        <button id="trainer-send-btn" onclick="TrainerBot.sendMessage()" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
       </div>
 
     </section>
 
   </main>
+
+  <!-- ── AI Brain persona sheet ─────────────────────────────────────────── -->
+  <div id="trainer-persona-sheet" onclick="TrainerBot.closePersonaSheet()">
+    <div id="trainer-persona-sheet-inner" onclick="event.stopPropagation()">
+      <div class="tps-header">Choose Persona</div>
+      <button class="tps-item" data-persona="skeptical" onclick="TrainerBot.selectPersona('skeptical')">
+        <div class="tps-emoji">🤨</div>
+        <div class="tps-info">
+          <div class="tps-name">The Skeptic</div>
+          <div class="tps-desc">Thinks solar is a scam. Hard wall to break through.</div>
+        </div>
+      </button>
+      <button class="tps-item" data-persona="budget" onclick="TrainerBot.selectPersona('budget')">
+        <div class="tps-emoji">💰</div>
+        <div class="tps-info">
+          <div class="tps-name">Budget-Conscious</div>
+          <div class="tps-desc">Interested but fixated on upfront cost.</div>
+        </div>
+      </button>
+      <button class="tps-item" data-persona="researcher" onclick="TrainerBot.selectPersona('researcher')">
+        <div class="tps-emoji">🔍</div>
+        <div class="tps-info">
+          <div class="tps-name">The Researcher</div>
+          <div class="tps-desc">Read everything online. Asks technical questions.</div>
+        </div>
+      </button>
+      <button class="tps-item" data-persona="spouse" onclick="TrainerBot.selectPersona('spouse')">
+        <div class="tps-emoji">👫</div>
+        <div class="tps-info">
+          <div class="tps-name">Need to Ask Spouse</div>
+          <div class="tps-desc">Warm but won't decide without partner.</div>
+        </div>
+      </button>
+      <button class="tps-item" data-persona="friendly" onclick="TrainerBot.selectPersona('friendly')">
+        <div class="tps-emoji">😊</div>
+        <div class="tps-info">
+          <div class="tps-name">The Friendly Listener</div>
+          <div class="tps-desc">Polite and curious, but hard to nail down a commitment.</div>
+        </div>
+      </button>
+      <button id="tps-random-btn" onclick="TrainerBot.randomizePersona()">🎲 Randomize Opponent</button>
+    </div>
+  </div>
 
   <!-- ── Bottom navigation (v94: 3+3 symmetry) ──────────────────────────── -->
   <nav id="bottom-nav" role="navigation" aria-label="Main navigation">
@@ -12512,35 +12435,84 @@ function applyImpersonateBanner() {
 
 // ── v94→v95: Sales Trainer Bot Engine (context-aware rebuild) ─────────────
 const TrainerBot = {
-  // ── Scenario personas ──────────────────────────────────────
+  // ── Scenario personas with multiple openers ─────────────────────────────
   scenarios: {
     skeptical: {
       name: 'The Skeptic', emoji: '🤨',
-      greeting: "Yeah? What do you want? If you're selling something, I've heard it all before.",
       personality: 'Distrustful, arms-crossed, references bad experiences.',
+      openers: [
+        "Yeah? What do you want? If you're selling something, I've heard it all before.",
+        "Solar? My neighbor did that and said it was a total nightmare. I'm not interested.",
+        "Look, I don't have time for this. Whatever you're selling, I'm not buying.",
+        "I already told the last solar guy no. What makes you different?",
+        "I've seen those ads — is this one of those door-to-door scam things?",
+        "How did you even get in this neighborhood? We have a no-soliciting sign.",
+        "Let me stop you right there — I've done my research and solar doesn't make sense for me.",
+        "You've got 30 seconds. Go."
+      ],
       topicBias: ['scam','savings','neighbor'],
-      resistanceBase: 8 // out of 10 — how hard to convince
+      resistanceBase: 8
     },
     budget: {
       name: 'Budget-Conscious', emoji: '💰',
-      greeting: "Look, I already know about solar. My electric bill is killing me, but I just don't see how I can afford panels right now.",
       personality: 'Interested but money-focused. Responds well to payment comparisons.',
+      openers: [
+        "Look, I already know about solar. My electric bill is killing me, but I just don't see how I can afford panels right now.",
+        "Solar sounds great in theory, but I've got a mortgage, car payment... I can't take on more debt.",
+        "I'm interested, I really am, but every quote I've gotten has been way over what I can afford.",
+        "What's the catch? Every time I talk to a solar person they make it sound free but then there's always something.",
+        "How much does it actually cost? I need a real number, not 'it depends.'",
+        "I've been thinking about solar but my credit isn't great. Is that going to be a problem?",
+        "I've heard you can save money but I've also heard people's bills went UP after solar. True?"
+      ],
       topicBias: ['cost','lease_vs_buy','savings'],
       resistanceBase: 5
     },
     researcher: {
       name: 'The Researcher', emoji: '🔍',
-      greeting: "I've been looking into solar actually. I've read that panel efficiency varies a lot depending on the brand. What are you guys installing?",
       personality: 'Informed, asks technical follow-ups. Respects knowledge.',
+      openers: [
+        "I've been looking into solar actually. I've read that panel efficiency varies a lot depending on the brand. What are you guys installing?",
+        "I've spent about 40 hours researching this. Convince me you know more than I do.",
+        "What's your panel degradation rate? I've seen everything from 0.3% to 0.8% per year.",
+        "I looked up your company. Can you tell me about your installer certifications?",
+        "I've been comparing microinverters versus string inverters. What does your company use and why?",
+        "I read that net metering policies are changing. How does that affect your ROI projections?",
+        "What panel brands are you offering? I've been comparing LG, REC, and SunPower.",
+        "I pulled up my last 12 months of electricity bills. I've got the averages right here."
+      ],
       topicBias: ['roof','warranty','grid','timeline'],
       resistanceBase: 4
     },
     spouse: {
       name: 'Need to Ask Spouse', emoji: '👫',
-      greeting: "Oh solar? Yeah, my wife and I have actually talked about it. She's not home right now though — I can't really make any decisions without her.",
       personality: 'Warm but deflects to absent partner.',
+      openers: [
+        "Oh solar? Yeah, my wife and I have actually talked about it. She's not home right now though — I can't really make any decisions without her.",
+        "That's interesting. My husband handles all the finances — I wouldn't feel right agreeing to anything without him.",
+        "We've been going back and forth on solar for about a year. My wife's more interested than I am, but she's at work.",
+        "I'd love to hear more but honestly my wife would kill me if I signed anything without her.",
+        "We actually had another solar company come by last month. My wife wasn't impressed. What makes you different?",
+        "Honestly the timing isn't great — we're in the middle of refinancing. Can you come back?",
+        "My husband's been saying we should look into it. He'd probably want to hear this too."
+      ],
       topicBias: ['spouse','cost','timeline'],
       resistanceBase: 6
+    },
+    friendly: {
+      name: 'Friendly Listener', emoji: '😊',
+      personality: 'Polite, warm, asks questions but resists commitment.',
+      openers: [
+        "Oh solar! My neighbor just got it done. Come on in out of the heat — tell me about it.",
+        "I've been curious about solar for years, honestly. What's your pitch?",
+        "You caught me at a good time! I was just looking at my electric bill and wincing. Tell me more.",
+        "Hey! I actually just emailed a solar company last week. What do you guys offer?",
+        "Yeah, I'm always open to hearing about ways to save money. What do you have?",
+        "We've thought about it. I mean, we're eventually going to do it, right? Tell me why now.",
+        "Sure, I've got a few minutes. My brother-in-law got solar and loves it."
+      ],
+      topicBias: ['savings','timeline','moving'],
+      resistanceBase: 3
     }
   },
 
@@ -12826,11 +12798,11 @@ const TrainerBot = {
 
   // ── State ──────────────────────────────────────────────────────────────
   state: {
-    mode: 'roleplay', // 'roleplay' or 'agent'
+    mode: 'agent',
     scenario: null,
-    conversationHistory: [], // tracks full flow {role, text, topic}
-    currentObjectionTopic: null, // what the homeowner last asked about
-    awaitingAnswer: false, // homeowner asked something, waiting for rep's answer
+    conversationHistory: [],
+    currentObjectionTopic: null,
+    awaitingAnswer: false,
     messageCount: 0,
     warmthLevel: 0,
     usedObjections: new Set(),
@@ -12838,10 +12810,26 @@ const TrainerBot = {
     speakerOn: false,
     micActive: false,
     recognizer: null,
-    sessionsCompleted: 0,
     scoreGood: 0,
     scoreWeak: 0,
-    selectedVoice: null
+    selectedVoice: null,
+    initialized: false
+  },
+
+  // ── Init ────────────────────────────────────────────────────────────────
+  _renderStats: function() { this.initIfNeeded(); },
+
+  initIfNeeded: function() {
+    if (this.state.initialized) return;
+    this.state.initialized = true;
+    this.startAgent();
+    var input = document.getElementById('trainer-input');
+    if (input) {
+      input.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+      });
+    }
   },
 
   // ── Topic detection ────────────────────────────────────────────────────
@@ -13018,7 +13006,6 @@ const TrainerBot = {
 
     // Track
     this.state.conversationHistory.push({ role: 'bot', text: response, topic: responseTopic });
-    this._updateWarmthUI();
 
     return { text: response, topic: responseTopic };
   },
@@ -13092,43 +13079,59 @@ const TrainerBot = {
     return bestMatch;
   },
 
-  // ── UI Helpers ─────────────────────────────────────────────────────────
-  _updateWarmthUI: function() {
-    var fill = document.getElementById('trainer-warmth-fill');
-    var label = document.getElementById('trainer-warmth-label');
-    if (!fill || !label) return;
-    var pct = [0, 30, 60, 100][this.state.warmthLevel] || 0;
-    var names = ['Cold', 'Lukewarm', 'Warming Up', 'Interested!'];
-    fill.style.width = pct + '%';
-    label.textContent = names[this.state.warmthLevel] || 'Cold';
+  // ── UI Helpers ──────────────────────────────────────────────────────────
+  _setPersonaDisplay: function(emoji, name) {
+    var emojiEl = document.getElementById('trainer-persona-emoji');
+    var nameEl  = document.getElementById('trainer-persona-name');
+    if (emojiEl) emojiEl.textContent = emoji;
+    if (nameEl)  nameEl.textContent  = name;
   },
 
-  _addMessage: function(text, type) {
+  _addMessage: function(text, type, personaId) {
     var container = document.getElementById('trainer-messages');
     if (!container) return;
-    var div = document.createElement('div');
-    div.className = 'trainer-msg trainer-msg--' + type;
-    div.textContent = text;
-    div.style.opacity = '0';
-    container.appendChild(div);
-    // SvelteMotionKit: fly + fade each message in
-    if (typeof SMK !== 'undefined' && !SMK.reducedMotion()) {
-      var flyX = type === 'user' ? 20 : -20;
-      SMK.animateIn(div, SMK.fly, { x: flyX, y: 8, duration: 350 });
-    } else {
-      div.style.opacity = '1';
+    var wrap = document.createElement('div');
+    wrap.className = 'trainer-msg trainer-msg--' + type;
+    if (type === 'bot') {
+      var sc    = personaId ? this.scenarios[personaId] : null;
+      var emoji = sc ? sc.emoji : '🧠';
+      var name  = sc ? sc.name  : 'Sales Coach';
+      var hdr   = document.createElement('div');
+      hdr.className = 'trainer-ai-header';
+      hdr.innerHTML = '<div class="trainer-ai-avatar">' + emoji + '</div>' +
+                      '<div class="trainer-ai-name">'   + name  + '</div>';
+      wrap.appendChild(hdr);
     }
+    var bubble = document.createElement('div');
+    bubble.className = 'trainer-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    var time = document.createElement('div');
+    time.className = 'trainer-msg-time';
+    var now = new Date();
+    time.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    wrap.appendChild(time);
+    container.appendChild(wrap);
     container.scrollTop = container.scrollHeight;
   },
 
   _addTypingIndicator: function() {
     var container = document.getElementById('trainer-messages');
     if (!container) return;
-    var div = document.createElement('div');
-    div.className = 'trainer-msg trainer-msg--bot trainer-typing';
-    div.id = 'trainer-typing';
-    div.innerHTML = '<div class="trainer-typing-dot"></div><div class="trainer-typing-dot"></div><div class="trainer-typing-dot"></div>';
-    container.appendChild(div);
+    var sc    = this.state.scenario ? this.scenarios[this.state.scenario] : null;
+    var emoji = sc ? sc.emoji : '🧠';
+    var wrap  = document.createElement('div');
+    wrap.className = 'trainer-msg trainer-msg--bot';
+    wrap.id = 'trainer-typing';
+    var hdr = document.createElement('div');
+    hdr.className = 'trainer-ai-header';
+    hdr.innerHTML = '<div class="trainer-ai-avatar">' + emoji + '</div>';
+    var bbl = document.createElement('div');
+    bbl.className = 'trainer-typing-bubble';
+    bbl.innerHTML = '<div class="trainer-typing-dot"></div><div class="trainer-typing-dot"></div><div class="trainer-typing-dot"></div>';
+    wrap.appendChild(hdr);
+    wrap.appendChild(bbl);
+    container.appendChild(wrap);
     container.scrollTop = container.scrollHeight;
   },
 
@@ -13137,73 +13140,84 @@ const TrainerBot = {
     if (el) el.remove();
   },
 
-  // ── Mode switching ────────────────────────────────────────────────────
-  switchMode: function(mode) {
-    this.state.mode = mode;
-    var roleBtn = document.getElementById('trainer-mode-roleplay');
-    var agentBtn = document.getElementById('trainer-mode-agent');
-    var roleSec = document.getElementById('trainer-roleplay-section');
-    var agentSec = document.getElementById('trainer-agent-section');
-    if (mode === 'agent') {
-      if (roleBtn) roleBtn.classList.remove('trainer-mode-tab--active');
-      if (agentBtn) agentBtn.classList.add('trainer-mode-tab--active');
-      if (roleSec) roleSec.style.display = 'none';
-      if (agentSec) agentSec.style.display = '';
-    } else {
-      if (roleBtn) roleBtn.classList.add('trainer-mode-tab--active');
-      if (agentBtn) agentBtn.classList.remove('trainer-mode-tab--active');
-      if (roleSec) roleSec.style.display = '';
-      if (agentSec) agentSec.style.display = 'none';
+  // ── Persona sheet ────────────────────────────────────────────────────────
+  openPersonaSheet: function() {
+    var sheet = document.getElementById('trainer-persona-sheet');
+    if (sheet) sheet.classList.add('open');
+    document.querySelectorAll('.tps-item').forEach(function(item) { item.classList.remove('active'); });
+    if (this.state.scenario) {
+      var active = document.querySelector('.tps-item[data-persona="' + this.state.scenario + '"]');
+      if (active) active.classList.add('active');
     }
   },
 
-  // ── Start Live Agent ──────────────────────────────────────────────────
+  closePersonaSheet: function() {
+    var sheet = document.getElementById('trainer-persona-sheet');
+    if (sheet) sheet.classList.remove('open');
+  },
+
+  selectPersona: function(personaId) {
+    this.closePersonaSheet();
+    this.state.mode = 'roleplay';
+    document.querySelectorAll('.trainer-mode-btn').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.querySelector('.trainer-mode-btn[data-mode="roleplay"]');
+    if (btn) btn.classList.add('active');
+    this.startScenario(personaId);
+  },
+
+  randomizePersona: function() {
+    var all     = Object.keys(this.scenarios);
+    var choices = all.filter(function(p) { return p !== TrainerBot.state.scenario; });
+    this.selectPersona(choices[Math.floor(Math.random() * choices.length)]);
+  },
+
+  // ── Mode switching ───────────────────────────────────────────────────────
+  switchMode: function(mode) {
+    if (mode === this.state.mode && this.state.conversationHistory.length > 0) return;
+    this.state.mode = mode;
+    document.querySelectorAll('.trainer-mode-btn').forEach(function(b) { b.classList.remove('active'); });
+    var activeBtn = document.querySelector('.trainer-mode-btn[data-mode="' + mode + '"]');
+    if (activeBtn) activeBtn.classList.add('active');
+    if (mode === 'agent') {
+      this.startAgent();
+    } else {
+      if (this.state.scenario) { this.startScenario(this.state.scenario); }
+      else { this.openPersonaSheet(); }
+    }
+  },
+
+  // ── Start modes ──────────────────────────────────────────────────────────
   startAgent: function() {
     this.state.mode = 'agent';
     this.state.scenario = null;
     this.state.conversationHistory = [];
     this.state.messageCount = 0;
-
-    document.getElementById('trainer-scenarios').style.display = 'none';
-    document.getElementById('trainer-chat').style.display = 'flex';
-
-    var peEl = document.getElementById('trainer-persona-emoji');
-    var pnEl = document.getElementById('trainer-persona-name');
-    if (peEl) peEl.textContent = '🧠';
-    if (pnEl) pnEl.textContent = 'Sales Coach';
-
-    // Hide warmth bar in agent mode (not relevant)
-    var warmth = document.querySelector('.trainer-warmth-indicator');
-    if (warmth) warmth.style.display = 'none';
-
+    this._setPersonaDisplay('🧠', 'AI Coach');
     var container = document.getElementById('trainer-messages');
     if (container) container.innerHTML = '';
-
-    var greeting = "Hey! I'm your AI sales coach. Ask me anything about solar sales — objection handling, NEPQ techniques, door openers, closing strategies, or how to handle specific situations you've run into. What's on your mind?";
+    var greeting = "Hey! I'm your AI sales coach. Ask me anything about solar sales — objection handling, NEPQ techniques, door openers, closing strategies, or specific situations you've run into. What's on your mind?";
     this._addMessage(greeting, 'bot');
     this.state.conversationHistory.push({ role: 'bot', text: greeting, topic: 'greeting' });
-
     var input = document.getElementById('trainer-input');
     if (input) { input.placeholder = 'Ask your coach anything...'; setTimeout(function() { input.focus(); }, 300); }
   },
 
   startAgentWith: function(question) {
+    this.state.mode = 'agent';
+    document.querySelectorAll('.trainer-mode-btn').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.querySelector('.trainer-mode-btn[data-mode="agent"]');
+    if (btn) btn.classList.add('active');
     this.startAgent();
     var self = this;
     setTimeout(function() {
       var input = document.getElementById('trainer-input');
-      if (input) {
-        input.value = question;
-        self.sendMessage();
-      }
+      if (input) { input.value = question; self.sendMessage(); }
     }, 600);
   },
 
-  // ── Core actions ───────────────────────────────────────────────────────
   startScenario: function(scenarioId) {
     var sc = this.scenarios[scenarioId];
     if (!sc) return;
-
     this.state.mode = 'roleplay';
     this.state.scenario = scenarioId;
     this.state.conversationHistory = [];
@@ -13215,92 +13229,69 @@ const TrainerBot = {
     this.state.usedReactions = new Set();
     this.state.scoreGood = 0;
     this.state.scoreWeak = 0;
-
-    document.getElementById('trainer-scenarios').style.display = 'none';
-    document.getElementById('trainer-chat').style.display = 'flex';
-
-    var peEl = document.getElementById('trainer-persona-emoji');
-    var pnEl = document.getElementById('trainer-persona-name');
-    if (peEl) peEl.textContent = sc.emoji;
-    if (pnEl) pnEl.textContent = sc.name;
-
-    // Show warmth bar in roleplay
-    var warmth = document.querySelector('.trainer-warmth-indicator');
-    if (warmth) warmth.style.display = '';
-
+    this._setPersonaDisplay(sc.emoji, sc.name.split(' ')[0]);
     var container = document.getElementById('trainer-messages');
     if (container) container.innerHTML = '';
-
-    this._updateWarmthUI();
-    this._addMessage('Scenario: ' + sc.name + ' — ' + sc.personality, 'system');
-
+    this._addMessage('Roleplay: ' + sc.name + ' — ' + sc.personality, 'system');
+    var openers = sc.openers || ['Hello?'];
+    var opener  = openers[Math.floor(Math.random() * openers.length)];
     var self = this;
     this._addTypingIndicator();
     setTimeout(function() {
       self._removeTypingIndicator();
-      self._addMessage(sc.greeting, 'bot');
-      self.state.conversationHistory.push({ role: 'bot', text: sc.greeting, topic: 'greeting' });
-      if (self.state.speakerOn) self._speak(sc.greeting);
-    }, 800 + Math.random() * 600);
-
+      self._addMessage(opener, 'bot', scenarioId);
+      self.state.conversationHistory.push({ role: 'bot', text: opener, topic: 'greeting' });
+      if (self.state.speakerOn) self._speak(opener);
+    }, 700 + Math.random() * 600);
     var input = document.getElementById('trainer-input');
-    if (input) { input.placeholder = 'Type your pitch...'; setTimeout(function() { input.focus(); }, 500); }
+    if (input) { input.placeholder = 'Your response...'; setTimeout(function() { input.focus(); }, 500); }
   },
 
-  // v99: API endpoint for live voice agent — configurable via dev console
-  _apiUrl: localStorage.getItem('ce_chat_api_url') || 'http://localhost:8080/api/chat',
+  // ── Exit ─────────────────────────────────────────────────────────────────
+  exitToNav: function() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    this.stopMic();
+    var navBtn = document.querySelector('.nav-item:not([data-tab="trainer"])');
+    if (navBtn) navBtn.click();
+  },
 
-  // Build system prompt based on current mode/scenario
-  _buildSystemPrompt: function() {
-    if (this.state.mode === 'agent') {
-      return 'You are an expert solar sales coach for door-to-door reps at Capital Energy. You teach NEPQ (Neuro-Emotional Persuasion Questions), Cardone-style urgency, and consultative selling. Give actionable advice. Keep responses concise (2-4 sentences). Never mention a specific tax credit percentage or ITC number — say "check current federal incentives" instead.';
+  reset: function() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    this.stopMic();
+    if (this.state.messageCount > 2) {
+      try {
+        var stats = JSON.parse(localStorage.getItem('ce_trainer_stats') || '{}');
+        stats.sessions = (stats.sessions || 0) + 1;
+        localStorage.setItem('ce_trainer_stats', JSON.stringify(stats));
+      } catch(_) {}
     }
-    var sc = this.scenarios[this.state.scenario];
-    if (!sc) return '';
-    return 'You are roleplaying as a homeowner called "' + sc.name + '". Personality: ' + sc.personality + ' Warmth level: ' + this.state.warmthLevel + '/3 (0=cold, 3=ready to buy). You are talking to a door-to-door solar sales rep who knocked on your door. Stay in character. Keep responses to 1-3 sentences like a real person would talk. React naturally to what they say. Never mention a specific tax credit percentage. If warmth is 3, start showing buying signals.';
+    if (this.state.mode === 'agent') { this.startAgent(); }
+    else if (this.state.scenario)   { this.startScenario(this.state.scenario); }
+    else                            { this.openPersonaSheet(); }
   },
 
-  // Build messages array for API
-  _buildMessages: function(userText) {
-    var msgs = [{ role: 'system', content: this._buildSystemPrompt() }];
-    // Add conversation history (last 20 messages max)
-    var history = this.state.conversationHistory.slice(-20);
-    for (var i = 0; i < history.length; i++) {
-      var h = history[i];
-      if (h.role === 'user')  msgs.push({ role: 'user', content: h.text });
-      if (h.role === 'bot')   msgs.push({ role: 'assistant', content: h.text });
-    }
-    msgs.push({ role: 'user', content: userText });
-    return msgs;
-  },
-
+  // ── sendMessage ───────────────────────────────────────────────────────────
   sendMessage: function() {
     var input = document.getElementById('trainer-input');
     if (!input) return;
     var text = input.value.trim();
     if (!text) return;
-
     input.value = '';
     input.style.height = 'auto';
-
     this._addMessage(text, 'user');
     this.state.conversationHistory.push({ role: 'user', text: text, topic: 'user' });
     this.state.messageCount++;
-
     var self = this;
     this._addTypingIndicator();
-
-    // Build messages for Claude (no system message in array — passed separately)
     var systemPrompt = this._buildSystemPrompt();
     var msgs = [];
     var history = this.state.conversationHistory.slice(-20);
     for (var i = 0; i < history.length; i++) {
       var h = history[i];
-      if (h.role === 'user') msgs.push({ role: 'user', content: h.text });
+      if (h.role === 'user') msgs.push({ role: 'user',      content: h.text });
       if (h.role === 'bot')  msgs.push({ role: 'assistant', content: h.text });
     }
     msgs.push({ role: 'user', content: text });
-
     var wcAiChatFn = firebase.functions().httpsCallable('wcAiChat');
     wcAiChatFn({ messages: msgs, system: systemPrompt })
     .then(function(result) {
@@ -13308,15 +13299,13 @@ const TrainerBot = {
       var reply = result.data.reply;
       if (!reply) throw new Error('Empty response');
       self.state.conversationHistory.push({ role: 'bot', text: reply, topic: self.state.mode });
-      self._addMessage(reply, 'bot');
+      self._addMessage(reply, 'bot', self.state.scenario);
       if (self.state.speakerOn) self._speak(reply);
       if (self.state.mode === 'roleplay' && self.state.messageCount > 4) {
         self.state.warmthLevel = Math.min(3, Math.floor(self.state.messageCount / 4));
-        self._updateWarmthUI();
       }
     })
     .catch(function(err) {
-      // Fallback to local KB when Cloud Function unavailable
       console.warn('TrainerBot callable failed, using local KB:', err.message);
       self._removeTypingIndicator();
       var result;
@@ -13325,72 +13314,30 @@ const TrainerBot = {
       } else {
         result = self.getResponse(text);
       }
-      self._addMessage(result.text, 'bot');
+      self._addMessage(result.text, 'bot', self.state.scenario);
       if (self.state.speakerOn) self._speak(result.text);
     });
   },
 
-  reset: function() {
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-    this.stopMic();
-
-    if (this.state.messageCount > 2) {
-      this.state.sessionsCompleted++;
-      try {
-        var stats = JSON.parse(localStorage.getItem('ce_trainer_stats') || '{}');
-        stats.sessions = (stats.sessions || 0) + 1;
-        stats.topicsCovered = Math.max(stats.topicsCovered || 0, (this.state.conversationHistory.filter(function(m) { return m.role === 'bot'; }).map(function(m) { return m.topic; }).filter(function(v, i, a) { return v !== 'generic' && v !== 'greeting' && a.indexOf(v) === i; })).length);
-        stats.avgScore = Math.round(((stats.avgScore || 0) * ((stats.sessions || 1) - 1) + (this.state.scoreGood / Math.max(1, this.state.scoreGood + this.state.scoreWeak) * 100)) / (stats.sessions || 1));
-        localStorage.setItem('ce_trainer_stats', JSON.stringify(stats));
-      } catch(_) {}
+  // ── Prompts ───────────────────────────────────────────────────────────────
+  _buildSystemPrompt: function() {
+    if (this.state.mode === 'agent') {
+      return 'You are an expert solar sales coach for door-to-door reps. You teach NEPQ (Neuro-Emotional Persuasion Questions), Cardone-style urgency, and consultative selling. Give actionable, specific advice. Keep responses concise (2-4 sentences). Never mention a specific tax credit percentage — say "check current federal incentives" instead.';
     }
-
-    document.getElementById('trainer-scenarios').style.display = '';
-    document.getElementById('trainer-chat').style.display = 'none';
-    document.getElementById('trainer-hint-banner').style.display = 'none';
-
-    var input = document.getElementById('trainer-input');
-    if (input) input.placeholder = 'Type your pitch...';
-
-    this._renderStats();
-  },
-
-  _renderStats: function() {
-    try {
-      var stats = JSON.parse(localStorage.getItem('ce_trainer_stats') || '{}');
-      var wrap = document.getElementById('trainer-stats-summary');
-      var sessEl = document.getElementById('trainer-stat-sessions');
-      var topicEl = document.getElementById('trainer-stat-topics');
-      if (stats.sessions > 0 && wrap) {
-        wrap.style.display = '';
-        if (sessEl) sessEl.textContent = stats.sessions;
-        if (topicEl) topicEl.textContent = stats.topicsCovered || 0;
-      }
-    } catch(_) {}
+    var sc = this.scenarios[this.state.scenario];
+    if (!sc) return '';
+    return 'You are roleplaying as a homeowner called "' + sc.name + '". Personality: ' + sc.personality + ' Warmth level: ' + this.state.warmthLevel + '/3 (0=cold, 3=ready to buy). You are talking to a door-to-door solar sales rep. Stay in character. Keep responses to 1-3 sentences like a real person. React naturally. Never mention a specific tax credit percentage. If warmth is 3, show buying signals.';
   },
 
   showHint: function() {
-    var topic = (this.state.currentObjectionTopic || this.state.conversationHistory.length > 0 && this.state.conversationHistory[this.state.conversationHistory.length - 1].topic) || 'generic';
-    var hint = this.hints[topic] || this.hints.generic;
-    var banner = document.getElementById('trainer-hint-banner');
-    var textEl = document.getElementById('trainer-hint-text');
-    if (banner && textEl) {
-      textEl.textContent = hint;
-      banner.style.display = 'flex';
-    }
+    var topic = (this.state.currentObjectionTopic || (this.state.conversationHistory.length > 0 && this.state.conversationHistory[this.state.conversationHistory.length - 1].topic)) || 'generic';
+    showToast('💡 ' + (this.hints[topic] || this.hints.generic));
   },
 
-  // ── Speech synthesis (voice output) — improved voice selection ─────────
+  // ── Speech synthesis ─────────────────────────────────────────────────────
   toggleSpeaker: function() {
     this.state.speakerOn = !this.state.speakerOn;
-    var icon = document.getElementById('trainer-speaker-icon');
-    var label = document.getElementById('trainer-speaker-label');
-    var btn = document.getElementById('trainer-speaker-btn');
-    if (icon) icon.textContent = this.state.speakerOn ? '🔊' : '🔇';
-    if (label) label.textContent = this.state.speakerOn ? 'Voice On' : 'Voice Off';
-    if (btn) btn.classList.toggle('active', this.state.speakerOn);
     if (!this.state.speakerOn && window.speechSynthesis) window.speechSynthesis.cancel();
-    // Pre-select best voice on first enable
     if (this.state.speakerOn && !this.state.selectedVoice) this._selectBestVoice();
   },
 
@@ -13398,16 +13345,15 @@ const TrainerBot = {
     if (!window.speechSynthesis) return;
     var voices = window.speechSynthesis.getVoices();
     if (!voices.length) return;
-    // Priority: natural/enhanced voices first, then specific good voices
     var priorities = [
       function(v) { return /enhanced|premium|natural/i.test(v.name) && /en/i.test(v.lang); },
-      function(v) { return v.name === 'Karen' && v.lang.startsWith('en'); }, // macOS natural
-      function(v) { return v.name === 'Daniel' && v.lang.startsWith('en'); }, // macOS natural male
-      function(v) { return v.name === 'Samantha' && v.lang.startsWith('en'); }, // macOS
-      function(v) { return /Google US English|Google UK English Male/i.test(v.name); }, // Chrome
-      function(v) { return /Microsoft (David|Zira|Mark)/i.test(v.name); }, // Windows
-      function(v) { return v.lang.startsWith('en') && !v.localService; }, // any remote en voice
-      function(v) { return v.lang.startsWith('en'); } // any en voice
+      function(v) { return v.name === 'Karen'    && v.lang.startsWith('en'); },
+      function(v) { return v.name === 'Daniel'   && v.lang.startsWith('en'); },
+      function(v) { return v.name === 'Samantha' && v.lang.startsWith('en'); },
+      function(v) { return /Google US English|Google UK English Male/i.test(v.name); },
+      function(v) { return /Microsoft (David|Zira|Mark)/i.test(v.name); },
+      function(v) { return v.lang.startsWith('en') && !v.localService; },
+      function(v) { return v.lang.startsWith('en'); }
     ];
     for (var p = 0; p < priorities.length; p++) {
       var match = voices.find(priorities[p]);
@@ -13420,34 +13366,24 @@ const TrainerBot = {
     window.speechSynthesis.cancel();
     if (!this.state.selectedVoice) this._selectBestVoice();
     var utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.92;
-    utterance.pitch = 1.05;
-    utterance.volume = 1.0;
+    utterance.rate = 0.92; utterance.pitch = 1.05; utterance.volume = 1.0;
     if (this.state.selectedVoice) utterance.voice = this.state.selectedVoice;
-    // Re-enable mic after speaking in voice-to-voice mode
     var self = this;
     utterance.onend = function() {
-      if (self.state.speakerOn && self.state.micActive) {
-        setTimeout(function() { self.startMic(); }, 400);
-      }
+      if (self.state.speakerOn && self.state.micActive) setTimeout(function() { self.startMic(); }, 400);
     };
     window.speechSynthesis.speak(utterance);
   },
 
-  // ── Speech recognition (voice input) ───────────────────────────────────
-  toggleMic: function() {
-    if (this.state.micActive) { this.stopMic(); } else { this.startMic(); }
-  },
+  // ── Voice input ───────────────────────────────────────────────────────────
+  toggleMic: function() { if (this.state.micActive) { this.stopMic(); } else { this.startMic(); } },
 
   startMic: function() {
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { showToast('Speech recognition not supported in this browser'); return; }
+    if (!SR) { showToast('Speech recognition not supported'); return; }
     var self = this;
     var recognizer = new SR();
-    recognizer.continuous = true;
-    recognizer.interimResults = false;
-    recognizer.lang = 'en-US';
-
+    recognizer.continuous = true; recognizer.interimResults = false; recognizer.lang = 'en-US';
     recognizer.onresult = function(e) {
       var final = '';
       for (var i = e.resultIndex; i < e.results.length; i++) {
@@ -13458,34 +13394,26 @@ const TrainerBot = {
         if (input) input.value = (input.value ? input.value + ' ' : '') + final.trim();
       }
     };
-
     recognizer.onstart = function() {
       self.state.micActive = true;
       var btn = document.getElementById('trainer-mic-btn');
       if (btn) btn.classList.add('recording');
     };
-
     recognizer.onend = function() {
       if (self.state.speakerOn && self.state.micActive) {
         var input = document.getElementById('trainer-input');
-        if (input && input.value.trim()) {
-          self.sendMessage();
-        }
+        if (input && input.value.trim()) self.sendMessage();
       }
-      self.state.micActive = false;
-      self.state.recognizer = null;
+      self.state.micActive = false; self.state.recognizer = null;
       var btn = document.getElementById('trainer-mic-btn');
       if (btn) btn.classList.remove('recording');
     };
-
     recognizer.onerror = function(e) {
       if (e.error !== 'aborted' && e.error !== 'no-speech') showToast('Mic error: ' + e.error);
-      self.state.micActive = false;
-      self.state.recognizer = null;
+      self.state.micActive = false; self.state.recognizer = null;
       var btn = document.getElementById('trainer-mic-btn');
       if (btn) btn.classList.remove('recording');
     };
-
     try { recognizer.start(); this.state.recognizer = recognizer; } catch(e) { showToast('Could not start microphone'); }
   },
 
@@ -19008,7 +18936,7 @@ function otdCloseDropCall() {
 }
 
 // Master Admin logo upload (legacy)
-document.getElementById('ma-logo-upload').addEventListener('change', e => {
+document.getElementById('ma-logo-upload')?.addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
