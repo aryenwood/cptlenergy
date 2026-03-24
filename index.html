@@ -12068,13 +12068,45 @@ if (_urlOrgId) {
           _dismissSplash();
         }
       } else if (!_orgIdForBrand) {
-        // SA or unaffiliated — reset to WC App defaults
-        console.log('[Branding] No ce_org_id — showing WC App defaults');
-        var _defBrand = document.getElementById('header-brand-img');
-        var _defSplashImg2 = document.getElementById('splash-logo');
-        if (_defBrand) _defBrand.src = 'W.png';
-        if (_defSplashImg2) _defSplashImg2.src = 'W.png';
-        _dismissSplash();
+        if (_urlOrgId && navigator.onLine) {
+          // SA navigated with ?org= param — load that org's branding for this session
+          console.log('[Branding] SA loading org from URL param:', _urlOrgId);
+          fbDb.collection('organizations').doc(_urlOrgId).get()
+            .then(function(doc) {
+              if (doc.exists) {
+                var _saOrg = doc.data();
+                applyOrgSettings(Object.assign({}, _saOrg, {
+                  companyName:  _saOrg.companyName  || _saOrg.name         || '',
+                  themePrimary: _saOrg.themePrimary || _saOrg.primaryColor || ''
+                }));
+                console.log('[Branding] SA preview:', (_saOrg.companyName || _saOrg.name || '—'), '| logo:', (_saOrg.logoUrl || 'none'));
+                if (_saOrg.logoUrl) {
+                  var _hblSA = document.getElementById('header-brand-img');
+                  if (_hblSA) _hblSA.src = _saOrg.logoUrl;
+                  var _spSA = document.getElementById('splash-logo');
+                  if (_spSA) _spSA.src = _saOrg.logoUrl;
+                  document.querySelectorAll('.login-logo img').forEach(function(i){ i.src = _saOrg.logoUrl; });
+                }
+                if (_saOrg.iconUrl) {
+                  var _hliSA = document.getElementById('header-logo');
+                  if (_hliSA) { var _hliSAImg = _hliSA.querySelector('img'); if (_hliSAImg) _hliSAImg.src = _saOrg.iconUrl; }
+                }
+              }
+              _dismissSplash();
+            })
+            .catch(function(e) {
+              console.warn('[Branding] SA org load failed:', e.message);
+              _dismissSplash();
+            });
+        } else {
+          // SA or unaffiliated with no ?org= param — WC App defaults
+          console.log('[Branding] No ce_org_id — showing WC App defaults');
+          var _defBrand = document.getElementById('header-brand-img');
+          var _defSplashImg2 = document.getElementById('splash-logo');
+          if (_defBrand) _defBrand.src = 'W.png';
+          if (_defSplashImg2) _defSplashImg2.src = 'W.png';
+          _dismissSplash();
+        }
       }
       // else: ce_org_id === user.uid (manager) — splash dismissed by step 5's .then()
     } else {
