@@ -22586,15 +22586,25 @@ function _lookupInvitePreAuth(code) {
       });
     }
 
+    function resetGate() {
+      yesBtn.style.display = '';
+      noBtn.style.display  = '';
+      if (codeWrap)  codeWrap.classList.add('hidden');
+      if (codeInput) codeInput.value = '';
+      if (statusEl)  statusEl.textContent = '';
+      if (backBtn)   backBtn.style.display = 'none';
+    }
+
     if (yesBtn) yesBtn.addEventListener('click', function() {
       yesBtn.style.display = 'none';
       noBtn.style.display  = 'none';
       if (codeWrap) codeWrap.classList.remove('hidden');
+      if (backBtn)  backBtn.style.display = 'block';
       if (codeInput) codeInput.focus();
     });
     if (noBtn)   noBtn.addEventListener('click', goToLogin);
     if (skipBtn) skipBtn.addEventListener('click', goToLogin);
-    if (backBtn) backBtn.addEventListener('click', goToLogin);
+    if (backBtn) backBtn.addEventListener('click', resetGate);
 
     if (codeInput) codeInput.addEventListener('input', function() {
       this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
