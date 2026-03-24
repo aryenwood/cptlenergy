@@ -10172,6 +10172,16 @@
       <div class="onboard-title">Go earn it!</div>
       <div class="onboard-desc">The leaderboard updates in real-time. Stay consistent and climb to the top of your team.</div>
     </div>
+    <div class="onboard-step onboard-hidden" data-step="5">
+      <div class="onboard-emoji">🎙️</div>
+      <div class="onboard-title">Recording &amp; Privacy Notice</div>
+      <div class="onboard-desc" style="text-align:left">
+        WC App may record sales conversations for coaching and training purposes.<br><br>
+        Recording laws vary by state. In some states you must inform the customer before recording.<br><br>
+        You are responsible for compliance in your area.<br><br>
+        By continuing you agree to our <strong>Terms of Use</strong> and <strong>Privacy Policy</strong>.
+      </div>
+    </div>
     <div id="onboard-dots"></div>
     <div id="onboard-btn-row">
       <button id="onboard-skip">Skip</button>
@@ -22204,7 +22214,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
 // ── F9: Onboarding Walkthrough ────────────────────────────────────────────
 ;(function() {
   let _step = 0;
-  const TOTAL = 5; // steps 0-4 (step 3 = contact info, step 4 = go earn it!)
+  const TOTAL = 6; // steps 0-5 (step 3 = contact info, step 4 = go earn it!, step 5 = privacy notice)
 
   function _render() {
     document.querySelectorAll('.onboard-step').forEach((el, i) => {
@@ -22217,7 +22227,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
       ).join('');
     }
     const nb = document.getElementById('onboard-next');
-    if (nb) nb.textContent = _step < TOTAL - 1 ? 'Next →' : "Let's Go! 🏆";
+    if (nb) nb.textContent = _step < TOTAL - 1 ? 'Next →' : "I Understand — Let's Go 🚀";
     if (_step === 4) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
   }
 
@@ -23136,6 +23146,10 @@ function otdSelectStatus(btn) {
         };
         _otdShowSaveSkip(duration, status, entry.address || _otdAddr || '');
       }, 380);
+    } else if (_otdPendingBlob && _otdPendingMeta) {
+      // Blob was pre-built from manual mic-stop — just stamp the dispo then show Save/Skip
+      _otdPendingMeta.status = status;
+      _otdShowSaveSkip(_otdPendingMeta.duration, status, _otdPendingMeta.address);
     }
   }
 }
@@ -23505,14 +23519,15 @@ function otdToggleVoice() {
       var duration = Math.max(1, Math.round((Date.now() - doorStart) / 1000));
       _otdPendingBlob = blob;
       _otdPendingMeta = {
-        status:    _otdStatus || 'memo',
+        status:    null,   // will be filled after dispo selection
         address:   _otdAddr || '',
         addressId: _otdEntryIdForSnap || null,
         duration:  duration,
         lat:       _otdLat,
         lng:       _otdLng,
       };
-      _otdShowSaveSkip(duration, _otdPendingMeta.status, _otdPendingMeta.address);
+      // Open dispo sheet so rep picks outcome BEFORE Save/Skip appears
+      otdOpenDispoSheet();
     }, 380);
 
   } else {
@@ -23648,12 +23663,17 @@ function _otdStopSessionRecording() {
 function _otdShowSaveSkip(duration, status, address) {
   var sheet = document.getElementById('otd-saveskip-sheet');
   if (!sheet) return;
-  var durStr = duration < 60 ? duration + 's' : Math.floor(duration / 60) + 'm ' + (duration % 60) + 's';
+  var m = Math.floor(duration / 60);
+  var s = duration % 60;
+  var durFmt = m + ':' + (s < 10 ? '0' : '') + s;
   var labelEl = document.getElementById('otd-ss-label');
   var subEl   = document.getElementById('otd-ss-sub');
-  var statusLabel = (status || '').replace(/-/g, ' ');
-  if (labelEl) labelEl.textContent = address || 'Recording ready';
-  if (subEl)   subEl.textContent   = statusLabel + ' · ' + durStr;
+  var dispoLabel = (status || '').replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+  var parts = ['🎙️ ' + durFmt];
+  if (address) parts.push(address);
+  if (dispoLabel) parts.push(dispoLabel);
+  if (labelEl) labelEl.textContent = parts.join(' · ');
+  if (subEl)   subEl.textContent   = 'Save to upload · Skip to discard';
   sheet.style.display = 'block';
   requestAnimationFrame(function() { sheet.classList.add('otd-ss-open'); });
 }
