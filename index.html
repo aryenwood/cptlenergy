@@ -11763,7 +11763,21 @@ function applyOrgSettings(data) {
     } catch(_) {}
     var _hbl = document.getElementById('header-brand-img');
     if (_hbl) _hbl.src = data.logoUrl;
+    // All login/gate logo images
     document.querySelectorAll('.login-logo img').forEach(function(img) { img.src = data.logoUrl; });
+    // Splash screen logo (separate element, not inside .login-logo)
+    var _splashLogo = document.getElementById('splash-logo');
+    if (_splashLogo) _splashLogo.src = data.logoUrl;
+  }
+
+  if (data.iconUrl) {
+    try {
+      var _ls2 = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+      _ls2.iconUrl = data.iconUrl;
+      localStorage.setItem('ce_admin', JSON.stringify(_ls2));
+    } catch(_) {}
+    var _hli = document.getElementById('header-logo');
+    if (_hli) { var _hliImg = _hli.querySelector('img'); if (_hliImg) _hliImg.src = data.iconUrl; }
   }
 
   // Keep hidden admin form fields in sync so Save still reads the right values
@@ -11973,10 +11987,17 @@ if (_urlOrgId) {
                 companyName:  org.companyName  || org.name         || '',
                 themePrimary: org.themePrimary || org.primaryColor || ''
               }));
-              // Apply logo directly in case applyOrgSettings misses it
+              // Direct fallbacks — belt-and-suspenders after applyOrgSettings
               if (org.logoUrl) {
                 var _hbl = document.getElementById('header-brand-img');
                 if (_hbl) { _hbl.src = org.logoUrl; console.log('[OrgBrand] Logo applied:', org.logoUrl); }
+                var _sp = document.getElementById('splash-logo');
+                if (_sp) _sp.src = org.logoUrl;
+                document.querySelectorAll('.login-logo img').forEach(function(i){ i.src = org.logoUrl; });
+              }
+              if (org.iconUrl) {
+                var _hli = document.getElementById('header-logo');
+                if (_hli) { var _hliImg = _hli.querySelector('img'); if (_hliImg) { _hliImg.src = org.iconUrl; console.log('[OrgBrand] Icon applied:', org.iconUrl); } }
               }
             } else {
               console.warn('[OrgBrand] No doc at organizations/' + _orgIdForBrand + ' — check Firestore');
