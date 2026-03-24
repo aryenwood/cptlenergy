@@ -4017,10 +4017,8 @@
       position: relative; z-index: 1;
     }
     #splash-logo {
-      width: 260px; height: auto;
+      width: 200px; height: auto;
       border-radius: 0;
-      /* Invert to white for dark splash background */
-      filter: brightness(0) invert(1);
       animation: splashLogoIn 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
     }
     /* #splash-wordmark removed — logo.png contains the wordmark */
@@ -7438,7 +7436,7 @@
   .login-logo {
     display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
-  .login-logo img { width: 56px; height: 56px; border-radius: 14px; }
+  .login-logo img { width: 72px; height: 72px; border-radius: 50%; }
   .login-logo-title { font-family: 'Outfit', sans-serif; font-size: var(--fs-2xl); font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
   .login-logo-sub { font-size: var(--fs-sm); color: var(--text-2); }
 
