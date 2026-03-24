@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WC App — Getting Started Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --teal: #148f98;
+    --teal-bright: #1ec8d5;
+    --teal-dim: rgba(20,143,152,0.15);
+    --purple: #7B2FBE;
+    --purple-dim: rgba(123,47,190,0.15);
+    --dark: #0d1117;
+    --dark-2: #161b22;
+    --dark-3: #1f2937;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f6fc;
+    --text-2: #8b949e;
+    --text-3: #484f58;
+    --green: #22c55e;
+    --amber: #f59e0b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 24px 60px;
+    text-align: center;
+    background: var(--dark-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(20,143,152,0.2) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(123,47,190,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-dim);
+    border: 1px solid rgba(20,143,152,0.3);
+    border-radius: 50px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--teal-bright);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 8vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span { color: var(--teal-bright); }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--text-2);
+    max-width: 500px;
+    margin: 0 auto 32px;
+    font-weight: 300;
+  }
+
+  .hero-tabs {
+    display: inline-flex;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .hero-tab {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-2);
+    border: none;
+    background: none;
+    font-family: inherit;
+  }
+
+  .hero-tab.active {
+    background: var(--teal);
+    color: white;
+  }
+
+  /* Container */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Sections */
+  .section {
+    display: none;
+    padding: 48px 0;
+  }
+  .section.active { display: block; }
+
+  /* Role header */
+  .role-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .role-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .role-icon.admin { background: var(--purple-dim); }
+  .role-icon.rep { background: var(--teal-dim); }
+
+  .role-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .role-header p { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+
+  /* Step cards */
+  .step {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 48px;
+    bottom: -32px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border), transparent);
+  }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--dark-3);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--teal-bright);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-body {
+    flex: 1;
+    padding-top: 8px;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Step card visual */
+  .step-card {
+    background: var(--dark-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .step-card-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+
+  /* Mock UI elements */
+  .mock-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal);
+    color: white;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 4px 4px 4px 0;
+  }
+
+  .mock-btn.outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+  }
+
+  .mock-btn.purple { background: var(--purple); }
+
+  .mock-field {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 8px;
+    width: 100%;
+  }
+
+  /* Tag pills */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+  .tag {
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .tag.teal { background: var(--teal-dim); color: var(--teal-bright); border: 1px solid rgba(20,143,152,0.25); }
+  .tag.purple { background: var(--purple-dim); color: #b06cff; border: 1px solid rgba(123,47,190,0.25); }
+  .tag.green { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+  .tag.amber { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+
+  /* Info callout */
+  .callout {
+    background: var(--teal-dim);
+    border: 1px solid rgba(20,143,152,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--teal-bright);
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .callout.purple {
+    background: var(--purple-dim);
+    border-color: rgba(123,47,190,0.25);
+    color: #b06cff;
+  }
+
+  .callout.amber {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.2);
+    color: #fbbf24;
+  }
+
+  /* Feature grid */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .feature-card {
+    background: var(--dark-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .feature-card-icon { font-size: 22px; margin-bottom: 8px; }
+  .feature-card-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .feature-card-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* Section label */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* OTD flow */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 12px 0;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .flow-step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .flow-step-dot.purple { background: var(--purple); }
+  .flow-step-dot.green { background: var(--green); }
+  .flow-step-dot.amber { background: var(--amber); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 13px;
+  }
+
+  footer strong { color: var(--teal-bright); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 60px 20px 48px; }
+    .feature-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">🚀 Pre-Alpha Guide</div>
+  <h1>Getting Started with<br/><span>WC App</span></h1>
+  <p>The D2D sales platform built for closers. Everything you need to hit the ground running.</p>
+  <div class="hero-tabs">
+    <button class="hero-tab active" onclick="showSection('admin')">👑 Admin / Manager</button>
+    <button class="hero-tab" onclick="showSection('rep')">🚪 Sales Rep</button>
+  </div>
+</div>
+
+<!-- ADMIN SECTION -->
+<div class="section active" id="section-admin">
+<div class="container">
+
+  <div class="role-header">
+    <div class="role-icon admin">👑</div>
+    <div>
+      <h2>Admin & Manager Guide</h2>
+      <p>Set up your team, configure branding, and manage your org from day one</p>
+    </div>
+  </div>
+
+  <div class="section-label">Getting In</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Open Your Invite Link</div>
+      <div class="step-desc">You'll receive a text message from Aryen at WC App with a personalized link and a 6-character invite code. Tap the link -- it opens the app in your browser.</div>
+      <div class="step-card">
+        <div class="step-card-title">What the invite looks like</div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;font-size:13px;line-height:1.8;color:var(--text-2)">
+          Hey Olashawan! 👋<br/>
+          You've been set up as the admin for <strong style="color:var(--text)">Triton Energy</strong> on WC App.<br/><br/>
+          Your setup code:<br/>
+          <span style="font-family:monospace;font-size:18px;font-weight:700;color:var(--teal-bright);letter-spacing:0.1em">WC4X9K</span><br/><br/>
+          <span style="color:var(--teal-bright)">https://tritonenergy.netlify.app</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Enter Your Invite Code</div>
+      <div class="step-desc">Tap "Yes — Enter Code" on the first screen and type your 6-character code. The app verifies it and connects you to your org automatically.</div>
+      <div class="callout">💡 Your code expires in 30 days and can only be used once. If you have issues, contact your WC App rep.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">Sign In with Google</div>
+      <div class="step-desc">Tap "Continue with Google" and sign in with your Google account. This is how you'll log in every time -- no separate password needed.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title">Complete Your Profile</div>
+      <div class="step-desc">The app walks you through a short setup -- your name, phone number, and region. This populates your rep card and business card automatically.</div>
+      <div class="tags">
+        <span class="tag teal">Name</span>
+        <span class="tag teal">Phone</span>
+        <span class="tag teal">Region</span>
+        <span class="tag teal">Profile Photo</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <div class="section-label">Setting Up Your Team</div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <div class="step-title">Invite Your Reps</div>
+      <div class="step-desc">Go to <strong>Admin → Sales Team → Invite Rep</strong>. Select their role (Canvasser or Closer), generate a code, and share it via text. Each rep gets their own unique code.</div>
+      <div class="step-card">
+        <div class="step-card-title">Invite flow</div>
+        <div class="flow">
+          <div class="flow-step"><div class="flow-step-dot"></div> Tap "Invite Rep" in Sales Team section</div>
+          <div class="flow-step"><div class="flow-step-dot"></div> Select role: Canvasser or Closer</div>
+          <div class="flow-step"><div class="flow-step-dot green"></div> Generate code → WC6-character code appears</div>
+          <div class="flow-step"><div class="flow-step-dot amber"></div> Tap "Share via Message" → SMS sends automatically</div>
+        </div>
+      </div>
+      <div class="callout amber">⚠️ Rep invite codes expire in 7 days. Generate fresh codes if a rep hasn't signed up yet.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <div class="step-title">Configure Your Quick Links</div>
+      <div class="step-desc">In Admin Settings, add your team's quoting tool URL (GoSolo, etc.) and any other tools they use daily. These appear as quick-access buttons on every rep's dashboard.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <div class="step-title">Add Hub Resources</div>
+      <div class="step-desc">Go to the <strong>Hub tab</strong> to upload training videos, sales documents, and pitch resources your reps can access in the field. Organized into Videos, Books, and Documents sections.</div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <div class="section-label">Managing Your Team</div>
+
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <div class="step-title">Monitor Activity in Real Time</div>
+      <div class="step-desc">The Manager Hub on your dashboard shows every rep's activity as it happens -- doors knocked, appointments set, and conversions. Filter by rep or view the full team.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <div class="step-title">Review Recordings</div>
+      <div class="step-desc">When reps use On The Doors mode and save a recording, it's stored under that customer's address record. Go to CRM → tap any address → see the full activity timeline with playable recordings.</div>
+      <div class="callout purple">🎙️ Recordings are saved to secure cloud storage. Only you and the rep who recorded it can access them.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <div class="step-title">Leaderboard & Performance</div>
+      <div class="step-desc">The <strong>Board tab</strong> shows ranked performance across your team -- doors knocked, contacts made, appointments set, and conversion rates. Updated in real time as reps log activity.</div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <div class="section-label">Key Features at a Glance</div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-card-icon">🗺️</div>
+      <div class="feature-card-name">Map View</div>
+      <div class="feature-card-desc">See every door your team has knocked, color-coded by outcome</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">📅</div>
+      <div class="feature-card-name">Calendar</div>
+      <div class="feature-card-desc">All appointments in one place with go-back reminders</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">📊</div>
+      <div class="feature-card-name">Reports</div>
+      <div class="feature-card-desc">Conversion rates, show rates, and team analytics</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🧠</div>
+      <div class="feature-card-name">AI Brain</div>
+      <div class="feature-card-desc">AI sales coach for objection handling and pitch practice</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🎙️</div>
+      <div class="feature-card-name">Recordings</div>
+      <div class="feature-card-desc">Voice memos tied to every customer record automatically</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🏆</div>
+      <div class="feature-card-name">Leaderboard</div>
+      <div class="feature-card-desc">Live team rankings to drive healthy competition</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- REP SECTION -->
+<div class="section" id="section-rep">
+<div class="container">
+
+  <div class="role-header">
+    <div class="role-icon rep">🚪</div>
+    <div>
+      <h2>Sales Rep Guide</h2>
+      <p>Everything you need to start knocking doors and closing deals today</p>
+    </div>
+  </div>
+
+  <div class="section-label">Getting Started</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Open Your Invite Link</div>
+      <div class="step-desc">Your manager will text you a link and a 6-character code. Tap the link -- it opens the WC App in your browser with your company's branding already loaded.</div>
+      <div class="callout amber">📱 For the best experience, add the app to your home screen after signing in. Tap the share icon in your browser → "Add to Home Screen".</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Enter Your Code & Sign In</div>
+      <div class="step-desc">Tap "Yes — Enter Code", type your invite code, then sign in with Google. Your role and team are set automatically -- you don't need to pick anything.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">Complete Your Profile</div>
+      <div class="step-desc">Add your phone number, region, and a profile photo. This auto-fills your digital business card so customers can contact you directly.</div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <div class="section-label">Your Daily Workflow</div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title">Start Your Day — Toggle "On The Doors"</div>
+      <div class="step-desc">When you're heading out, toggle <strong>On The Doors</strong> on your home screen. This activates focus mode and lets you record conversations at each door.</div>
+      <div class="step-card">
+        <div class="step-card-title">OTD Recording Flow</div>
+        <div class="flow">
+          <div class="flow-step"><div class="flow-step-dot"></div> Walk up to the door</div>
+          <div class="flow-step"><div class="flow-step-dot"></div> Tap the mic button to start recording</div>
+          <div class="flow-step"><div class="flow-step-dot amber"></div> Have your conversation naturally</div>
+          <div class="flow-step"><div class="flow-step-dot amber"></div> Tap mic again to stop</div>
+          <div class="flow-step"><div class="flow-step-dot teal"></div> Tap "TAP TO DISPO" → select outcome</div>
+          <div class="flow-step"><div class="flow-step-dot green"></div> Choose Save or Skip on the recording</div>
+        </div>
+      </div>
+      <div class="callout purple">🎙️ Recording laws vary by state. You are responsible for compliance in your area. When in doubt, let the homeowner know you're recording for training purposes.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <div class="step-title">Log Every Door</div>
+      <div class="step-desc">Tap <strong>Log Door</strong> on your home screen or use the quick-log button on the Map tab. Fill in the address, select your outcome, and add notes. GPS captures the location automatically.</div>
+      <div class="tags">
+        <span class="tag teal">No Answer</span>
+        <span class="tag amber">Callback</span>
+        <span class="tag purple">Not Interested</span>
+        <span class="tag green">Appointment</span>
+        <span class="tag green">Sold</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <div class="step-title">Book an Appointment</div>
+      <div class="step-desc">Tap <strong>Book Appt</strong> from the home screen. Fill in the customer details, assign a closer, and submit. The closer gets a push notification instantly and it appears on both calendars.</div>
+      <div class="step-card">
+        <div class="step-card-title">Required information</div>
+        <div class="mock-field">📅 Date & Time</div>
+        <div class="mock-field">👤 Customer Name & Contact</div>
+        <div class="mock-field">🏠 Address</div>
+        <div class="mock-field">⚡ Utility Company & Avg Bill</div>
+        <div class="mock-field">👔 Assigned Closer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <div class="step-title">Track Your Stats</div>
+      <div class="step-desc">Your dashboard shows today's doors, total contacts, appointments set, and your conversion rate -- updated in real time as you log activity. Your streak and rank update daily.</div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+  <div class="section-label">Tools That Make You Better</div>
+
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <div class="step-title">AI Brain — Practice Your Pitch</div>
+      <div class="step-desc">Go to the <strong>AI tab</strong> and select a persona to practice against. The AI plays a skeptical homeowner, a price-focused buyer, or a technical researcher. Get real-time feedback on your pitch.</div>
+      <div class="step-card">
+        <div class="step-card-title">Available personas</div>
+        <div class="tags" style="margin-top:0">
+          <span class="tag teal">😤 The Skeptic</span>
+          <span class="tag amber">💰 Budget-Conscious</span>
+          <span class="tag purple">🔍 The Researcher</span>
+          <span class="tag green">✅ Ready to Buy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <div class="step-title">The Map — Know Your Territory</div>
+      <div class="step-desc">The <strong>Map tab</strong> shows every door you've knocked, color-coded by outcome. Tap any pin to see the full history. Use satellite view to spot solar panels already installed nearby.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <div class="step-title">The Hub — Learn from the Best</div>
+      <div class="step-desc">The <strong>Hub tab</strong> has training videos, pitch guides, and resources your manager has loaded. 30 minutes of study a week compounds fast over a season.</div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="callout">
+    💬 Questions? Contact your manager directly or reach out to WC App support at <strong>tritonenergy.netlify.app</strong>
+  </div>
+
+</div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <strong>WC App</strong> — The D2D Sales Platform &nbsp;·&nbsp; Pre-Alpha &nbsp;·&nbsp; Built by Wood Consulting LLC
+</footer>
+
+<script>
+function showSection(role) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.hero-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + role).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
