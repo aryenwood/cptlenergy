@@ -11903,7 +11903,12 @@ if (_urlOrgId) {
           var pi = _pendingInvite;
           _pendingInvite = null;
           localStorage.setItem('ce_user_role', pi.role);
-          if (pi.orgId) localStorage.setItem('ce_org_id', pi.orgId);
+          if (pi.orgId) {
+            localStorage.setItem('ce_org_id', pi.orgId);
+            console.log('[Invite] ce_org_id set:', pi.orgId, '(role:', pi.role + ')');
+          } else {
+            console.warn('[Invite] _pendingInvite has no orgId — branding will not load');
+          }
           var _piRepName = user.displayName || localStorage.getItem('ce_user_name') || '';
           if (pi.orgId) {
             fbDb.collection('organizations').doc(pi.orgId)
@@ -11937,6 +11942,7 @@ if (_urlOrgId) {
           var _joinName = user.displayName || localStorage.getItem('ce_user_name') || '';
           localStorage.setItem('ce_user_role', 'canvasser');
           localStorage.setItem('ce_org_id', _urlOrgId);
+          console.log('[OrgUrl] ce_org_id set from ?org= param:', _urlOrgId);
           fbDb.collection('organizations').doc(_urlOrgId)
             .collection('team').doc(user.uid)
             .set({ name: _joinName, email: user.email || '', role: 'canvasser',
@@ -11947,6 +11953,38 @@ if (_urlOrgId) {
         } else {
           setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
         }
+      }
+
+      // 7. Load org branding from ce_org_id (reps belong to a different org than their own uid)
+      // Step 5 above reads organizations/{user.uid} — correct for managers/admins.
+      // This step covers reps/canvassers whose ce_org_id is the manager's org, not their own uid.
+      var _orgIdForBrand = localStorage.getItem('ce_org_id');
+      console.log('[OrgBrand] user.uid:', user.uid, '| ce_org_id:', _orgIdForBrand);
+      if (_orgIdForBrand && _orgIdForBrand !== user.uid && navigator.onLine) {
+        console.log('[OrgBrand] Fetching org branding from organizations/' + _orgIdForBrand);
+        fbDb.collection('organizations').doc(_orgIdForBrand).get()
+          .then(function(doc) {
+            if (doc.exists) {
+              console.log('[OrgBrand] Doc found — fields:', Object.keys(doc.data()));
+              var org = doc.data();
+              // Normalize field names: SA creates docs with 'name'/'primaryColor';
+              // applyOrgSettings() expects 'companyName'/'themePrimary'
+              applyOrgSettings(Object.assign({}, org, {
+                companyName:  org.companyName  || org.name         || '',
+                themePrimary: org.themePrimary || org.primaryColor || ''
+              }));
+              // Apply logo directly in case applyOrgSettings misses it
+              if (org.logoUrl) {
+                var _hbl = document.getElementById('header-brand-img');
+                if (_hbl) { _hbl.src = org.logoUrl; console.log('[OrgBrand] Logo applied:', org.logoUrl); }
+              }
+            } else {
+              console.warn('[OrgBrand] No doc at organizations/' + _orgIdForBrand + ' — check Firestore');
+            }
+          })
+          .catch(function(e) { console.warn('[OrgBrand] Load failed:', e.code, e.message); });
+      } else if (!_orgIdForBrand) {
+        console.log('[OrgBrand] No ce_org_id in localStorage — skipping rep branding load');
       }
     } else {
       appEl.style.display = 'none';
