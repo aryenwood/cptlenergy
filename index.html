@@ -4680,6 +4680,141 @@
     background: rgba(26,157,184,0.04);
   }
 
+  /* ─────────────────────────────────────────────────────────────────────────
+     SUPER ADMIN — WC Platform Mission Control
+  ───────────────────────────────────────────────────────────────────────── */
+  #super-admin-panel {
+    position: fixed; inset: 0; z-index: 10600;
+    background: #010508;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  #super-admin-panel.open { opacity: 1; pointer-events: auto; }
+
+  #sa-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 52px 20px 14px;
+    background: #020a0e;
+    border-bottom: 1px solid rgba(26,157,184,0.22);
+    box-shadow: 0 0 24px rgba(26,157,184,0.06);
+    flex-shrink: 0;
+  }
+  #sa-title {
+    font-family: var(--font-mono);
+    font-size: 14px; font-weight: 700;
+    color: #20d8ec; letter-spacing: 0.14em;
+    text-shadow: 0 0 14px rgba(32,216,236,0.55);
+  }
+  #sa-uid-badge {
+    font-family: var(--font-mono);
+    font-size: 10px; color: rgba(32,216,236,0.38);
+    letter-spacing: 0.06em; margin-top: 3px;
+  }
+  #sa-close-btn {
+    background: none; border: 1px solid rgba(26,157,184,0.22);
+    border-radius: 8px; color: rgba(255,255,255,0.55);
+    width: 34px; height: 34px; font-size: 14px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  #sa-close-btn:hover { border-color: rgba(26,157,184,0.55); color: #20d8ec; box-shadow: 0 0 10px rgba(26,157,184,0.20); }
+
+  #sa-body {
+    flex: 1; overflow-y: auto; padding: 20px 16px 48px;
+    display: flex; flex-direction: column; gap: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sa-section {
+    background: rgba(26,157,184,0.025);
+    border: 1px solid rgba(26,157,184,0.10);
+    border-radius: 12px; overflow: hidden;
+  }
+  .sa-section-header {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    color: rgba(32,216,236,0.60); letter-spacing: 0.16em;
+    padding: 11px 14px;
+    background: rgba(26,157,184,0.05);
+    border-bottom: 1px solid rgba(26,157,184,0.08);
+  }
+  .sa-section-body { padding: 14px; display: flex; flex-direction: column; gap: 11px; }
+
+  .sa-field { display: flex; flex-direction: column; gap: 5px; }
+  .sa-label {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    color: rgba(255,255,255,0.35); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .sa-input, .sa-select {
+    width: 100%; padding: 10px 12px;
+    background: rgba(0,0,0,0.55); border: 1px solid rgba(26,157,184,0.18);
+    border-radius: 8px; color: #e8f4f6;
+    font-family: var(--font-mono); font-size: 13px;
+    outline: none; transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .sa-input:focus, .sa-select:focus { border-color: rgba(26,157,184,0.50); box-shadow: 0 0 0 2px rgba(26,157,184,0.08); }
+  .sa-select option { background: #010a0e; }
+  .sa-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .sa-btn {
+    padding: 11px 16px;
+    background: rgba(26,157,184,0.10); border: 1px solid rgba(26,157,184,0.30);
+    border-radius: 8px; color: #20d8ec;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 0 8px rgba(26,157,184,0.10);
+  }
+  .sa-btn:hover { background: rgba(26,157,184,0.18); border-color: rgba(26,157,184,0.55); box-shadow: 0 0 16px rgba(26,157,184,0.22); }
+  .sa-btn:active { transform: scale(0.97); }
+  .sa-btn:disabled { opacity: 0.40; cursor: not-allowed; transform: none !important; }
+  .sa-btn--full { width: 100%; text-align: center; }
+
+  .sa-result {
+    display: none; padding: 13px 14px;
+    background: rgba(0,0,0,0.55); border: 1px solid rgba(26,157,184,0.20);
+    border-radius: 8px; font-family: var(--font-mono); font-size: 11px;
+    color: rgba(255,255,255,0.60); line-height: 1.8;
+  }
+  .sa-result.visible { display: block; }
+  .sa-result-code {
+    display: block; margin: 8px 0 10px;
+    font-size: 24px; font-weight: 700; letter-spacing: 0.18em;
+    color: #20d8ec; text-shadow: 0 0 14px rgba(32,216,236,0.55);
+  }
+  .sa-copy-btn {
+    background: rgba(26,157,184,0.12); border: 1px solid rgba(26,157,184,0.28);
+    border-radius: 6px; color: #20d8ec; font-size: 10px;
+    font-family: var(--font-mono); font-weight: 700; letter-spacing: 0.08em;
+    padding: 5px 10px; cursor: pointer; transition: all 0.15s;
+  }
+  .sa-copy-btn:hover { background: rgba(26,157,184,0.22); }
+
+  .sa-org-list { display: flex; flex-direction: column; gap: 8px; }
+  .sa-org-row {
+    padding: 10px 12px; background: rgba(0,0,0,0.40);
+    border: 1px solid rgba(26,157,184,0.09); border-radius: 8px;
+  }
+  .sa-org-row-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sa-org-row-info { flex: 1; min-width: 0; }
+  .sa-org-name { font-size: 13px; font-weight: 600; color: #e8f4f6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sa-org-meta { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.30); margin-top: 2px; }
+  .sa-org-view-btn {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 5px 10px; background: none; border: 1px solid rgba(26,157,184,0.22);
+    border-radius: 6px; color: rgba(32,216,236,0.65); cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+  }
+  .sa-org-view-btn:hover { border-color: rgba(26,157,184,0.50); color: #20d8ec; }
+  .sa-team-list {
+    display: none; margin-top: 8px; padding: 8px 10px;
+    background: rgba(0,0,0,0.35); border-radius: 6px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: rgba(255,255,255,0.45); line-height: 1.9;
+  }
+  .sa-team-list.visible { display: block; }
+  .sa-status { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.30); text-align: center; padding: 10px 0; }
+
   /* PIN keypad overlay */
   #pin-overlay {
     position: fixed; inset: 0; z-index: 9850;
@@ -7712,6 +7847,11 @@
         <div class="profile-dropdown-identity-email" id="pdd-identity-email"></div>
       </div>
     </div>
+    <div class="profile-dropdown-item" id="pdd-super-admin" style="display:none;color:#20d8ec">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      ⚡ WC Platform Admin
+    </div>
+    <div class="profile-dropdown-divider" id="pdd-super-admin-divider" style="display:none"></div>
     <div class="profile-dropdown-item" id="pdd-admin">
       <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Admin Settings
@@ -10552,6 +10692,90 @@
   <div class="cust-detail-inner" id="cust-detail-inner"></div>
 </div>
 
+<!-- ── Super Admin Panel — WC Platform Control ────────────────────────── -->
+<div id="super-admin-panel">
+  <div id="sa-header">
+    <div>
+      <div id="sa-title">⚡ WC PLATFORM ADMIN</div>
+      <div id="sa-uid-badge">UID: yyyDjhfDgDSQIxJEq9xRd5dLbw42</div>
+    </div>
+    <button id="sa-close-btn" onclick="closeSuperAdmin()">✕</button>
+  </div>
+  <div id="sa-body">
+
+    <!-- Section 1: Create Org -->
+    <div class="sa-section">
+      <div class="sa-section-header">01 — CREATE ORG</div>
+      <div class="sa-section-body">
+        <div class="sa-row">
+          <div class="sa-field">
+            <label class="sa-label">Org Name</label>
+            <input class="sa-input" id="sa-org-name" type="text" placeholder="e.g. Apex Solar" autocomplete="off" />
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Niche</label>
+            <select class="sa-select" id="sa-org-niche">
+              <option value="Solar">Solar</option>
+              <option value="Roofing">Roofing</option>
+              <option value="Fiber">Fiber</option>
+              <option value="Pest Control">Pest Control</option>
+              <option value="Lighting">Lighting</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="sa-row">
+          <div class="sa-field">
+            <label class="sa-label">Primary Color</label>
+            <input class="sa-input" id="sa-org-color" type="color" value="#1a9db8" style="height:42px;padding:4px 8px;cursor:pointer" />
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Logo (optional)</label>
+            <input class="sa-input" id="sa-org-logo-file" type="file" accept="image/*" style="padding:8px;cursor:pointer;font-size:12px" />
+          </div>
+        </div>
+        <button class="sa-btn sa-btn--full" id="sa-create-org-btn" onclick="_saCreateOrg()">CREATE ORG →</button>
+        <div class="sa-result" id="sa-create-org-result"></div>
+      </div>
+    </div>
+
+    <!-- Section 2: Generate Master Admin Invite -->
+    <div class="sa-section">
+      <div class="sa-section-header">02 — MASTER ADMIN INVITE</div>
+      <div class="sa-section-body">
+        <div class="sa-row">
+          <div class="sa-field">
+            <label class="sa-label">Org ID</label>
+            <input class="sa-input" id="sa-invite-org-id" type="text" placeholder="auto-filled on create" autocomplete="off" />
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Org Name</label>
+            <input class="sa-input" id="sa-invite-org-name" type="text" placeholder="auto-filled on create" autocomplete="off" />
+          </div>
+        </div>
+        <div class="sa-field">
+          <label class="sa-label">Admin Name (for SMS)</label>
+          <input class="sa-input" id="sa-invite-admin-name" type="text" placeholder="e.g. Jason" autocomplete="off" />
+        </div>
+        <button class="sa-btn sa-btn--full" id="sa-gen-invite-btn" onclick="_saGenMasterAdminInvite()">GENERATE CODE →</button>
+        <div class="sa-result" id="sa-invite-result"></div>
+      </div>
+    </div>
+
+    <!-- Section 3: Platform Overview -->
+    <div class="sa-section">
+      <div class="sa-section-header">03 — PLATFORM OVERVIEW</div>
+      <div class="sa-section-body">
+        <button class="sa-btn sa-btn--full" onclick="_saLoadOrgs()">LOAD ALL ORGS ↻</button>
+        <div id="sa-org-list" class="sa-org-list">
+          <div class="sa-status">Press LOAD to fetch orgs</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div id="rep-profile-overlay" onclick="closeRepProfile()"></div>
 <div id="rep-profile-sheet" role="dialog" aria-modal="true" aria-label="Rep Profile">
   <div class="rps-handle"></div>
@@ -11220,6 +11444,12 @@ const fbDb      = firebase.firestore();
 const fbStorage = firebase.storage();
 const fbMsg     = firebase.messaging();
 
+// ── Super Admin ───────────────────────────────────────────────────────────
+const SUPER_ADMIN_UID = 'yyyDjhfDgDSQIxJEq9xRd5dLbw42';
+function isSuperAdmin() {
+  return !!(fbAuth.currentUser && fbAuth.currentUser.uid === SUPER_ADMIN_UID);
+}
+
 // ── Firebase identity helpers ─────────────────────────────────────────────
 function _applyFirebaseIdentity(user) {
   // Header avatar: swap SVG for photo if available
@@ -11553,7 +11783,16 @@ function applyOrgSettings(data) {
           });
       }
 
-      // 6. First-time user: apply pending invite (pre-auth) or show role setup
+      // 6a. Super admin: always grant role + show platform admin menu item
+      if (user.uid === SUPER_ADMIN_UID) {
+        localStorage.setItem('ce_user_role', 'super_admin');
+      }
+      var _saItemEl = document.getElementById('pdd-super-admin');
+      var _saDivEl  = document.getElementById('pdd-super-admin-divider');
+      if (_saItemEl) _saItemEl.style.display = user.uid === SUPER_ADMIN_UID ? '' : 'none';
+      if (_saDivEl)  _saDivEl.style.display  = user.uid === SUPER_ADMIN_UID ? '' : 'none';
+
+      // 6b. First-time user: apply pending invite (pre-auth) or show role setup
       if (!localStorage.getItem('ce_user_role')) {
         if (_pendingInvite) {
           var pi = _pendingInvite;
@@ -13211,11 +13450,12 @@ navItems.forEach(btn => {
 // ── Profile dropdown menu ────────────────────────────────────────────────
 // v93: added null guards throughout
 (function() {
-  const menuBtn    = document.getElementById('profile-menu-btn');
-  const dropdown   = document.getElementById('profile-dropdown');
-  const pddAdmin   = document.getElementById('pdd-admin');
-  const pddRes     = document.getElementById('pdd-resources');
-  const pddSignout = document.getElementById('pdd-signout');
+  const menuBtn       = document.getElementById('profile-menu-btn');
+  const dropdown      = document.getElementById('profile-dropdown');
+  const pddAdmin      = document.getElementById('pdd-admin');
+  const pddRes        = document.getElementById('pdd-resources');
+  const pddSignout    = document.getElementById('pdd-signout');
+  const pddSuperAdmin = document.getElementById('pdd-super-admin');
   if (!menuBtn || !dropdown) return;
 
   function closeDropdown() { if (dropdown) dropdown.style.display = 'none'; }
@@ -13241,7 +13481,174 @@ navItems.forEach(btn => {
     closeDropdown();
     if (typeof fbAuth !== 'undefined') fbAuth.signOut();
   });
+  if (pddSuperAdmin) pddSuperAdmin.addEventListener('click', () => {
+    closeDropdown();
+    openSuperAdmin();
+  });
 })();
+
+// ── Super Admin Functions ────────────────────────────────────────────────
+function openSuperAdmin() {
+  if (!isSuperAdmin()) return;
+  const panel = document.getElementById('super-admin-panel');
+  if (panel) panel.classList.add('open');
+}
+function closeSuperAdmin() {
+  const panel = document.getElementById('super-admin-panel');
+  if (panel) panel.classList.remove('open');
+}
+
+async function _saCreateOrg() {
+  if (!isSuperAdmin()) return;
+  const btn    = document.getElementById('sa-create-org-btn');
+  const result = document.getElementById('sa-create-org-result');
+  const name   = (document.getElementById('sa-org-name')?.value || '').trim();
+  const niche  = document.getElementById('sa-org-niche')?.value || 'Solar';
+  const color  = document.getElementById('sa-org-color')?.value || '#1a9db8';
+  const logoInput = document.getElementById('sa-org-logo-file');
+
+  if (!name) { showToast('Enter an org name'); return; }
+  btn.disabled = true; btn.textContent = 'CREATING…';
+
+  const orgId = Date.now().toString(36);
+  let logoUrl = '';
+
+  if (logoInput?.files[0]) {
+    try {
+      const ref = fbStorage.ref('orgs/' + orgId + '/logo.png');
+      await ref.put(logoInput.files[0]);
+      logoUrl = await ref.getDownloadURL();
+    } catch(e) { console.warn('[SA] Logo upload failed:', e); }
+  }
+
+  try {
+    await fbDb.collection('organizations').doc(orgId).set({
+      name, niche, primaryColor: color, logoUrl,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdBy: SUPER_ADMIN_UID
+    });
+    // Pre-fill invite section
+    const invOrgId   = document.getElementById('sa-invite-org-id');
+    const invOrgName = document.getElementById('sa-invite-org-name');
+    if (invOrgId)   invOrgId.value   = orgId;
+    if (invOrgName) invOrgName.value = name;
+
+    result.innerHTML = `<span style="color:rgba(32,216,236,0.75)">ORG CREATED</span><br>ID: <span class="sa-result-code" style="font-size:15px;letter-spacing:0.10em">${orgId}</span><span style="color:rgba(255,255,255,0.38)">Name: ${name} &nbsp;·&nbsp; Niche: ${niche}</span>`;
+    result.classList.add('visible');
+    showToast('Org created!');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    console.error('[SA] Create org failed:', e);
+  }
+  btn.disabled = false; btn.textContent = 'CREATE ORG →';
+}
+
+function _genSuperInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'WC';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+async function _saGenMasterAdminInvite() {
+  if (!isSuperAdmin()) return;
+  const btn       = document.getElementById('sa-gen-invite-btn');
+  const result    = document.getElementById('sa-invite-result');
+  const orgId     = (document.getElementById('sa-invite-org-id')?.value || '').trim();
+  const orgName   = (document.getElementById('sa-invite-org-name')?.value || '').trim();
+  const adminName = (document.getElementById('sa-invite-admin-name')?.value || '').trim() || 'there';
+
+  if (!orgId)   { showToast('Enter an Org ID'); return; }
+  if (!orgName) { showToast('Enter an Org Name'); return; }
+  btn.disabled = true; btn.textContent = 'GENERATING…';
+
+  const code      = _genSuperInviteCode();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  try {
+    await fbDb.collection('invites').doc(code).set({
+      code, orgId, orgName, role: 'master_admin',
+      createdBy: SUPER_ADMIN_UID,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      expiresAt: firebase.firestore.Timestamp.fromDate(expiresAt),
+      used: false, usedBy: null
+    });
+
+    const smsText = `Hey ${adminName}! 👋\n\nYou've been set up as the admin for ${orgName} on WC App.\n\nYour setup code:\n${code}\n\nGet started here:\nhttps://cptlenergy.netlify.app\n\nCode expires in 30 days.\n— Aryen, WC App`;
+    const smsEncoded = encodeURIComponent(smsText);
+
+    result.innerHTML = `<span style="color:rgba(32,216,236,0.75)">CODE GENERATED</span>
+<span class="sa-result-code">${code}</span>
+<span style="color:rgba(255,255,255,0.38)">Role: master_admin &nbsp;·&nbsp; Org: ${orgName}<br>Expires: ${expiresAt.toLocaleDateString()}</span>
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+  <button class="sa-copy-btn" onclick="navigator.clipboard.writeText('${code}').then(()=>showToast('Code copied!'))">COPY CODE</button>
+  <button class="sa-copy-btn" onclick="if(navigator.share){navigator.share({text:decodeURIComponent('${smsEncoded}')})}else{navigator.clipboard.writeText(decodeURIComponent('${smsEncoded}')).then(()=>showToast('SMS text copied!'))}">SHARE SMS</button>
+</div>`;
+    result.classList.add('visible');
+    showToast('Invite generated!');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    console.error('[SA] Generate invite failed:', e);
+  }
+  btn.disabled = false; btn.textContent = 'GENERATE CODE →';
+}
+
+async function _saLoadOrgs() {
+  const listEl = document.getElementById('sa-org-list');
+  if (!listEl || !isSuperAdmin()) return;
+  listEl.innerHTML = '<div class="sa-status">Loading…</div>';
+  try {
+    const snap = await fbDb.collection('organizations').orderBy('createdAt', 'desc').get();
+    if (snap.empty) { listEl.innerHTML = '<div class="sa-status">No orgs found</div>'; return; }
+    listEl.innerHTML = '';
+    snap.forEach(function(doc) {
+      const d       = doc.data();
+      const name    = d.name || d.companyName || doc.id;
+      const niche   = d.niche || '—';
+      const created = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleDateString() : '—';
+      const row = document.createElement('div');
+      row.className = 'sa-org-row';
+      row.innerHTML = `
+        <div class="sa-org-row-top">
+          <div class="sa-org-row-info">
+            <div class="sa-org-name">${name}</div>
+            <div class="sa-org-meta">${niche} &nbsp;·&nbsp; ${doc.id} &nbsp;·&nbsp; ${created}</div>
+          </div>
+          <button class="sa-org-view-btn" onclick="_saViewOrgTeam('${doc.id}', this)">VIEW</button>
+        </div>
+        <div class="sa-team-list" id="sa-team-${doc.id}"></div>`;
+      listEl.appendChild(row);
+    });
+  } catch(e) {
+    listEl.innerHTML = '<div class="sa-status">Error: ' + e.message + '</div>';
+  }
+}
+
+async function _saViewOrgTeam(orgId, btn) {
+  const teamEl = document.getElementById('sa-team-' + orgId);
+  if (!teamEl) return;
+  if (teamEl.classList.contains('visible')) {
+    teamEl.classList.remove('visible');
+    btn.textContent = 'VIEW'; return;
+  }
+  btn.textContent = '…';
+  teamEl.innerHTML = 'Loading team…';
+  teamEl.classList.add('visible');
+  try {
+    const snap = await fbDb.collection('organizations').doc(orgId).collection('team').get();
+    if (snap.empty) { teamEl.innerHTML = 'No team members yet'; btn.textContent = 'HIDE'; return; }
+    const rows = [];
+    snap.forEach(d => {
+      const m = d.data();
+      rows.push(`${m.name || d.id} &nbsp;—&nbsp; ${m.role || 'unknown'}`);
+    });
+    teamEl.innerHTML = rows.join('<br>');
+    btn.textContent = 'HIDE';
+  } catch(e) {
+    teamEl.innerHTML = 'Error: ' + e.message;
+    btn.textContent = 'VIEW';
+  }
+}
 
 // Declared early to avoid TDZ when activateTab calls stopGpsWatch on initial load
 let gpsWatchId = null;
@@ -17921,7 +18328,7 @@ function migrateDataV1() {
 // v77: expanded to fully filter dashboard, CRM, leaderboard per role
 function applyRoleUI() {
   const role      = getActiveRole();
-  const isManager = role === 'manager' || role === 'master_admin';
+  const isManager = role === 'manager' || role === 'master_admin' || role === 'super_admin';
   const isCloser  = role === 'closer';
   const isCanv    = role === 'canvasser';
 
