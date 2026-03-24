@@ -7576,6 +7576,17 @@
   </div>
 </div>
 
+<!-- ── Dev bypass menu (localhost / netlify.app only) ─────────────────── -->
+<div id="dev-bypass-menu" style="display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;background:rgba(0,0,0,0.65)">
+  <div style="background:#0d1e2c;border:1.5px solid rgba(20,145,153,0.45);border-radius:18px;padding:24px 20px;width:min(300px,86vw);display:flex;flex-direction:column;gap:10px">
+    <div style="color:#149199;font-size:11px;font-weight:800;letter-spacing:0.1em;text-align:center;margin-bottom:2px">🛠 DEV BYPASS</div>
+    <button onclick="_devBypass('skip')"    style="padding:12px;border-radius:10px;border:1px solid rgba(20,145,153,0.35);background:rgba(20,145,153,0.12);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Skip to App (bypass auth)</button>
+    <button onclick="_devBypass('reset')"   style="padding:12px;border-radius:10px;border:1px solid rgba(251,191,36,0.35);background:rgba(251,191,36,0.08);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Reset Onboarding</button>
+    <button onclick="_devBypass('role')"    style="padding:12px;border-radius:10px;border:1px solid rgba(251,191,36,0.35);background:rgba(251,191,36,0.08);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Force Role Picker</button>
+    <button onclick="_devBypass('cancel')"  style="padding:10px;border-radius:10px;border:none;background:none;color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+
 <div id="app" style="display:none">
 
   <!-- ── v78: Offline banner — shows only when device loses internet ─────── -->
@@ -21800,6 +21811,72 @@ function _lookupInvitePreAuth(code) {
     }).catch(function() { reject(new Error('Could not verify code')); });
   });
 }
+
+// ── Dev bypass (localhost / netlify.app only) ─────────────────────────────
+;(function() {
+  var _host = window.location.hostname;
+  if (!(_host === 'localhost' || _host.endsWith('.netlify.app'))) return;
+
+  var _taps = 0, _tapTimer = null;
+  var _menu = null;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    _menu = document.getElementById('dev-bypass-menu');
+
+    // Attach 5-tap detector to all .login-logo images (invite gate + login screen)
+    document.querySelectorAll('.login-logo img').forEach(function(img) {
+      img.addEventListener('click', function() {
+        _taps++;
+        clearTimeout(_tapTimer);
+        _tapTimer = setTimeout(function() { _taps = 0; }, 1500);
+        if (_taps >= 5) {
+          _taps = 0;
+          if (_menu) _menu.style.display = 'flex';
+        }
+      });
+    });
+  });
+
+  window._devBypass = function(action) {
+    if (_menu) _menu.style.display = 'none';
+    if (action === 'cancel') return;
+
+    if (action === 'skip') {
+      // Set minimal local state so the app renders without hitting auth
+      try { localStorage.setItem('ce_user_role', 'canvasser'); } catch(_) {}
+      try { localStorage.setItem('ce_onboarding_done', '1'); } catch(_) {}
+      var gate = document.getElementById('invite-gate-screen');
+      var login = document.getElementById('login-screen');
+      var app = document.getElementById('app');
+      if (gate)  gate.classList.add('hidden');
+      if (login) login.classList.add('hidden');
+      if (app)   app.style.display = '';
+      console.warn('[DEV] Skipped auth — canvasser role set locally');
+      return;
+    }
+
+    if (action === 'reset') {
+      ['ce_onboarding_done','ce_user_role','ce_org_id'].forEach(function(k) {
+        try { localStorage.removeItem(k); } catch(_) {}
+      });
+      console.warn('[DEV] Onboarding reset — reloading');
+      location.reload();
+      return;
+    }
+
+    if (action === 'role') {
+      try { localStorage.removeItem('ce_user_role'); } catch(_) {}
+      var gate2 = document.getElementById('invite-gate-screen');
+      var login2 = document.getElementById('login-screen');
+      var app2 = document.getElementById('app');
+      if (gate2) gate2.classList.add('hidden');
+      if (login2) login2.classList.add('hidden');
+      if (app2) app2.style.display = '';
+      setTimeout(function() { typeof showFirstRunModal === 'function' && showFirstRunModal(); }, 200);
+      console.warn('[DEV] Forced role picker');
+    }
+  };
+})();
 
 // ── Pre-login invite gate ─────────────────────────────────────────────────
 ;(function() {
