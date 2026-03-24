@@ -4556,11 +4556,11 @@
   #role-setup-go:active { transform: scale(0.97); opacity: 0.9; }
 
   /* ─────────────────────────────────────────────────────────────────────────
-     MASTER ADMIN — Full-Screen Dev Console
+     MASTER ADMIN — Dev Console Terminal
   ───────────────────────────────────────────────────────────────────────── */
   #master-admin-sheet {
     position: fixed; inset: 0; z-index: 9800;
-    background: linear-gradient(180deg, #060d10 0%, #0a1214 100%);
+    background: #0d1117;
     display: flex; flex-direction: column;
     overflow: hidden;
     transform: translateY(100%);
@@ -4571,113 +4571,177 @@
 
   #master-admin-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 56px 20px 16px;
-    border-bottom: 1px solid rgba(26,157,184,0.08);
+    padding: 52px 20px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     flex-shrink: 0;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.45);
   }
   #master-admin-title {
-    font-size: 18px; font-weight: 700;
-    color: #20d8ec; letter-spacing: 0.06em;
-    font-family: var(--font-display);
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+    color: #20d8ec; letter-spacing: 0.20em; text-transform: uppercase;
   }
   #master-admin-badge {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-    background: rgba(26,157,184,0.10); color: rgba(32,216,236,0.8);
-    padding: 4px 8px; border-radius: 24px; margin-left: 8px;
-    border: 1px solid rgba(26,157,184,0.15);
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    background: rgba(26,157,184,0.10); color: rgba(32,216,236,0.65);
+    padding: 3px 8px; border-radius: 4px; margin-left: 10px;
+    border: 1px solid rgba(26,157,184,0.18);
   }
   #master-admin-close-btn {
-    width: 36px; height: 36px; border-radius: 50%; border: none;
-    background: rgba(255,255,255,0.06); color: rgba(240,248,255,0.6);
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.04); color: rgba(240,248,255,0.45);
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
-    font-size: 16px;
-    transition: background 0.15s;
+    cursor: pointer; font-size: 14px; transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
   }
-  #master-admin-close-btn:active { background: rgba(255,255,255,0.12); }
+  #master-admin-close-btn:hover { border-color: rgba(26,157,184,0.40); color: #20d8ec; }
+
+  /* Status bar */
+  #ma-status-bar {
+    display: flex; flex-shrink: 0;
+    background: rgba(0,0,0,0.30);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .ma-stat {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 10px 16px; border-right: 1px solid rgba(255,255,255,0.04);
+    flex-shrink: 0;
+  }
+  .ma-stat-label {
+    font-family: var(--font-mono); font-size: 8px; font-weight: 700;
+    letter-spacing: 0.16em; color: rgba(255,255,255,0.22); text-transform: uppercase;
+  }
+  .ma-stat-value {
+    font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.60);
+    white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ma-stat-badge {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.10em; padding: 2px 7px; border-radius: 3px;
+  }
+  .ma-stat-badge--prod { background: rgba(239,68,68,0.14); color: #f87171; border: 1px solid rgba(239,68,68,0.22); }
+  .ma-stat-badge--dev  { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.20); }
+
   #master-admin-body {
-    flex: 1; overflow-y: auto; padding: 16px 16px 48px;
+    flex: 1; min-height: 0; overflow-y: auto; padding: 14px 14px 60px;
     -webkit-overflow-scrolling: touch;
   }
-  .ma-section {
-    margin-bottom: 16px;
-    background: rgba(255,255,255,0.03); border-radius: var(--r-md);
-    border: 1px solid rgba(255,255,255,0.05);
-    overflow: hidden;
+
+  /* Collapsible cards */
+  .ma-card {
+    margin-bottom: 8px; border-radius: 12px; flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
   }
-  .ma-section-title {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: rgba(26,157,184,0.5);
-    padding: 12px 16px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+  .ma-card[open] { border-color: rgba(26,157,184,0.25); }
+  .ma-card-header {
+    display: flex; align-items: center; gap: 11px;
+    padding: 13px 14px; cursor: pointer; list-style: none;
+    user-select: none; -webkit-tap-highlight-color: transparent;
+    border-left: 3px solid transparent; transition: border-color 0.15s, background 0.15s;
   }
-  .ma-field { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-  .ma-field:last-child { border-bottom: none; }
+  .ma-card-header::-webkit-details-marker { display: none; }
+  .ma-card[open] .ma-card-header {
+    border-left-color: rgba(26,157,184,0.55);
+    background: rgba(26,157,184,0.05);
+  }
+  .ma-card-num {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    color: rgba(255,255,255,0.18); letter-spacing: 0.06em; flex-shrink: 0; width: 18px;
+  }
+  .ma-card-icon { font-size: 14px; flex-shrink: 0; }
+  .ma-card-title {
+    font-size: 13px; font-weight: 600; color: rgba(240,248,255,0.78); flex: 1;
+  }
+  .ma-card-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,0.14);
+  }
+  .ma-card-dot--on  { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.55); }
+  .ma-card-chevron {
+    width: 14px; height: 14px; flex-shrink: 0;
+    stroke: rgba(255,255,255,0.22); transition: transform 0.2s;
+  }
+  .ma-card[open] .ma-card-chevron { transform: rotate(180deg); }
+  .ma-card-body {
+    padding: 6px 14px 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .ma-card-desc {
+    font-size: 12px; color: rgba(255,255,255,0.28); line-height: 1.6;
+    margin: 10px 0 14px;
+  }
+
+  /* Fields & inputs */
+  .ma-field { margin-bottom: 13px; }
+  .ma-field:last-child { margin-bottom: 0; }
   .ma-label {
-    font-size: 10px; color: rgba(240,248,255,0.4);
-    font-weight: 600; letter-spacing: 0.06em; margin-bottom: 8px;
-    display: block; text-transform: uppercase;
+    font-size: 12px; color: rgba(240,248,255,0.42); font-weight: 500;
+    margin-bottom: 7px; display: block;
   }
   .ma-input {
     width: 100%; padding: 10px 12px;
-    border-radius: var(--r-sm); border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.04); color: #f0f4f5;
-    font-size: 14px; font-family: inherit;
-    outline: none; -webkit-appearance: none;
-    transition: border-color 0.15s;
+    border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05); color: #e8f4f6;
+    font-size: 13px; font-family: var(--font-mono);
+    outline: none; -webkit-appearance: none; transition: border-color 0.15s;
   }
-  .ma-input:focus { border-color: rgba(26,157,184,0.4); }
-  .ma-color-row {
-    display: flex; align-items: center; gap: 12px;
-  }
-  #ma-color-pick {
-    width: 44px; height: 44px; border-radius: 12px; border: none;
+  .ma-input:focus { border-color: rgba(26,157,184,0.45); }
+  .ma-input-plain { font-family: var(--font-body); }
+  .ma-color-row { display: flex; align-items: center; gap: 10px; }
+  #ma-color-pick, #ma-glass-pick {
+    width: 42px; height: 42px; border-radius: 10px; border: none;
     padding: 2px; cursor: pointer; background: transparent;
-    -webkit-appearance: none;
+    -webkit-appearance: none; flex-shrink: 0;
   }
-  #ma-color-pick::-webkit-color-swatch-wrapper { padding: 0; }
-  #ma-color-pick::-webkit-color-swatch { border-radius: 8px; border: none; }
-  #ma-color-hex {
-    flex: 1; padding: 10px 12px;
-    border-radius: 12px; border: 1px solid rgba(26,157,184,0.15);
-    background: rgba(0,0,0,0.4); color: #f0f8ff;
-    font-size: 14px; font-family: 'Courier New', monospace;
-    outline: none; -webkit-appearance: none;
-  }
+  #ma-color-pick::-webkit-color-swatch-wrapper,
+  #ma-glass-pick::-webkit-color-swatch-wrapper { padding: 0; }
+  #ma-color-pick::-webkit-color-swatch,
+  #ma-glass-pick::-webkit-color-swatch { border-radius: 8px; border: none; }
+  #ma-color-hex { flex: 1; }
+
+  /* Buttons */
   .ma-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 12px 16px; border-radius: var(--r-sm); border: none;
-    background: rgba(26,157,184,0.08); color: #20d8ec;
-    font-size: 13px; font-weight: 600; font-family: inherit;
+    width: 100%; padding: 11px 16px; border-radius: 8px;
+    background: linear-gradient(135deg, #1a9db8 0%, #20d8ec 100%);
+    border: none; color: #fff;
+    font-size: 12px; font-weight: 700; font-family: var(--font-body); letter-spacing: 0.04em;
     cursor: pointer; -webkit-tap-highlight-color: transparent;
-    transition: background 0.15s, transform 0.12s;
-    margin-top: 8px;
-    border: 1px solid rgba(26,157,184,0.12);
+    transition: all 0.15s; box-shadow: 0 0 12px rgba(26,157,184,0.22); margin-top: 4px;
   }
-  .ma-btn:active { transform: scale(0.97); background: rgba(26,157,184,0.15); }
+  .ma-btn:hover { box-shadow: 0 0 22px rgba(26,157,184,0.45); opacity: 0.93; }
+  .ma-btn:active { transform: scale(0.97); }
+  .ma-btn--ghost {
+    background: rgba(26,157,184,0.08); color: #20d8ec;
+    border: 1px solid rgba(26,157,184,0.20); box-shadow: none;
+  }
+  .ma-btn--ghost:hover { background: rgba(26,157,184,0.14); box-shadow: 0 0 10px rgba(26,157,184,0.18); }
   .ma-btn--danger {
-    background: rgba(239,68,68,0.08); color: #f87171;
-    border-color: rgba(239,68,68,0.15);
+    background: rgba(239,68,68,0.09); color: #f87171;
+    border: 1px solid rgba(239,68,68,0.22); box-shadow: none;
   }
-  .ma-btn--danger:active { background: rgba(239,68,68,0.18); }
-  .ma-storage-info {
-    font-size: 12px; color: rgba(240,248,255,0.35);
-    padding: 8px 0 0; font-family: 'Courier New', monospace;
-    line-height: 1.8;
+  .ma-btn--danger:hover { background: rgba(239,68,68,0.17); box-shadow: 0 0 10px rgba(239,68,68,0.18); }
+
+  .ma-storage-info, .ma-about-text {
+    font-size: 11px; color: rgba(240,248,255,0.30); line-height: 1.9;
+    font-family: var(--font-mono);
+    background: rgba(0,0,0,0.35); border-radius: 8px; padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.05); white-space: pre-wrap;
   }
-  .ma-about-text {
-    font-size: 12px; color: rgba(240,248,255,0.4);
-    line-height: 1.8; font-family: 'Courier New', monospace;
+  .ma-upload-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 14px; border-radius: 8px;
+    background: rgba(26,157,184,0.07); color: #20d8ec;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid rgba(26,157,184,0.18); transition: all 0.15s;
   }
-  /* Monospace for URL/technical input fields */
-  #ma-chat-api-url, #ma-gosolo-url, #ma-grid-url {
-    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-    font-size: 12px; letter-spacing: 0.01em;
-  }
-  /* Cleaner section headers */
-  .ma-section-title {
-    background: rgba(26,157,184,0.04);
+  .ma-upload-label:hover { background: rgba(26,157,184,0.13); }
+  .ma-upload-status {
+    display: block; margin-top: 6px; font-size: 11px;
+    color: rgba(26,157,184,0.70); font-family: var(--font-mono);
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -10271,207 +10335,247 @@
   </div>
   <div id="master-admin-body">
 
-    <!-- v71: View As Rep (Impersonation) -->
-    <div class="ma-section" id="ma-impersonate-section">
-      <div class="ma-section-title">👁 View As Rep</div>
-      <p>Preview the app exactly as a specific team member sees it. A red banner will appear — tap Exit to return.</p>
-      <div class="ma-field">
-        <label class="ma-label">SELECT TEAM MEMBER</label>
-        <select class="ma-input" id="ma-impersonate-select">
-          <option value="">— Select a team member —</option>
-        </select>
+    <!-- Status Bar -->
+    <div id="ma-status-bar">
+      <div class="ma-stat">
+        <span class="ma-stat-label">VER</span>
+        <span class="ma-stat-value" id="ma-stat-ver">—</span>
       </div>
-      <div class="ma-field" style="margin-top:10px">
-        <button class="ma-btn" id="ma-impersonate-btn">View as Selected Rep</button>
+      <div class="ma-stat">
+        <span class="ma-stat-label">ENV</span>
+        <span class="ma-stat-value" id="ma-stat-env">—</span>
+      </div>
+      <div class="ma-stat">
+        <span class="ma-stat-label">PROJECT</span>
+        <span class="ma-stat-value" id="ma-stat-project">—</span>
+      </div>
+      <div class="ma-stat">
+        <span class="ma-stat-label">UID</span>
+        <span class="ma-stat-value" id="ma-stat-uid">—</span>
       </div>
     </div>
 
-    <!-- White-Label -->
-    <div class="ma-section">
-      <div class="ma-section-title">⚡ White-Label Setup</div>
-      <div class="ma-field">
-        <label class="ma-label">APP NAME</label>
-        <input class="ma-input" type="text" id="ma-app-name" placeholder="Capital Energy" />
+    <!-- 01 System Status -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot" id="ma-dot-system"></span>
+        <span class="ma-card-num">01</span>
+        <span class="ma-card-title">System Status</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field"><div class="ma-storage-info" id="ma-storage-info">Calculating…</div></div>
       </div>
-      <div class="ma-field">
-        <label class="ma-label">TAGLINE</label>
-        <input class="ma-input" type="text" id="ma-tagline" placeholder="Solar Sales Hub" />
-      </div>
-      <div class="ma-field">
-        <label class="ma-label">PRIMARY COLOR</label>
-        <div class="ma-color-row">
-          <input type="color" id="ma-color-pick" value="#148f98" />
-          <input class="ma-input" type="text" id="ma-color-hex" placeholder="#148f98" style="flex:1" />
+    </details>
+
+    <!-- 02 White-Label -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot" id="ma-dot-brand"></span>
+        <span class="ma-card-num">02</span>
+        <span class="ma-card-title">White-Label Setup</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field">
+          <label class="ma-label">APP NAME</label>
+          <input class="ma-input" type="text" id="ma-app-name" placeholder="Capital Energy" />
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">TAGLINE</label>
+          <input class="ma-input" type="text" id="ma-tagline" placeholder="Solar Sales Hub" />
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">PRIMARY COLOR</label>
+          <div class="ma-color-row">
+            <input type="color" id="ma-color-pick" value="#148f98" />
+            <input class="ma-input" type="text" id="ma-color-hex" placeholder="#148f98" style="flex:1" />
+          </div>
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">GLASS TINT COLOR
+            <span style="font-size:10px;font-weight:400;color:#7ab8d4;margin-left:6px;text-transform:none">— background &amp; glass panels</span>
+          </label>
+          <div class="ma-color-row">
+            <input type="color" id="ma-glass-pick" value="#e8f2f4" />
+            <input class="ma-input" type="text" id="ma-glass-hex" placeholder="#e8f2f4" style="flex:1" />
+          </div>
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">LOGO (upload)</label>
+          <label class="ma-upload-label">Choose Image<input type="file" id="ma-logo-upload" accept="image/*" style="display:none" /></label>
+        </div>
+        <div class="ma-field" style="display:flex;gap:12px">
+          <button class="ma-btn" id="ma-save-brand-btn" style="flex:1">💾 Save White-Label</button>
+          <button class="ma-btn ma-btn--danger" id="ma-reset-brand-btn" style="flex-shrink:0;width:auto;padding:11px 16px">↺ Reset</button>
         </div>
       </div>
-      <div class="ma-field">
-        <label class="ma-label">GLASS TINT COLOR
-          <span style="font-size:10px;font-weight:400;color:#7ab8d4;margin-left:6px;text-transform:none">— background &amp; glass panels</span>
-        </label>
-        <div class="ma-color-row">
-          <input type="color" id="ma-glass-pick" value="#e8f2f4" />
-          <input class="ma-input" type="text" id="ma-glass-hex" placeholder="#e8f2f4" style="flex:1" />
+    </details>
+
+    <!-- 03 Branding -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot"></span>
+        <span class="ma-card-num">03</span>
+        <span class="ma-card-title">Branding &amp; Logo</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field">
+          <label class="ma-label">COMPANY NAME</label>
+          <input class="ma-input" type="text" id="ma-company-name-field" placeholder="Capital Energy" />
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">HEADER LOGO (image)</label>
+          <label class="ma-upload-label">Upload Logo<input type="file" id="ma-header-logo-upload" accept="image/*" style="display:none" /></label>
+          <span id="ma-header-logo-status" style="display:block;margin-top:6px;font-size:12px;color:#7ab8d4"></span>
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">APP ICON (home screen)</label>
+          <label class="ma-upload-label">Upload Icon<input type="file" id="ma-app-icon-upload" accept="image/*" style="display:none" /></label>
+          <span id="ma-app-icon-status" style="display:block;margin-top:6px;font-size:12px;color:#7ab8d4"></span>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-save-branding-btn">💾 Save Branding</button>
         </div>
       </div>
-      <div class="ma-field">
-        <label class="ma-label">LOGO (upload)</label>
-        <label style="display:inline-block;padding:8px 14px;border-radius:12px;background:rgba(26,157,184,0.08);color:#20d8ec;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(26,157,184,0.2);">
-          Choose Image
-          <input type="file" id="ma-logo-upload" accept="image/*" style="display:none" />
-        </label>
-      </div>
-      <div class="ma-field" style="display:flex;gap:12px">
-        <button class="ma-btn" id="ma-save-brand-btn" style="flex:1">💾 Save White-Label Settings</button>
-        <button class="ma-btn" id="ma-reset-brand-btn" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:#ef4444;flex-shrink:0">↺ Reset</button>
-      </div>
-    </div>
+    </details>
 
-    <!-- Developer Quick Links -->
-    <div class="ma-section">
-      <div class="ma-section-title">🔗 Developer Quick Links</div>
-      <div class="ma-field">
-        <label class="ma-label">GOSOLO URL</label>
-        <input class="ma-input" type="url" id="ma-gosolo-url" placeholder="https://phx.gosolo.io/" />
+    <!-- 04 Dev Links -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot"></span>
+        <span class="ma-card-num">04</span>
+        <span class="ma-card-title">Developer Links</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field">
+          <label class="ma-label">GOSOLO URL</label>
+          <input class="ma-input" type="url" id="ma-gosolo-url" placeholder="https://phx.gosolo.io/" />
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">CPTL GRID URL</label>
+          <input class="ma-input" type="url" id="ma-grid-url" placeholder="https://procfu.com/..." />
+        </div>
+        <div class="ma-field">
+          <label class="ma-label">AI CHAT API URL</label>
+          <input class="ma-input" type="url" id="ma-chat-api-url" placeholder="http://localhost:8080/api/chat" />
+          <span style="display:block;margin-top:4px;font-size:var(--fs-2xs);color:rgba(122,184,212,0.6);">Live voice agent endpoint — leave blank for local KB fallback</span>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-save-links-btn">💾 Save Links</button>
+        </div>
       </div>
-      <div class="ma-field">
-        <label class="ma-label">CPTL GRID URL</label>
-        <input class="ma-input" type="url" id="ma-grid-url" placeholder="https://procfu.com/..." />
-      </div>
-      <div class="ma-field">
-        <label class="ma-label">AI CHAT API URL</label>
-        <input class="ma-input" type="url" id="ma-chat-api-url" placeholder="http://localhost:8080/api/chat" />
-        <span style="display:block;margin-top:4px;font-size:var(--fs-2xs);color:rgba(122,184,212,0.6);">Live voice agent endpoint — leave blank for local KB fallback</span>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn" id="ma-save-links-btn">💾 Save Quick Links</button>
-      </div>
-    </div>
+    </details>
 
-    <!-- Branding / Logo / Icon -->
-    <div class="ma-section">
-      <div class="ma-section-title">🎨 Branding &amp; Logo</div>
-      <div class="ma-field">
-        <label class="ma-label">COMPANY NAME</label>
-        <input class="ma-input" type="text" id="ma-company-name-field" placeholder="Capital Energy" />
+    <!-- 05 Data Tools -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot"></span>
+        <span class="ma-card-num">05</span>
+        <span class="ma-card-title">Data Tools</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-export-btn">⬇ Export All Data (JSON)</button>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-export-csv-btn">📊 Export Activity Log (CSV)</button>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn ma-btn--danger" id="ma-clear-btn">⚠ Clear All Data</button>
+        </div>
       </div>
-      <div class="ma-field">
-        <label class="ma-label">HEADER LOGO (image)</label>
-        <label style="display:inline-block;padding:8px 14px;border-radius:12px;background:rgba(26,157,184,0.08);color:#20d8ec;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(26,157,184,0.2);">
-          Upload Logo
-          <input type="file" id="ma-header-logo-upload" accept="image/*" style="display:none" />
-        </label>
-        <span id="ma-header-logo-status" style="display:block;margin-top:6px;font-size:12px;color:#7ab8d4"></span>
-      </div>
-      <div class="ma-field">
-        <label class="ma-label">APP ICON (home screen)</label>
-        <label style="display:inline-block;padding:8px 14px;border-radius:12px;background:rgba(26,157,184,0.08);color:#20d8ec;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(26,157,184,0.2);">
-          Upload Icon
-          <input type="file" id="ma-app-icon-upload" accept="image/*" style="display:none" />
-        </label>
-        <span id="ma-app-icon-status" style="display:block;margin-top:6px;font-size:12px;color:#7ab8d4"></span>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn" id="ma-save-branding-btn">💾 Save Branding</button>
-      </div>
-    </div>
+    </details>
 
-    <!-- Adder Sheets -->
-    <div class="ma-section">
-      <div class="ma-section-title">📄 Adder Sheets</div>
-      <p style="font-size:12px;color:#7ab8d4;margin:0 0 0;line-height:1.5;padding:10px 16px 0">Edit tab labels, upload a PDF for any tab, or add custom tabs.</p>
-      <div id="ma-adder-list"><!-- populated by JS --></div>
-      <div class="ma-field" style="display:flex;gap:8px;align-items:center">
-        <input class="ma-input" id="ma-adder-new-label" placeholder="New tab label…" style="flex:1;min-width:0" />
-        <button class="ma-btn" onclick="maAdderAdd()" style="white-space:nowrap;flex-shrink:0;padding:10px 14px">+ Add</button>
+    <!-- 06 PIN Management -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot"></span>
+        <span class="ma-card-num">06</span>
+        <span class="ma-card-title">PIN Management</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-change-pin-btn">🔄 Change Master Admin PIN</button>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn ma-btn--danger" id="ma-remove-pin-btn">🗑 Remove PIN (disable Master Admin)</button>
+        </div>
       </div>
-      <div class="ma-field">
-        <button class="ma-btn" onclick="maAdderSaveLabels()" style="width:100%">💾 Save Labels</button>
-      </div>
-    </div>
+    </details>
 
-    <!-- Checklist PDF -->
-    <div class="ma-section">
-      <div class="ma-section-title">✅ Clean Deal Checklist</div>
-      <p style="font-size:12px;color:#7ab8d4;margin:0 0 14px;line-height:1.5">Upload a custom checklist PDF. If uploaded, reps see a View PDF button. Otherwise the default interactive checklist is shown.</p>
-      <div class="ma-field">
-        <label style="display:inline-block;padding:8px 14px;border-radius:12px;background:rgba(26,157,184,0.08);color:#20d8ec;font-size:13px;font-weight:600;cursor:pointer;border:1px solid rgba(26,157,184,0.2);">
-          Upload Checklist PDF
-          <input type="file" id="ma-checklist-upload" accept=".pdf,image/*" style="display:none" />
-        </label>
-        <span id="ma-checklist-status" style="display:block;margin-top:6px;font-size:12px;color:#7ab8d4"></span>
+    <!-- 07 Dev Tools -->
+    <details class="ma-card" style="border-color:rgba(239,68,68,0.18)">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot" style="background:rgba(239,68,68,0.55)"></span>
+        <span class="ma-card-num" style="color:rgba(239,68,68,0.55)">07</span>
+        <span class="ma-card-title" style="color:rgba(239,68,68,0.80)">Dev Tools</span>
+        <span class="ma-card-chevron" style="color:rgba(239,68,68,0.40);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <p style="font-size:11px;color:rgba(239,68,68,0.50);margin:8px 0 14px;line-height:1.5">Troubleshooting only. Clears localStorage keys — no Firestore data touched unless noted.</p>
+        <div class="ma-field">
+          <button class="ma-btn ma-btn--danger" id="ma-dev-reset-onboarding">↺ Reset Onboarding</button>
+          <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_onboarding_done + ce_user_role. Reruns on next reload.</span>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn ma-btn--danger" id="ma-dev-reset-role">↺ Reset Role Only</button>
+          <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_user_role only. Forces role picker on next reload.</span>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn ma-btn--danger" id="ma-dev-reset-profile">↺ Reset User Profile</button>
+          <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_user_phone, ce_user_region, ce_user_headshot.</span>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-dev-force-drain">⚡ Force Drain to Firestore</button>
+          <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Manually triggers drainToFirestore() now.</span>
+        </div>
       </div>
-    </div>
+    </details>
 
-    <!-- Quick Links -->
-    <div class="ma-section">
-      <div class="ma-section-title">🔗 Quick Links</div>
-      <p style="font-size:12px;color:#7ab8d4;margin:0 0 14px;line-height:1.5">Customize the label, subtitle, and URL for each home screen quick link.</p>
-      <div id="ma-ql-list"><!-- Populated by JS --></div>
-      <div class="ma-field" style="margin-top:8px">
-        <button class="ma-btn" id="ma-ql-save-btn">💾 Save Quick Links</button>
+    <!-- 08 View As Rep -->
+    <details class="ma-card" id="ma-impersonate-section">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot"></span>
+        <span class="ma-card-num">08</span>
+        <span class="ma-card-title">View As Rep</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <p style="font-size:12px;color:rgba(255,255,255,0.35);margin:8px 0 14px;line-height:1.5">Preview the app exactly as a specific team member sees it. A red banner will appear — tap Exit to return.</p>
+        <div class="ma-field">
+          <label class="ma-label">SELECT TEAM MEMBER</label>
+          <select class="ma-input" id="ma-impersonate-select">
+            <option value="">— Select a team member —</option>
+          </select>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn" id="ma-impersonate-btn">👁 View as Selected Rep</button>
+        </div>
       </div>
-    </div>
+    </details>
 
-    <!-- Data Tools -->
-    <div class="ma-section">
-      <div class="ma-section-title">🗄 Data Tools</div>
-      <div class="ma-field">
-        <button class="ma-btn" id="ma-export-btn">⬇ Export All Data (JSON)</button>
+    <!-- 09 About & Exit -->
+    <details class="ma-card">
+      <summary class="ma-card-header">
+        <span class="ma-card-dot"></span>
+        <span class="ma-card-num">09</span>
+        <span class="ma-card-title">About &amp; Exit</span>
+        <span class="ma-card-chevron" style="color:rgba(255,255,255,0.28);font-size:13px;display:inline-block;margin-left:auto">▾</span>
+      </summary>
+      <div class="ma-card-body">
+        <div class="ma-field">
+          <div class="ma-about-text" id="ma-about-text">Loading…</div>
+        </div>
+        <div class="ma-field">
+          <button class="ma-btn ma-btn--danger" id="ma-lock-btn">🔒 Lock &amp; Exit Master Admin</button>
+        </div>
       </div>
-      <div class="ma-field">
-        <button class="ma-btn" id="ma-export-csv-btn">📊 Export Activity Log (CSV)</button>
-      </div>
-      <div class="ma-field">
-        <div class="ma-storage-info" id="ma-storage-info">Calculating…</div>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn ma-btn--danger" id="ma-clear-btn">⚠ Clear All Data</button>
-      </div>
-    </div>
-
-    <!-- PIN Management -->
-    <div class="ma-section">
-      <div class="ma-section-title">🔐 PIN Management</div>
-      <div class="ma-field">
-        <button class="ma-btn" id="ma-change-pin-btn">🔄 Change Master Admin PIN</button>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn ma-btn--danger" id="ma-remove-pin-btn">🗑 Remove PIN (disable Master Admin)</button>
-      </div>
-    </div>
-
-    <!-- Dev Tools -->
-    <div class="ma-section" style="border-color:rgba(239,68,68,0.2)">
-      <div class="ma-section-title" style="color:rgba(239,68,68,0.7);background:rgba(239,68,68,0.04)">⚠ Dev Tools — Troubleshooting Only</div>
-      <p style="font-size:11px;color:rgba(239,68,68,0.55);margin:0;padding:8px 16px 0;line-height:1.5">These actions clear specific localStorage keys. None touch Firestore or knock/appointment data unless noted.</p>
-      <div class="ma-field">
-        <button class="ma-btn ma-btn--danger" id="ma-dev-reset-onboarding">↺ Reset Onboarding</button>
-        <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_onboarding_done + ce_user_role. Onboarding reruns on next reload.</span>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn ma-btn--danger" id="ma-dev-reset-role">↺ Reset Role Only</button>
-        <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_user_role only. Forces role picker on next reload.</span>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn ma-btn--danger" id="ma-dev-reset-profile">↺ Reset User Profile</button>
-        <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_user_phone, ce_user_region, ce_user_headshot. Does not touch Firebase auth or Firestore.</span>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn" id="ma-dev-force-drain" style="border-color:rgba(26,157,184,0.25)">⚡ Force Drain to Firestore</button>
-        <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Manually triggers drainToFirestore() now. Useful for debugging sync issues.</span>
-      </div>
-    </div>
-
-    <!-- About -->
-    <div class="ma-section">
-      <div class="ma-section-title">ℹ About</div>
-      <div class="ma-field">
-        <div class="ma-about-text" id="ma-about-text">Loading…</div>
-      </div>
-      <div class="ma-field">
-        <button class="ma-btn ma-btn--danger" id="ma-lock-btn">🔒 Lock & Exit Master Admin</button>
-      </div>
-    </div>
+    </details>
 
   </div>
 </div>
@@ -18726,6 +18830,37 @@ function openMasterAdmin() {
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('ce_')).length} keys`;
   }
+
+  // Status bar
+  const statVer     = document.getElementById('ma-stat-ver');
+  const statEnv     = document.getElementById('ma-stat-env');
+  const statProject = document.getElementById('ma-stat-project');
+  const statUid     = document.getElementById('ma-stat-uid');
+  const isProd = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
+  if (statVer)     statVer.textContent     = 'v100';
+  if (statEnv) {
+    statEnv.innerHTML = isProd
+      ? '<span class="ma-stat-badge ma-stat-badge--prod">PROD</span>'
+      : '<span class="ma-stat-badge ma-stat-badge--dev">DEV</span>';
+  }
+  try {
+    const projId = firebase.app().options.projectId || '—';
+    if (statProject) statProject.textContent = projId;
+  } catch(e) { if (statProject) statProject.textContent = '—'; }
+  try {
+    const uid = firebase.auth().currentUser ? firebase.auth().currentUser.uid : '—';
+    if (statUid) statUid.textContent = uid.length > 16 ? uid.slice(0,16)+'…' : uid;
+  } catch(e) { if (statUid) statUid.textContent = '—'; }
+
+  // Status dots: green if brand config is saved
+  const brandDot = document.getElementById('ma-dot-brand');
+  if (brandDot) {
+    const hasBrand = !!(localStorage.getItem('ce_app_name') || localStorage.getItem('ce_theme_primary'));
+    if (hasBrand) brandDot.classList.add('ma-card-dot--on');
+    else brandDot.classList.remove('ma-card-dot--on');
+  }
+  const systemDot = document.getElementById('ma-dot-system');
+  if (systemDot) systemDot.classList.add('ma-card-dot--on');
 
   populateImpersonateDropdown();
   sheet.classList.add('open');
