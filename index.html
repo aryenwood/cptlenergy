@@ -7461,6 +7461,14 @@
   }
   .login-field input:focus { border-color: var(--amber); }
 
+  #invite-gate-code {
+    background: var(--g1); border: 1px solid var(--g-border);
+    color: var(--text); outline: none;
+    transition: border-color 0.15s;
+  }
+  #invite-gate-code:focus { border-color: var(--amber); }
+  #invite-gate-code::placeholder { color: var(--text-3); }
+
   .login-btn {
     padding: 12px; border-radius: 12px; border: none; cursor: pointer;
     font-size: var(--fs-md); font-weight: 600; transition: opacity 0.15s, transform 0.1s;
@@ -7527,7 +7535,7 @@
     <button class="login-btn login-btn--primary" id="invite-gate-yes-btn">Yes — Enter Code</button>
     <button class="login-btn login-btn--google" id="invite-gate-no-btn" style="margin-top:10px">No — Create Account</button>
     <div id="invite-gate-code-wrap" class="hidden" style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
-      <input id="invite-gate-code" type="text" placeholder="Enter code (e.g. WC4X9K)" maxlength="8" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.12em;font-size:22px;text-align:center;font-weight:700;width:100%;padding:14px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;outline:none;box-sizing:border-box" />
+      <input id="invite-gate-code" type="text" placeholder="Enter code (e.g. WC4X9K)" maxlength="8" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.12em;font-size:22px;text-align:center;font-weight:700;width:100%;padding:14px 12px;border-radius:12px;box-sizing:border-box" />
       <div id="invite-gate-status" style="font-size:13px;text-align:center;min-height:18px;color:rgba(255,255,255,0.5)"></div>
       <button class="login-btn login-btn--primary" id="invite-gate-submit-btn">Verify Code →</button>
       <button id="invite-gate-skip-btn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;padding:8px 0;text-align:center;width:100%">Skip — I don't have a code</button>
