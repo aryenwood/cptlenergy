@@ -11389,6 +11389,17 @@ function applyOrgSettings(data) {
     if (typeof applyGlassColor === 'function') applyGlassColor(data.glassColor);
   }
 
+  if (data.logoUrl) {
+    try {
+      var _ls = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+      _ls.logoUrl = data.logoUrl;
+      localStorage.setItem('ce_admin', JSON.stringify(_ls));
+    } catch(_) {}
+    var _hbl = document.getElementById('header-brand-img');
+    if (_hbl) _hbl.src = data.logoUrl;
+    document.querySelectorAll('.login-logo img').forEach(function(img) { img.src = data.logoUrl; });
+  }
+
   // Keep hidden admin form fields in sync so Save still reads the right values
   var fieldMap = {
     'admin-company-name': data.companyName,
@@ -13187,6 +13198,15 @@ function _initApp() {
     document.title = savedName;
     const brandImg = document.getElementById('header-brand-img');
     if (brandImg) brandImg.alt = savedName;
+  }
+
+  // Apply cached org logo to header and pre-login screens (covers returning users before auth)
+  const _cachedAdmin = JSON.parse(localStorage.getItem('ce_admin') || '{}');
+  const _cachedLogo = _cachedAdmin.logoUrl || _cachedAdmin.customLogo;
+  if (_cachedLogo) {
+    const _hbl = document.getElementById('header-brand-img');
+    if (_hbl) _hbl.src = _cachedLogo;
+    document.querySelectorAll('.login-logo img').forEach(function(img) { img.src = _cachedLogo; });
   }
 
   // Role UI applied after auth now — see onAuthStateChanged in Firebase block
@@ -18407,6 +18427,18 @@ document.getElementById('ma-logo-upload').addEventListener('change', e => {
       const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
       s.customLogo = b64; localStorage.setItem('ce_admin', JSON.stringify(s));
       _applyBranding(s); _loadMaBrandingStatus(); showToast('Logo updated!');
+      // Upload to Firebase Storage and persist URL to Firestore
+      const user = fbAuth.currentUser;
+      if (user) {
+        try {
+          const storageRef = fbStorage.ref('orgs/' + user.uid + '/logo.png');
+          await storageRef.put(file);
+          const url = await storageRef.getDownloadURL();
+          s.logoUrl = url;
+          localStorage.setItem('ce_admin', JSON.stringify(s));
+          await fbDb.collection('organizations').doc(user.uid).set({ logoUrl: url }, { merge: true });
+        } catch(uploadErr) { console.warn('[Logo] Storage upload failed:', uploadErr); }
+      }
     } catch(_) { showToast('Upload failed.'); }
   });
 
@@ -19691,13 +19723,26 @@ document.getElementById('admin-add-member').addEventListener('click', () => {
   if (logoFile) {
     logoFile.addEventListener('change', async () => {
       if (!logoFile.files[0]) return;
+      const file = logoFile.files[0];
       try {
-        const b64 = await _fileToBase64(logoFile.files[0]);
+        const b64 = await _fileToBase64(file);
         const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
         s.customLogo = b64;
         localStorage.setItem('ce_admin', JSON.stringify(s));
         _loadAdminAssets();
         showToast('Logo updated!');
+        // Upload to Firebase Storage and persist URL to Firestore
+        const user = fbAuth.currentUser;
+        if (user) {
+          try {
+            const storageRef = fbStorage.ref('orgs/' + user.uid + '/logo.png');
+            await storageRef.put(file);
+            const url = await storageRef.getDownloadURL();
+            s.logoUrl = url;
+            localStorage.setItem('ce_admin', JSON.stringify(s));
+            await fbDb.collection('organizations').doc(user.uid).set({ logoUrl: url }, { merge: true });
+          } catch(uploadErr) { console.warn('[Logo] Storage upload failed:', uploadErr); }
+        }
       } catch(e) { showToast('Failed to save logo.'); }
     });
   }
@@ -19719,15 +19764,25 @@ document.getElementById('admin-add-member').addEventListener('click', () => {
 
   const logoRemove = document.getElementById('admin-logo-remove');
   if (logoRemove) {
-    logoRemove.addEventListener('click', () => {
+    logoRemove.addEventListener('click', async () => {
       const s = JSON.parse(localStorage.getItem('ce_admin') || '{}');
       delete s.customLogo;
+      delete s.logoUrl;
       localStorage.setItem('ce_admin', JSON.stringify(s));
       const logoPreview = document.getElementById('admin-logo-preview');
       if (logoPreview) logoPreview.style.display = 'none';
       const hbl = document.getElementById('header-brand-img');
-      if (hbl) hbl.src = 'logo.png';
+      if (hbl) hbl.src = 'W.png';
       showToast('Logo removed.');
+      // Clear logoUrl from Firestore
+      const user = fbAuth.currentUser;
+      if (user) {
+        try {
+          await fbDb.collection('organizations').doc(user.uid).update({
+            logoUrl: firebase.firestore.FieldValue.delete()
+          });
+        } catch(e) { console.warn('[Logo] Failed to clear logoUrl from Firestore:', e); }
+      }
     });
   }
 
