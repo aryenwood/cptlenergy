@@ -11729,6 +11729,42 @@ function applyOrgSettings(data) {
     ((typeof fbAuth !== 'undefined' && fbAuth.currentUser) ? fbAuth.currentUser.uid : '?'));
 }
 
+// ── URL Org Branding ──────────────────────────────────────────────────────
+var _urlOrgId = (new URLSearchParams(window.location.search)).get('org') || '';
+
+function _applyOrgBranding(orgData) {
+  var name    = orgData.name || orgData.companyName || 'WC App';
+  var logoUrl = orgData.logoUrl || '';
+  var tagline = orgData.tagline || (orgData.niche ? orgData.niche + ' Sales Platform' : 'The D2D Sales Platform');
+  var color   = orgData.primaryColor || '';
+  // Logo + title on both screens
+  document.querySelectorAll('.login-logo img').forEach(function(img) {
+    if (logoUrl) { img.src = logoUrl; img.alt = name; img.style.borderRadius = '12px'; }
+  });
+  document.querySelectorAll('.login-logo-title').forEach(function(el) { el.textContent = name; });
+  // Subtitles
+  var gateSub  = document.querySelector('#invite-gate-screen .login-logo-sub');
+  var loginSub = document.querySelector('#login-screen .login-logo-sub');
+  if (gateSub)  gateSub.textContent  = 'You\u2019ve been invited to join ' + name;
+  if (loginSub) loginSub.textContent = tagline + ' \u2014 sign in to continue';
+  // Primary color on buttons + focus rings
+  if (color) {
+    document.querySelectorAll('.login-btn--primary').forEach(function(btn) {
+      btn.style.background = color;
+    });
+    var s = document.getElementById('_org-brand-style');
+    if (!s) { s = document.createElement('style'); s.id = '_org-brand-style'; document.head.appendChild(s); }
+    s.textContent = '.login-field input:focus{border-color:' + color + '!important}'
+                  + '#invite-gate-code:focus{border-color:' + color + '!important}';
+  }
+}
+
+if (_urlOrgId) {
+  fbDb.collection('organizations').doc(_urlOrgId).get()
+    .then(function(doc) { if (doc.exists) _applyOrgBranding(doc.data()); })
+    .catch(function(e)  { console.warn('[OrgBrand] fetch failed:', e); });
+}
+
 // ── Login screen logic ────────────────────────────────────────────────────
 (function() {
   var loginScreen = document.getElementById('login-screen');
@@ -11835,6 +11871,18 @@ function applyOrgSettings(data) {
               { type: 'rep_joined', repUid: user.uid }
             );
           }
+          setTimeout(function() { showOnboarding && showOnboarding(); }, 100);
+        } else if (_urlOrgId) {
+          // No invite code but opened via ?org= link — auto-join org as canvasser
+          var _joinName = user.displayName || localStorage.getItem('ce_user_name') || '';
+          localStorage.setItem('ce_user_role', 'canvasser');
+          localStorage.setItem('ce_org_id', _urlOrgId);
+          fbDb.collection('organizations').doc(_urlOrgId)
+            .collection('team').doc(user.uid)
+            .set({ name: _joinName, email: user.email || '', role: 'canvasser',
+                   repUid: user.uid, joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                   joinedVia: 'org_url' }, { merge: true })
+            .catch(function(e) { console.warn('[OrgBrand] team write:', e); });
           setTimeout(function() { showOnboarding && showOnboarding(); }, 100);
         } else {
           setTimeout(function() { showFirstRunModal && showFirstRunModal(); }, 100);
@@ -13536,15 +13584,23 @@ async function _saCreateOrg() {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       createdBy: SUPER_ADMIN_UID
     });
-    // Pre-fill invite section
+    // Pre-fill invite section and scroll to it
     const invOrgId   = document.getElementById('sa-invite-org-id');
     const invOrgName = document.getElementById('sa-invite-org-name');
+    const invSection = invOrgId ? invOrgId.closest('.sa-section') : null;
     if (invOrgId)   invOrgId.value   = orgId;
     if (invOrgName) invOrgName.value = name;
 
     result.innerHTML = `<span style="color:rgba(32,216,236,0.75)">ORG CREATED</span><br>ID: <span class="sa-result-code" style="font-size:15px;letter-spacing:0.10em">${orgId}</span><span style="color:rgba(255,255,255,0.38)">Name: ${name} &nbsp;·&nbsp; Niche: ${niche}</span>`;
     result.classList.add('visible');
-    showToast('Org created!');
+    showToast('Org created! ↓ Section 02 ready');
+
+    // Scroll Section 02 into view and focus Admin Name field
+    setTimeout(function() {
+      if (invSection) invSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const adminName = document.getElementById('sa-invite-admin-name');
+      if (adminName) adminName.focus();
+    }, 300);
   } catch(e) {
     showToast('Error: ' + e.message);
     console.error('[SA] Create org failed:', e);
@@ -13583,7 +13639,7 @@ async function _saGenMasterAdminInvite() {
       used: false, usedBy: null
     });
 
-    const smsText = `Hey ${adminName}! 👋\n\nYou've been set up as the admin for ${orgName} on WC App.\n\nYour setup code:\n${code}\n\nGet started here:\nhttps://cptlenergy.netlify.app\n\nCode expires in 30 days.\n— Aryen, WC App`;
+    const smsText = `Hey ${adminName}! 👋\n\nYou've been set up as the admin for ${orgName} on WC App.\n\nYour setup code:\n${code}\n\nGet started here:\nhttps://tritonenergy.netlify.app?org=${orgId}\n\nCode expires in 30 days.\n— Aryen, WC App`;
     const smsEncoded = encodeURIComponent(smsText);
 
     result.innerHTML = `<span style="color:rgba(32,216,236,0.75)">CODE GENERATED</span>
