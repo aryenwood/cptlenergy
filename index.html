@@ -7489,7 +7489,7 @@
   #panel-trainer { padding: 0; background: #0d1117; overflow: hidden; }
   #panel-trainer.active {
     display: flex !important; flex-direction: column;
-    position: fixed; inset: 0; z-index: 400;
+    position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 9500;
   }
 
   /* Top bar */
@@ -7644,7 +7644,7 @@
 
   /* Persona bottom sheet */
   #trainer-persona-sheet {
-    position: fixed; inset: 0; z-index: 1000;
+    position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 9600;
     background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px); align-items: flex-end; display: none;
   }
