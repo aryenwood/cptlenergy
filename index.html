@@ -11635,13 +11635,12 @@ async function drainToFirestore() {
   if (!user) { console.log('[Firestore] Drain skipped — not signed in'); return; }
   if (!navigator.onLine) { console.log('[Firestore] Drain skipped — offline'); return; }
 
+  const uid   = user.uid;
+  const orgId = localStorage.getItem('ce_org_id') || uid;
   let queue;
   try { queue = JSON.parse(localStorage.getItem('ce_sync_queue') || '[]'); } catch(_) { queue = []; }
-  if (!queue.length) { console.log('[Firestore] Drain skipped — queue empty'); return; }
-
-  const uid      = user.uid;
-  const entities = [...new Set(queue.map(function(q) { return q.entity; }))];
-  console.log('[Firestore] Drain starting — entities: ' + entities.join(', '));
+  const entities = queue.length ? [...new Set(queue.map(function(q) { return q.entity; }))] : [];
+  if (entities.length) console.log('[Firestore] Drain starting — entities: ' + entities.join(', '));
 
   // Firestore doc IDs may not contain '/'; strip media to stay under 1 MB per doc
   function toDocId(str) {
@@ -11739,6 +11738,53 @@ async function drainToFirestore() {
       writes.push(flushBatch(batch4, n4));
     }
   }
+
+  // ── adder sheets ──────────────────────────────────────────────────────────
+  try {
+    var adderSheets = JSON.parse(localStorage.getItem('ce_adder_sheets') || 'null');
+    if (adderSheets) {
+      writes.push(
+        fbDb.collection('organizations').doc(orgId).collection('settings').doc('adderSheets')
+          .set({ sheets: adderSheets, updatedAt: Date.now() }, { merge: true })
+      );
+      totalWritten++;
+    }
+  } catch(_) {}
+
+  // ── resource docs ─────────────────────────────────────────────────────────
+  try {
+    var resourceDocs = JSON.parse(localStorage.getItem('ce_resource_docs') || 'null');
+    if (resourceDocs && resourceDocs.length) {
+      var docsStripped = resourceDocs.map(function(d) { var o = Object.assign({}, d); delete o.dataUrl; return o; });
+      writes.push(
+        fbDb.collection('organizations').doc(orgId).collection('settings').doc('resourceDocs')
+          .set({ docs: docsStripped, updatedAt: Date.now() }, { merge: true })
+      );
+      totalWritten++;
+    }
+  } catch(_) {}
+
+  // ── customer files ────────────────────────────────────────────────────────
+  try {
+    Object.keys(localStorage).filter(function(k) { return k.startsWith('ce_cust_files_'); }).forEach(function(k) {
+      var custId = k.replace('ce_cust_files_', '');
+      var files;
+      try { files = JSON.parse(localStorage.getItem(k) || '[]'); } catch(_) { files = []; }
+      if (!files.length) return;
+      var batchF = fbDb.batch(); var nF = 0;
+      files.forEach(function(f) {
+        if (!f.id) return;
+        var stripped = Object.assign({}, f); delete stripped.dataUrl;
+        batchF.set(
+          fbDb.collection('addresses').doc(toDocId(custId)).collection('files').doc(toDocId(f.id)),
+          Object.assign(stripped, { repUid: uid, syncedAt: Date.now() }),
+          { merge: true }
+        );
+        totalWritten++; nF++;
+      });
+      if (nF > 0) writes.push(batchF.commit());
+    });
+  } catch(_) {}
 
   if (!writes.length) {
     console.log('[Firestore] Drain complete — 0 writes (entity data arrays were empty; queue cleared)');
@@ -13893,7 +13939,10 @@ navItems.forEach(btn => {
     if (navigator.onLine && typeof drainToFirestore === 'function') {
       try { await drainToFirestore(); } catch(_) {}
     }
-    if (typeof fbAuth !== 'undefined') fbAuth.signOut();
+    if (typeof fbAuth !== 'undefined') {
+      fbAuth.signOut();
+      ['ce_user_role','ce_org_id','ce_org_logo','ce_org_name','ce_org_color'].forEach(k => localStorage.removeItem(k));
+    }
   });
   if (pddSuperAdmin) pddSuperAdmin.addEventListener('click', () => {
     closeDropdown();
@@ -15128,7 +15177,7 @@ function renderGameStats(passedEntries, passedAppts) {
 
   // v76: Rank badge row — compute rank from ALL-TIME data (not range-filtered)
   try {
-    const role2   = localStorage.getItem('ce_user_role') || 'canvasser';
+    const role2   = getActiveRole();
     const myName2 = (localStorage.getItem('ce_user_name') || '').toLowerCase();
     const allEntries2 = passedEntries ?? (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries')||'[]'); } catch(_){return [];} })();
     const allAppts2   = passedAppts   ?? (() => { try { return JSON.parse(localStorage.getItem('ce_appointments')||'[]'); } catch(_){return [];} })();
@@ -16441,7 +16490,7 @@ function runDeferredGeocode() {
 
 window.addEventListener('online', runDeferredGeocode);
 window.addEventListener('online', function() {
-  if (typeof drainToFirestore === 'function') setTimeout(drainToFirestore, 1000);
+  if (typeof drainToFirestore === 'function') setTimeout(drainToFirestore, 3000);
 });
 
 // ── v78: Offline detection banner ─────────────────────────────────────────
@@ -16880,7 +16929,7 @@ function switchCrmPane(pane) {
 // ── CRM: load appointments with role-based filter ────────────────────────
 function loadCrmAppointments() {
   const all    = loadAppointments();
-  const role   = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role   = getActiveRole();
   const myName = (localStorage.getItem('ce_user_name') || '').trim().toLowerCase();
   if (!myName || role === 'manager' || role === 'master_admin') return all;
   if (role === 'closer') {
@@ -17492,7 +17541,7 @@ function _renderCustFiles(custId) {
   const listEl  = document.getElementById(`cust-files-list-${custId}`);
   const emptyEl = document.getElementById(`cust-files-empty-${custId}`);
   const countEl = document.getElementById(`cust-files-count-${custId}`);
-  const role    = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role    = getActiveRole();
   const uploadBtn = document.getElementById(`cust-files-upload-btn-${custId}`);
 
   if (!listEl) return;
@@ -18507,7 +18556,7 @@ function populateCloserDropdown() {
   // Keep first placeholder option, rebuild rest
   while (sel.options.length > 1) sel.remove(1);
 
-  const role  = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role  = getActiveRole();
   const uname = (localStorage.getItem('ce_user_name') || '').trim();
 
   // If current user IS a closer → lock the dropdown to themselves
@@ -19968,7 +20017,7 @@ function computeShowRateStats(range) {
 
 // v76: Overall show rate (all closers combined) for current user / range
 function computeShowRate(range) {
-  const role   = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role   = getActiveRole();
   const myName = (localStorage.getItem('ce_user_name') || '').toLowerCase();
   let appts = [];
   try { appts = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
@@ -20120,7 +20169,7 @@ function _getAchievementStats(name) {
   const nameLower = (name || '').trim().toLowerCase();
   const entries   = (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) { return []; } })();
   const appts     = loadAppointments();
-  const role      = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role      = getActiveRole();
 
   // Filter by this user's entries
   const mine = name
@@ -20204,7 +20253,7 @@ document.addEventListener('click', function(e) {
 });
 
 function renderLeaderboard() {
-  const role    = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role    = getActiveRole();
   const youName = localStorage.getItem('ce_user_name') || '';
 
   const canvStats = computeCanvasserStats(_lbRange);
@@ -20773,7 +20822,7 @@ function loadAdminSettings() {
   // v95: canvassers cannot change their own role — only a manager can upgrade them
   const roleEl = document.getElementById('admin-role-select');
   if (roleEl) {
-    const curRole = localStorage.getItem('ce_user_role');
+    const curRole = getActiveRole();
     if (curRole && curRole !== 'master_admin') roleEl.value = curRole;
     const effectiveRole = localStorage.getItem('ce_impersonate_role') || curRole || 'canvasser';
     if (effectiveRole === 'canvasser') {
@@ -20890,7 +20939,7 @@ function renderTeamList() {
     : '<div class="team-empty">No canvassers added yet.</div>';
 
   // Show/hide team section based on role
-  const role = localStorage.getItem('ce_user_role') || 'canvasser';
+  const role = getActiveRole();
   const isMgr = (role === 'manager' || role === 'master_admin');
   const teamSection = document.getElementById('admin-team-section');
   if (teamSection) teamSection.style.display = isMgr ? '' : 'none';
@@ -21257,7 +21306,7 @@ document.getElementById('admin-ql-save-btn')?.addEventListener('click', () => {
         // Show drop call section only for manager / master_admin
         const dcSection = document.getElementById('admin-drop-call-section');
         if (dcSection) {
-          const r = localStorage.getItem('ce_user_role') || 'canvasser';
+          const r = getActiveRole();
           dcSection.style.display = (r === 'manager' || r === 'master_admin') ? '' : 'none';
         }
       }
@@ -21268,7 +21317,7 @@ document.getElementById('admin-ql-save-btn')?.addEventListener('click', () => {
   // Hide drop call section by default (role check runs when panel opens)
   const dcSection = document.getElementById('admin-drop-call-section');
   if (dcSection) {
-    const r = localStorage.getItem('ce_user_role') || 'canvasser';
+    const r = getActiveRole();
     dcSection.style.display = (r === 'manager' || r === 'master_admin') ? '' : 'none';
   }
 })();
@@ -22987,7 +23036,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     if (ov) ov.classList.remove('open');
     localStorage.setItem('ce_onboarding_done', '1');
 
-    const role = localStorage.getItem('ce_user_role') || '';
+    const role = getActiveRole();
     const name = localStorage.getItem('ce_user_name') || '';
     const phone = localStorage.getItem('ce_user_phone') || '';
 
@@ -24138,7 +24187,7 @@ function _otdPopulateCloser() {
   var sel = document.getElementById('otd-b-closer');
   if (!sel) return;
   while (sel.options.length > 1) sel.remove(1);
-  var role  = localStorage.getItem('ce_user_role') || 'canvasser';
+  var role = getActiveRole();
   var uname = (localStorage.getItem('ce_user_name') || '').trim();
   if (role === 'closer' && uname) {
     var opt = document.createElement('option');
