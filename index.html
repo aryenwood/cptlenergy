@@ -634,8 +634,9 @@
       touch-action: manipulation;
     }
     body {
-      min-height: -webkit-fill-available;
-      min-height: 100dvh;
+      height: -webkit-fill-available;
+      height: 100dvh;
+      overflow: hidden; /* iOS PWA: stops WKWebView's outer UIScrollView from scrolling */
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-body);
@@ -678,10 +679,11 @@
       z-index: 1;
       display: flex;
       flex-direction: column;
-      min-height: -webkit-fill-available;
-      min-height: 100dvh;
+      height: -webkit-fill-available;
+      height: 100dvh;
       max-width: 540px;
       margin: 0 auto;
+      overflow: hidden;
     }
 
     /* ── Header ──────────────────────────────────────────────────────────── */
