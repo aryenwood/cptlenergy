@@ -19,15 +19,25 @@ const HEADER = "Georgia";
 const BODY = "Calibri";
 const MONO = "Courier New";
 
-// ── IMAGE URLS ──
+// ── IMAGE URLS — real CCF content from completecustomfence.com ──
+const CCF_CDN = "https://mlr4zezkusej.i.optimole.com";
+const CCF_GALLERY = `${CCF_CDN}/w:900/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray`;
 const IMAGE_URLS = {
-  hero: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=1800&q=88&fit=crop&crop=center",
-  g1: "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=900&q=88",
-  g2: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=88",
-  g3: "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800&q=88",
-  g4: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=700&q=88",
-  g5: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=88",
-  g6: "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800&q=88",
+  logo: `${CCF_CDN}/w:auto/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/2023/04/NEW-CCF-logo-2.png`,
+  hero: `${CCF_CDN}/w:1800/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/2023/03/Photo-Oct-29-10-38-45-AM-scaled.jpg`,
+  g1: `${CCF_GALLERY}/Vinyl1.jpg`,
+  g2: `${CCF_GALLERY}/Aluminum1-scaled.jpg`,
+  g3: `${CCF_GALLERY}/Aluminum5-scaled.jpg`,
+  g4: `${CCF_GALLERY}/wood1.jpg`,
+  g5: `${CCF_GALLERY}/Vinyl5.jpg`,
+  g6: `${CCF_GALLERY}/Vinyl10.jpg`,
+  // Extra install photos for additional slides
+  vinyl2: `${CCF_GALLERY}/Vinyl2.jpg`,
+  vinyl3: `${CCF_GALLERY}/Vinyl3.jpg`,
+  aluminum3: `${CCF_GALLERY}/Aluminum3-scaled.jpg`,
+  aluminum8: `${CCF_GALLERY}/Aluminum8-scaled.jpg`,
+  wood3: `${CCF_GALLERY}/wood3.jpg`,
+  wood5: `${CCF_GALLERY}/wood5.jpg`,
 };
 
 const IMG_DIR = "/tmp/ccf_images";
@@ -108,6 +118,10 @@ async function main() {
       s.addShape("rect", { x: 0, y: 0, w: W, h: H, fill: { color: NAVY_DK, transparency: 40 } });
     }
     addRedBar(s);
+    // CCF Logo in top-left
+    if (imgs.logo) {
+      s.addImage({ path: imgs.logo, x: 0.8, y: 0.6, w: 2.2, h: 0.8, sizing: { type: "contain", w: 2.2, h: 0.8 } });
+    }
     // Mono label
     s.addText("COMPLETE CUSTOM FENCE  ·  GROVELAND, FL", {
       fontFace: MONO, fontSize: 9, color: WHITE, charSpacing: 2,
@@ -119,7 +133,7 @@ async function main() {
       x: 0.8, y: 5.3, w: 8, h: 1.6, lineSpacingMultiple: 0.9,
     });
     // Pills row
-    const pills = ["20+ Years", "American-Made", "Lifetime Warranty", "50+ Yrs Experience"];
+    const pills = ["20+ Years", "American-Made", "Lifetime Warranty", "Real Leads · Real Commissions"];
     pills.forEach((t, i) => {
       s.addShape("roundRect", {
         x: 0.8 + i * 2.2, y: 7.0, w: 2.0, h: 0.32, rectRadius: 0.16,
@@ -156,7 +170,7 @@ async function main() {
 
 When you show up to a job site wearing this company's name, you're carrying something we worked hard to build. We're going to do everything on our end to make sure you're proud to carry it.
 
-This kit isn't a rulebook. It's a roadmap. Read it. Ask questions. The people around you have been doing this a long time and they will set you up to succeed.
+If you're in sales, here's what I want you to know: the hardest part of selling is already done. We spent 20 years building a reputation that homeowners trust before you ever knock on their door. Lifetime warranty, American-made materials, five-star reviews you can pull up on your phone at the kitchen table.
 
 We don't hire people to fill seats. We hire people we want to build something with. You're one of those people — now let's get to work.`;
 
@@ -697,7 +711,7 @@ We don't hire people to fill seats. We hire people we want to build something wi
       fontFace: HEADER, fontSize: 16, color: WHITE, bold: true,
       x: 0.8, y: 2.3, w: 6, h: 0.6, valign: "middle",
     });
-    s.addText("Complete Custom Fence · New Hire Orientation Kit · 2025", {
+    s.addText("Complete Custom Fence · New Hire Orientation Kit · 2026", {
       fontFace: MONO, fontSize: 7, color: "8898AA", charSpacing: 1,
       x: 7, y: 2.3, w: 5.5, h: 0.6, valign: "middle", align: "right",
     });
