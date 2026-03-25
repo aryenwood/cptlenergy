@@ -3705,7 +3705,8 @@
 
     /* ── Bottom sheet ────────────────────────────────────────────────────── */
     .sheet-overlay {
-      position: fixed; inset: 0; z-index: 999;
+      position: fixed; inset: 0; z-index: 1000;
+      overflow: hidden; display: flex; align-items: flex-end;
       background: rgba(0,0,0,0); pointer-events: none;
       transition: background 0.30s ease;
     }
@@ -3757,7 +3758,9 @@
 
     .sheet-body {
       overflow-y: auto; -webkit-overflow-scrolling: touch;
+      max-height: 92vh;
       padding: 4px 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
+      padding-bottom: env(safe-area-inset-bottom, 28px);
       flex: 1;
       min-height: 0;
     }
