@@ -648,10 +648,6 @@
       overscroll-behavior: none;
       touch-action: manipulation;
     }
-    /* iOS PWA: lock body scroll when booking sheet is open (toggled via JS class) */
-    body.booking-sheet-open {
-      overflow: hidden;
-    }
 
     /* Gradient mesh — soft ambient glow */
     body::before {
@@ -3709,7 +3705,7 @@
 
     /* ── Bottom sheet ────────────────────────────────────────────────────── */
     .sheet-overlay {
-      position: fixed; inset: 0; z-index: 200;
+      position: fixed; inset: 0; z-index: 999;
       background: rgba(0,0,0,0); pointer-events: none;
       transition: background 0.30s ease;
     }
@@ -3724,7 +3720,7 @@
     .sheet {
       position: fixed; bottom: 0; left: 50%;
       transform: translateX(-50%) translateY(105%);
-      width: 100%; max-width: 540px; z-index: 201;
+      width: 100%; max-width: 540px; z-index: 1000;
       background: rgba(244,250,251,0.96);
       backdrop-filter: blur(48px) saturate(180%);
       -webkit-backdrop-filter: blur(48px) saturate(180%);
@@ -3763,12 +3759,9 @@
       overflow-y: auto; -webkit-overflow-scrolling: touch;
       padding: 4px 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
       flex: 1;
+      min-height: 0;
     }
-    /* Ensure booking form scroll works on iOS (explicit max-height in addition to sheet's 92vh) */
     #booking-form {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      max-height: 90vh;
       overscroll-behavior: contain;
     }
 
@@ -16179,6 +16172,8 @@ function openSheet(entry = null) {
   logSheet.classList.add('open');
   logOverlay.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
   setTimeout(() => document.getElementById('f-address').focus(), 380);
 }
 
@@ -16187,6 +16182,8 @@ function closeSheet() {
   logSheet.classList.remove('open');
   logOverlay.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
   closePinDrop();
   setAddrStatus('idle', '');
   setTimeout(() => {
@@ -18449,7 +18446,9 @@ function openBookingSheet() {
   bookingOverlay.classList.add('open');
   bookingSheet.classList.add('open');
   bookingOverlay.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('booking-sheet-open');
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
   const _mainEl = document.getElementById('main');
   if (_mainEl) { _mainEl._bsSavedScroll = _mainEl.scrollTop; _mainEl.classList.add('scroll-locked'); }
   document.addEventListener('touchmove', _bookingTouchMove, { passive: false });
@@ -18466,7 +18465,9 @@ function closeBookingSheet() {
   bookingOverlay.classList.remove('open');
   bookingSheet.classList.remove('open');
   bookingOverlay.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('booking-sheet-open');
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
   const _mainElC = document.getElementById('main');
   if (_mainElC) { _mainElC.classList.remove('scroll-locked'); _mainElC.scrollTop = _mainElC._bsSavedScroll || 0; }
   document.removeEventListener('touchmove', _bookingTouchMove);
