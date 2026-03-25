@@ -779,6 +779,11 @@
       /* No padding-top needed — #header is sticky in flex flow, not position:fixed */
       padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
     }
+    /* iOS PWA: touch-action:none is the only thing WKWebView honors to stop native scroll */
+    #main.scroll-locked {
+      overflow: hidden;
+      touch-action: none;
+    }
 
     /* ── Tab panels ──────────────────────────────────────────────────────── */
     .tab-panel {
@@ -18318,10 +18323,9 @@ function openBookingSheet() {
   bookingOverlay.classList.add('open');
   bookingSheet.classList.add('open');
   bookingOverlay.setAttribute('aria-hidden', 'false');
-  // Lock #main (the real PWA scroll container) so the dashboard can't scroll behind the sheet
+  // iOS PWA: touch-action:none via class is the only reliable way to stop WKWebView native scroll
   const _mainEl = document.getElementById('main');
-  if (_mainEl) { _mainEl._bsSavedScroll = _mainEl.scrollTop; _mainEl.style.overflow = 'hidden'; }
-  document.body.style.overflow = 'hidden';
+  if (_mainEl) { _mainEl._bsSavedScroll = _mainEl.scrollTop; _mainEl.classList.add('scroll-locked'); }
   document.addEventListener('touchmove', _bookingTouchMove, { passive: false });
   // Default datetime to next hour
   const now = new Date();
@@ -18336,10 +18340,8 @@ function closeBookingSheet() {
   bookingOverlay.classList.remove('open');
   bookingSheet.classList.remove('open');
   bookingOverlay.setAttribute('aria-hidden', 'true');
-  // Restore #main scroll
   const _mainElC = document.getElementById('main');
-  if (_mainElC) { _mainElC.style.overflow = ''; _mainElC.scrollTop = _mainElC._bsSavedScroll || 0; }
-  document.body.style.overflow = '';
+  if (_mainElC) { _mainElC.classList.remove('scroll-locked'); _mainElC.scrollTop = _mainElC._bsSavedScroll || 0; }
   document.removeEventListener('touchmove', _bookingTouchMove);
   setTimeout(() => {
     bookingForm.reset();
