@@ -22,7 +22,7 @@
   --border:      #CDD4E2;
   --ink:         #18263A;
   --muted:       #546070;
-  --faint:       #8898AA;
+  --faint:       #6B7C90;
   --sage:        #1B6645;
   --sage-pale:   #E8F5EE;
   --sage-rim:    #A5D4BC;
@@ -64,7 +64,7 @@ body{
 .sb-tagline{
   font-family:'DM Mono',monospace;
   font-size:11px;letter-spacing:0.22em;
-  text-transform:uppercase;color:rgba(255,255,255,0.45);
+  text-transform:uppercase;color:rgba(255,255,255,0.58);
 }
 /* Badge */
 .sb-badge{
@@ -81,12 +81,12 @@ body{
   color:var(--white);line-height:1.1;margin-bottom:2px;
 }
 .sb-badge .btitle{
-  font-size:11px;letter-spacing:0.06em;
-  color:rgba(255,255,255,0.45);margin-bottom:10px;
+  font-size:12px;letter-spacing:0.06em;
+  color:rgba(255,255,255,0.58);margin-bottom:10px;
 }
 .sb-badge .btext{
-  font-size:13px;line-height:1.6;
-  color:rgba(255,255,255,0.38);
+  font-size:14px;line-height:1.6;
+  color:rgba(255,255,255,0.52);
 }
 /* Nav */
 nav{flex:1;padding:8px 0 16px}
@@ -94,7 +94,7 @@ nav{flex:1;padding:8px 0 16px}
   font-family:'DM Mono',monospace;
   font-size:11px;letter-spacing:0.18em;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.40);
   padding:18px 24px 5px;
 }
 .ni{
@@ -107,13 +107,13 @@ nav{flex:1;padding:8px 0 16px}
 .ni:hover{background:rgba(255,255,255,0.04)}
 .ni.on{border-left-color:var(--red);background:rgba(255,255,255,0.05)}
 .ni .nn{
-  font-family:'DM Mono',monospace;font-size:11px;
-  color:rgba(255,255,255,0.22);width:18px;flex-shrink:0;
+  font-family:'DM Mono',monospace;font-size:12px;
+  color:rgba(255,255,255,0.40);width:18px;flex-shrink:0;
   transition:color 0.15s;
 }
 .ni.on .nn,.ni:hover .nn{color:rgba(255,255,255,0.6)}
 .ni .nl{
-  font-size:13.5px;color:rgba(255,255,255,0.48);
+  font-size:14px;color:rgba(255,255,255,0.60);
   transition:color 0.15s;
 }
 .ni.on .nl,.ni:hover .nl{color:rgba(255,255,255,0.92)}
@@ -129,9 +129,9 @@ nav{flex:1;padding:8px 0 16px}
   align-items:baseline;margin-bottom:8px;
 }
 .sb-prog-row span:first-child{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.12em;text-transform:uppercase;
-  color:rgba(255,255,255,0.25);
+  color:rgba(255,255,255,0.45);
 }
 #pct{
   font-family:'Cormorant Garamond',serif;
@@ -186,9 +186,9 @@ nav{flex:1;padding:8px 0 16px}
 }
 .hero-tag{
   display:inline-flex;align-items:center;gap:10px;
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.2em;text-transform:uppercase;
-  color:rgba(255,255,255,0.55);margin-bottom:20px;
+  color:rgba(255,255,255,0.70);margin-bottom:20px;
   animation:fadeUp 0.8s ease-out 0.1s both;
 }
 .hero-tag::before{
@@ -202,10 +202,10 @@ nav{flex:1;padding:8px 0 16px}
   animation:fadeUp 1s ease-out 0.25s both;
 }
 .hero h1 span{
-  font-style:italic;color:rgba(255,255,255,0.4);
+  font-style:italic;color:rgba(255,255,255,0.55);
 }
 .hero-sub{
-  font-size:17px;color:rgba(255,255,255,0.58);
+  font-size:17px;color:rgba(255,255,255,0.72);
   font-weight:400;line-height:1.7;
   max-width:480px;margin-bottom:44px;
   animation:fadeUp 1s ease-out 0.5s both;
@@ -213,9 +213,9 @@ nav{flex:1;padding:8px 0 16px}
 .hero-pills{display:flex;flex-wrap:wrap;gap:8px}
 .pill{
   padding:7px 16px;border-radius:20px;
-  font-size:11px;letter-spacing:0.05em;
-  border:1px solid rgba(255,255,255,0.22);
-  color:rgba(255,255,255,0.7);
+  font-size:12px;letter-spacing:0.05em;
+  border:1px solid rgba(255,255,255,0.30);
+  color:rgba(255,255,255,0.82);
   background:rgba(255,255,255,0.07);
   backdrop-filter:blur(8px);
   opacity:0;
@@ -238,8 +238,8 @@ nav{flex:1;padding:8px 0 16px}
 }
 .l-eyebrow{
   font-family:'DM Mono',monospace;
-  font-size:11px;letter-spacing:0.22em;
-  text-transform:uppercase;color:rgba(255,255,255,0.55);
+  font-size:12px;letter-spacing:0.22em;
+  text-transform:uppercase;color:rgba(255,255,255,0.65);
   margin-bottom:32px;
   display:flex;align-items:center;gap:10px;
 }
@@ -269,11 +269,11 @@ nav{flex:1;padding:8px 0 16px}
   font-size:22px;font-weight:600;color:var(--white);
 }
 .l-sig .role{
-  font-size:12px;color:rgba(255,255,255,0.38);
+  font-size:13px;color:rgba(255,255,255,0.55);
   letter-spacing:0.06em;margin-top:4px;
 }
 .l-sig .contact{
-  font-size:13px;color:rgba(255,255,255,0.25);
+  font-size:14px;color:rgba(255,255,255,0.48);
   margin-top:8px;
 }
 /* Stats sidebar */
@@ -294,7 +294,7 @@ nav{flex:1;padding:8px 0 16px}
   color:var(--white);line-height:1;
 }
 .l-stat .sl{
-  font-size:12px;color:rgba(255,255,255,0.38);
+  font-size:13px;color:rgba(255,255,255,0.55);
   margin-top:4px;line-height:1.4;
 }
 /* ── GALLERY ─────────────────────────────── */
@@ -306,7 +306,7 @@ nav{flex:1;padding:8px 0 16px}
   padding:64px 72px 36px;
 }
 .g-ey{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.2em;text-transform:uppercase;
   color:var(--red);margin-bottom:10px;
   display:flex;align-items:center;gap:8px;
@@ -363,9 +363,9 @@ nav{flex:1;padding:8px 0 16px}
   padding:18px 20px;z-index:2;
 }
 .gc-type{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.14em;text-transform:uppercase;
-  color:rgba(255,255,255,0.55);margin-bottom:5px;
+  color:rgba(255,255,255,0.65);margin-bottom:5px;
 }
 .gc-name{
   font-family:'Cormorant Garamond',serif;
@@ -373,13 +373,13 @@ nav{flex:1;padding:8px 0 16px}
   color:var(--white);line-height:1.15;
 }
 .gc-loc{
-  font-size:12px;color:rgba(255,255,255,0.45);
+  font-size:13px;color:rgba(255,255,255,0.58);
   margin-top:3px;font-weight:400;
 }
 .gc-badge{
   position:absolute;top:14px;right:14px;z-index:3;
   background:var(--red);color:white;
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.1em;text-transform:uppercase;
   padding:4px 10px;border-radius:3px;
   font-weight:500;
@@ -392,9 +392,9 @@ nav{flex:1;padding:8px 0 16px}
 }
 .rv-head{margin-bottom:32px}
 .rv-ey{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.2em;text-transform:uppercase;
-  color:rgba(255,255,255,0.55);
+  color:rgba(255,255,255,0.65);
 }
 .rv-title{
   font-family:'Cormorant Garamond',serif;
@@ -423,13 +423,13 @@ nav{flex:1;padding:8px 0 16px}
   line-height:1.65;margin-bottom:18px;
 }
 .rv-by{
-  font-size:12px;font-family:'DM Mono',monospace;
+  font-size:13px;font-family:'DM Mono',monospace;
   letter-spacing:0.08em;text-transform:uppercase;
-  color:rgba(255,255,255,0.28);
+  color:rgba(255,255,255,0.45);
 }
 .rv-by strong{
-  display:block;color:rgba(255,255,255,0.55);
-  margin-bottom:2px;font-size:13px;
+  display:block;color:rgba(255,255,255,0.65);
+  margin-bottom:2px;font-size:14px;
   font-family:'DM Sans',sans-serif;
   letter-spacing:0;text-transform:none;font-weight:500;
 }
@@ -446,7 +446,7 @@ nav{flex:1;padding:8px 0 16px}
   border-bottom:1px solid var(--border);
 }
 .pn{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   color:var(--red);letter-spacing:0.1em;
   background:var(--red-pale);
   border:1px solid var(--red-rim);
@@ -523,7 +523,7 @@ nav{flex:1;padding:8px 0 16px}
   margin-bottom:4px;
 }
 .team-card .team-role{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.1em;text-transform:uppercase;
   color:var(--muted);margin-bottom:14px;
 }
@@ -550,9 +550,9 @@ nav{flex:1;padding:8px 0 16px}
   background:var(--navy);
 }
 .fw-day-head .fw-label{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.12em;text-transform:uppercase;
-  color:rgba(255,255,255,0.55);
+  color:rgba(255,255,255,0.65);
 }
 .fw-day-head h4{
   font-family:'Cormorant Garamond',serif;
@@ -566,7 +566,7 @@ nav{flex:1;padding:8px 0 16px}
 .fw-item:last-child{border-bottom:none}
 .fw-time{
   padding:14px 18px;
-  font-family:'DM Mono',monospace;font-size:13px;
+  font-family:'DM Mono',monospace;font-size:14px;
   color:var(--navy);font-weight:500;
   background:var(--surface);
   border-right:1px solid var(--border);
@@ -671,7 +671,7 @@ nav{flex:1;padding:8px 0 16px}
   border-bottom:1px solid var(--border);
 }
 .sn{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.1em;color:var(--red);
   background:var(--red-pale);border:1px solid var(--red-rim);
   padding:4px 10px;border-radius:4px;
@@ -740,8 +740,8 @@ nav{flex:1;padding:8px 0 16px}
   border:1px solid var(--border);border-radius:10px;overflow:hidden;
 }
 .tbl thead th{
-  background:var(--navy);color:rgba(255,255,255,0.65);
-  font-family:'DM Mono',monospace;font-size:11px;
+  background:var(--navy);color:rgba(255,255,255,0.72);
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.14em;text-transform:uppercase;
   padding:13px 22px;text-align:left;font-weight:400;
 }
@@ -771,7 +771,7 @@ nav{flex:1;padding:8px 0 16px}
 .call-i{font-size:20px;flex-shrink:0;margin-top:2px}
 .call-b{font-size:16px;line-height:1.7;color:var(--ink);font-weight:400}
 .call-b strong{
-  display:block;font-size:11px;
+  display:block;font-size:12px;
   font-family:'DM Mono',monospace;
   letter-spacing:0.1em;text-transform:uppercase;
   margin-bottom:6px;
@@ -810,7 +810,7 @@ nav{flex:1;padding:8px 0 16px}
   border-bottom:1px solid var(--border);
 }
 .pl-h .ph{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.14em;text-transform:uppercase;
   color:var(--red);margin-bottom:4px;
 }
@@ -857,11 +857,11 @@ nav{flex:1;padding:8px 0 16px}
   font-family:'Cormorant Garamond',serif;
   font-size:18px;font-weight:600;color:var(--ink);margin-bottom:5px;
 }
-.at p{font-size:13.5px;color:var(--muted);line-height:1.6;font-weight:400}
+.at p{font-size:14px;color:var(--muted);line-height:1.6;font-weight:400}
 .at-tag{
   display:inline-block;margin-top:10px;
   padding:3px 9px;border-radius:3px;
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.08em;text-transform:uppercase;
 }
 .tag-r{background:var(--red-pale);color:var(--red);border:1px solid var(--red-rim)}
@@ -874,9 +874,9 @@ nav{flex:1;padding:8px 0 16px}
   border:1px solid rgba(255,255,255,0.06);
 }
 .wf-lbl{
-  font-family:'DM Mono',monospace;font-size:11px;
+  font-family:'DM Mono',monospace;font-size:12px;
   letter-spacing:0.16em;text-transform:uppercase;
-  color:rgba(255,255,255,0.55);margin-bottom:16px;
+  color:rgba(255,255,255,0.65);margin-bottom:16px;
 }
 .wf-row{
   display:flex;align-items:center;gap:8px;
@@ -898,10 +898,10 @@ nav{flex:1;padding:8px 0 16px}
 }
 .wn-out{
   background:rgba(255,255,255,0.03);
-  color:rgba(255,255,255,0.5);
+  color:rgba(255,255,255,0.6);
   border:1px solid rgba(255,255,255,0.07);
 }
-.wa{color:rgba(255,255,255,0.2);font-size:14px}
+.wa{color:rgba(255,255,255,0.35);font-size:14px}
 .wf-div{height:1px;background:rgba(255,255,255,0.06);margin:20px 0}
 /* ── SIGNATURE ───────────────────────────── */
 .sig-wrap{
@@ -917,8 +917,8 @@ nav{flex:1;padding:8px 0 16px}
   font-size:22px;font-weight:600;color:var(--white);
 }
 .sig-top span{
-  font-family:'DM Mono',monospace;font-size:11px;
-  color:rgba(255,255,255,0.28);letter-spacing:0.08em;
+  font-family:'DM Mono',monospace;font-size:12px;
+  color:rgba(255,255,255,0.45);letter-spacing:0.08em;
 }
 .sig-body{padding:30px;background:var(--white)}
 .sig-g{
@@ -927,7 +927,7 @@ nav{flex:1;padding:8px 0 16px}
 }
 .sf label{
   display:block;font-family:'DM Mono',monospace;
-  font-size:11px;letter-spacing:0.14em;
+  font-size:12px;letter-spacing:0.14em;
   text-transform:uppercase;color:var(--faint);margin-bottom:8px;
 }
 .sf .sl{
@@ -941,7 +941,7 @@ nav{flex:1;padding:8px 0 16px}
   border-top:4px solid var(--red);
 }
 .bbar p{
-  font-size:11px;color:rgba(255,255,255,0.22);
+  font-size:12px;color:rgba(255,255,255,0.40);
   font-family:'DM Mono',monospace;letter-spacing:0.05em;
 }
 .bbtns{display:flex;gap:10px}
@@ -1210,7 +1210,7 @@ nav{flex:1;padding:8px 0 16px}
     <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)">
       <iframe class="lc_reviews_widget" src="https://reputationhub.site/reputation/widgets/review_widget/lcdhKQ9YsnvSbiCx1hCi?widgetId=69305481f4530a0640f818f3" frameborder="0" scrolling="no" style="min-width:100%;width:100%;min-height:700px;border:none;background:rgba(255,255,255,0.02)" loading="lazy"></iframe>
     </div>
-    <div style="margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(255,255,255,0.25)">&#9733; These are real, verified reviews from Google and Facebook. Pull them up at the kitchen table — this is your closing tool.</div>
+    <div style="margin-top:16px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.1em;color:rgba(255,255,255,0.45)">&#9733; These are real, verified reviews from Google and Facebook. Pull them up at the kitchen table — this is your closing tool.</div>
   </div>
 </div>
 <!-- WHY REPS WIN -->
@@ -1219,39 +1219,39 @@ nav{flex:1;padding:8px 0 16px}
     <div class="sn" style="background:rgba(191,17,32,0.2);border-color:rgba(191,17,32,0.3);color:#F4A8B0">&#9733; Advantage</div>
     <div>
       <div class="st" style="color:var(--white)">Why Sales Reps Win at CCF</div>
-      <div class="ss" style="color:rgba(255,255,255,0.5)">You're not selling a commodity. You're selling a 20-year reputation with a lifetime warranty. Here's why that matters for your paycheck.</div>
+      <div class="ss" style="color:rgba(255,255,255,0.65)">You're not selling a commodity. You're selling a 20-year reputation with a lifetime warranty. Here's why that matters for your paycheck.</div>
     </div>
   </div>
   <div class="pg-grid" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.06)">
     <div class="pg" style="background:rgba(255,255,255,0.02)">
       <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128176;</div>
       <h3 style="color:var(--white)">The Product Sells Itself</h3>
-      <p style="color:rgba(255,255,255,0.6)">Lifetime warranty on vinyl and aluminum. 100% American-made materials. 20+ years of 5-star reviews backing every word you say. Homeowners already trust the name — you're not starting from zero, you're closing on a foundation of proof.</p>
+      <p style="color:rgba(255,255,255,0.72)">Lifetime warranty on vinyl and aluminum. 100% American-made materials. 20+ years of 5-star reviews backing every word you say. Homeowners already trust the name — you're not starting from zero, you're closing on a foundation of proof.</p>
     </div>
     <div class="pg" style="background:rgba(255,255,255,0.02)">
       <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128200;</div>
       <h3 style="color:var(--white)">Leads Come to You</h3>
-      <p style="color:rgba(255,255,255,0.6)">Google Ads, website inbound, Active Knocker D2D pipeline, and 20 years of referral momentum. You're not cold-calling into silence — you're working warm leads backed by real marketing spend and a CRM that tracks every touchpoint.</p>
+      <p style="color:rgba(255,255,255,0.72)">Google Ads, website inbound, Active Knocker D2D pipeline, and 20 years of referral momentum. You're not cold-calling into silence — you're working warm leads backed by real marketing spend and a CRM that tracks every touchpoint.</p>
     </div>
     <div class="pg" style="background:rgba(255,255,255,0.02)">
       <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128170;</div>
       <h3 style="color:var(--white)">We Crush the Big Box Stores</h3>
-      <p style="color:rgba(255,255,255,0.6)">Home Depot and Lowe's subcontract to the lowest bidder. We don't. Our crews are W-2 employees trained to CCF standards. Our materials are premium American-made. Our warranty is lifetime, not 1-year. When a homeowner compares us side-by-side, we win. Every time.</p>
+      <p style="color:rgba(255,255,255,0.72)">Home Depot and Lowe's subcontract to the lowest bidder. We don't. Our crews are W-2 employees trained to CCF standards. Our materials are premium American-made. Our warranty is lifetime, not 1-year. When a homeowner compares us side-by-side, we win. Every time.</p>
     </div>
     <div class="pg" style="background:rgba(255,255,255,0.02)">
       <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#127919;</div>
       <h3 style="color:var(--white)">Close Rate You Can Feel</h3>
-      <p style="color:rgba(255,255,255,0.6)">When the quality is real, the reviews are real, and the warranty is real — objections shrink. You're not defending a shaky product. You're presenting the obvious best choice and watching homeowners come to the same conclusion you already did.</p>
+      <p style="color:rgba(255,255,255,0.72)">When the quality is real, the reviews are real, and the warranty is real — objections shrink. You're not defending a shaky product. You're presenting the obvious best choice and watching homeowners come to the same conclusion you already did.</p>
     </div>
     <div class="pg" style="background:rgba(255,255,255,0.02)">
       <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128640;</div>
       <h3 style="color:var(--white)">Tech-Backed, Not Tech-Buried</h3>
-      <p style="color:rgba(255,255,255,0.6)">9 platforms that actually make the job easier. ARC Site for instant field estimates. JobNimbus for CRM. Active Knocker for D2D optimization. Zapier automations pushing leads to closers in real time. You sell — the systems handle the rest.</p>
+      <p style="color:rgba(255,255,255,0.72)">9 platforms that actually make the job easier. ARC Site for instant field estimates. JobNimbus for CRM. Active Knocker for D2D optimization. Zapier automations pushing leads to closers in real time. You sell — the systems handle the rest.</p>
     </div>
     <div class="pg" style="background:rgba(255,255,255,0.02)">
       <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#127793;</div>
       <h3 style="color:var(--white)">Three-County Territory, Zero Saturation</h3>
-      <p style="color:rgba(255,255,255,0.6)">Lake, Orange, and Seminole counties — Central Florida's fastest-growing corridor. Every new subdivision is a pipeline. Every aging fence is an opportunity. This territory has room for reps who want to run, not walk.</p>
+      <p style="color:rgba(255,255,255,0.72)">Lake, Orange, and Seminole counties — Central Florida's fastest-growing corridor. Every new subdivision is a pipeline. Every aging fence is an opportunity. This territory has room for reps who want to run, not walk.</p>
     </div>
   </div>
   <div class="call" style="margin-top:24px;background:rgba(191,17,32,0.1);border-color:rgba(191,17,32,0.25)">
@@ -1326,19 +1326,19 @@ nav{flex:1;padding:8px 0 16px}
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:24px 0;border-radius:10px;overflow:hidden">
     <div style="height:200px;background:url('https://mlr4zezkusej.i.optimole.com/w:600/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/Vinyl1.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px;background:linear-gradient(transparent,rgba(17,34,71,0.9))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:2px">Vinyl</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:2px">Vinyl</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:white">Privacy Panels &amp; Picket</div>
       </div>
     </div>
     <div style="height:200px;background:url('https://mlr4zezkusej.i.optimole.com/w:600/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/Aluminum3-scaled.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px;background:linear-gradient(transparent,rgba(17,34,71,0.9))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:2px">Aluminum</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:2px">Aluminum</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:white">Ornamental &amp; Estate</div>
       </div>
     </div>
     <div style="height:200px;background:url('https://mlr4zezkusej.i.optimole.com/w:600/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/wood5.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px;background:linear-gradient(transparent,rgba(17,34,71,0.9))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:2px">Wood</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:2px">Wood</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:white">Shadow Box &amp; Board-on-Board</div>
       </div>
     </div>
@@ -1590,22 +1590,22 @@ nav{flex:1;padding:8px 0 16px}
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:28px;border-radius:10px;overflow:hidden">
     <div style="height:180px;background:url('https://mlr4zezkusej.i.optimole.com/w:500/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/Vinyl2.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent,rgba(17,34,71,0.85))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6)">Vinyl Privacy</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.65)">Vinyl Privacy</div>
       </div>
     </div>
     <div style="height:180px;background:url('https://mlr4zezkusej.i.optimole.com/w:500/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/Aluminum3-scaled.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent,rgba(17,34,71,0.85))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6)">Aluminum</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.65)">Aluminum</div>
       </div>
     </div>
     <div style="height:180px;background:url('https://mlr4zezkusej.i.optimole.com/w:500/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/wood3.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent,rgba(17,34,71,0.85))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6)">Wood</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.65)">Wood</div>
       </div>
     </div>
     <div style="height:180px;background:url('https://mlr4zezkusej.i.optimole.com/w:500/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/photo-gallery/imported_from_media_libray/Vinyl2.jpg') center/cover;position:relative">
       <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent,rgba(17,34,71,0.85))">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6)">Vinyl Picket</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.65)">Vinyl Picket</div>
       </div>
     </div>
   </div>
