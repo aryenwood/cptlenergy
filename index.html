@@ -3755,6 +3755,7 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       max-height: 90vh;
+      overscroll-behavior: contain;
     }
 
     /* Form */
@@ -18292,6 +18293,12 @@ const bookingForm    = document.getElementById('booking-form');
 const btnBookNow     = document.getElementById('btn-book-now');
 const bookingClose   = document.getElementById('booking-sheet-close');
 
+// iOS PWA scroll-passthrough fix: block touchmove on document while booking sheet is open,
+// except within the scrollable form itself.
+function _bookingTouchMove(e) {
+  if (!bookingForm.contains(e.target)) e.preventDefault();
+}
+
 function openBookingSheet() {
   // Grab GPS silently for the booking entry — does NOT touch log-sheet UI
   pendingLat = null; pendingLng = null;
@@ -18308,6 +18315,7 @@ function openBookingSheet() {
   bookingSheet.classList.add('open');
   bookingOverlay.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  document.addEventListener('touchmove', _bookingTouchMove, { passive: false });
   // Default datetime to next hour
   const now = new Date();
   now.setMinutes(0, 0, 0);
@@ -18322,6 +18330,7 @@ function closeBookingSheet() {
   bookingSheet.classList.remove('open');
   bookingOverlay.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  document.removeEventListener('touchmove', _bookingTouchMove);
   setTimeout(() => {
     bookingForm.reset();
     document.querySelectorAll('#booking-form .radio-opt').forEach(o => o.classList.remove('sel-yes','sel-no'));
@@ -18388,7 +18397,8 @@ bookingOverlay.addEventListener('click', closeBookingSheet);
 let bTouchY = 0;
 bookingSheet.addEventListener('touchstart', e => { bTouchY = e.touches[0].clientY; }, { passive: true });
 bookingSheet.addEventListener('touchend',   e => {
-  if (e.changedTouches[0].clientY - bTouchY > 80) closeBookingSheet();
+  // Only close on swipe-down if form is already scrolled to top (prevents fast scroll triggering close)
+  if (e.changedTouches[0].clientY - bTouchY > 80 && bookingForm.scrollTop < 10) closeBookingSheet();
 }, { passive: true });
 
 // ── Radio groups (Yes / No) ────────────────────────────────────────────────
