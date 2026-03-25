@@ -18318,6 +18318,9 @@ function openBookingSheet() {
   bookingOverlay.classList.add('open');
   bookingSheet.classList.add('open');
   bookingOverlay.setAttribute('aria-hidden', 'false');
+  // Lock #main (the real PWA scroll container) so the dashboard can't scroll behind the sheet
+  const _mainEl = document.getElementById('main');
+  if (_mainEl) { _mainEl._bsSavedScroll = _mainEl.scrollTop; _mainEl.style.overflow = 'hidden'; }
   document.body.style.overflow = 'hidden';
   document.addEventListener('touchmove', _bookingTouchMove, { passive: false });
   // Default datetime to next hour
@@ -18333,6 +18336,9 @@ function closeBookingSheet() {
   bookingOverlay.classList.remove('open');
   bookingSheet.classList.remove('open');
   bookingOverlay.setAttribute('aria-hidden', 'true');
+  // Restore #main scroll
+  const _mainElC = document.getElementById('main');
+  if (_mainElC) { _mainElC.style.overflow = ''; _mainElC.scrollTop = _mainElC._bsSavedScroll || 0; }
   document.body.style.overflow = '';
   document.removeEventListener('touchmove', _bookingTouchMove);
   setTimeout(() => {
