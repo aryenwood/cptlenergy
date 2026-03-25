@@ -13706,6 +13706,9 @@ function activateTab(tabId) {
 
   // ── SvelteMotionKit: View Transitions on tab switch ──
   const doSwitch = () => {
+    // Close booking sheet if open when switching tabs (cleans up scroll lock + touchmove listener)
+    if (bookingSheet && bookingSheet.classList.contains('open')) closeBookingSheet();
+
     navItems.forEach(btn => {
       const active = btn.dataset.tab === tabId;
       btn.classList.toggle('active', active);
@@ -18296,6 +18299,7 @@ const bookingClose   = document.getElementById('booking-sheet-close');
 // iOS PWA scroll-passthrough fix: block touchmove on document while booking sheet is open,
 // except within the scrollable form itself.
 function _bookingTouchMove(e) {
+  if (!bookingSheet.classList.contains('open')) return; // defensive: sheet closed, never block
   if (!bookingForm.contains(e.target)) e.preventDefault();
 }
 
