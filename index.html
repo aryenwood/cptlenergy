@@ -16182,7 +16182,7 @@ function captureLocation() {
 }
 
 function _safeAdminSettings() {
-  try { return _safeAdminSettings(); } catch(_) { return {}; }
+  try { return JSON.parse(localStorage.getItem('ce_admin') || '{}'); } catch(_) { return {}; }
 }
 
 function lockBodyScroll() {
@@ -16195,6 +16195,7 @@ function unlockBodyScroll() {
   document.body.style.position = '';
   document.body.style.width = '';
   document.body.style.top = '';
+  document.documentElement.style.overflow = '';
 }
 
 function openSheet(entry = null) {
