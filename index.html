@@ -2926,6 +2926,12 @@
       border-color: rgba(26,157,184,0.50);
       box-shadow: 0 0 0 3px rgba(26,157,184,0.13);
     }
+    /* iOS repeating-chevron fix: suppress native + custom arrow in booking form */
+    #booking-form .form-select {
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: none;
+    }
 
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 90px; gap: 8px; margin-bottom: 16px; }
     .form-row-3 .form-group { margin-bottom: 0; }
@@ -3743,6 +3749,12 @@
       overflow-y: auto; -webkit-overflow-scrolling: touch;
       padding: 4px 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
       flex: 1;
+    }
+    /* Ensure booking form scroll works on iOS (explicit max-height in addition to sheet's 92vh) */
+    #booking-form {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: 90vh;
     }
 
     /* Form */
@@ -12043,7 +12055,7 @@ if (_urlOrgId) {
       // 7. Load org branding from ce_org_id (reps belong to a different org than their own uid)
       var _orgIdForBrand = localStorage.getItem('ce_org_id');
       console.log('[Branding] user.uid:', user.uid, '| ce_org_id:', _orgIdForBrand);
-      if (_orgIdForBrand && _orgIdForBrand !== user.uid) {
+      if (_orgIdForBrand) {
         if (navigator.onLine) {
           console.log('[Branding] Loading org ' + _orgIdForBrand + '...');
           fbDb.collection('organizations').doc(_orgIdForBrand).get()
@@ -12132,7 +12144,7 @@ if (_urlOrgId) {
           _dismissSplash();
         }
       }
-      // else: ce_org_id === user.uid (manager) — splash dismissed by step 5's .then()
+      // else: no ce_org_id — SA or unaffiliated, handled above
     } else {
       appEl.style.display = 'none';
       _clearFirebaseIdentity();
