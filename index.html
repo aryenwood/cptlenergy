@@ -18314,12 +18314,7 @@ function openBookingSheet() {
   bookingOverlay.classList.add('open');
   bookingSheet.classList.add('open');
   bookingOverlay.setAttribute('aria-hidden', 'false');
-  // iOS scroll lock: save position and pin body with position:fixed so iOS can't scroll the background
-  const _scrollY = window.scrollY;
-  document.body.dataset.scrollY = _scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${_scrollY}px`;
-  document.body.style.width = '100%';
+  document.body.style.overflow = 'hidden';
   document.addEventListener('touchmove', _bookingTouchMove, { passive: false });
   // Default datetime to next hour
   const now = new Date();
@@ -18334,12 +18329,7 @@ function closeBookingSheet() {
   bookingOverlay.classList.remove('open');
   bookingSheet.classList.remove('open');
   bookingOverlay.setAttribute('aria-hidden', 'true');
-  // iOS scroll lock restore: unpin body and jump back to saved position
-  const _savedY = parseInt(document.body.dataset.scrollY || '0', 10);
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.width = '';
-  window.scrollTo(0, _savedY);
+  document.body.style.overflow = '';
   document.removeEventListener('touchmove', _bookingTouchMove);
   setTimeout(() => {
     bookingForm.reset();
