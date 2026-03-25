@@ -159,7 +159,8 @@ nav{flex:1;padding:8px 0 16px}
   height:92vh;min-height:580px;
   overflow:hidden;
   background-color:var(--navy-dk);
-  background-image:url('https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=1800&q=88&fit=crop&crop=center');
+  /* Replace with actual CCF hero photo — e.g. crew on a job site or finished install */
+  background-image:linear-gradient(135deg,var(--navy-dk) 0%,var(--navy-mid) 40%,var(--navy) 100%);
   background-size:cover;
   background-position:center;
 }
@@ -342,12 +343,23 @@ nav{flex:1;padding:8px 0 16px}
 .gc:nth-child(4){ grid-column:1/5; grid-row:2; border-radius:0 0 0 10px; }
 .gc:nth-child(5){ grid-column:5/9; grid-row:2; }
 .gc:nth-child(6){ grid-column:9/13; grid-row:2; border-radius:0 0 10px 0; }
-.gc:nth-child(1){ background-image:url('https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=900&q=88'); }
-.gc:nth-child(2){ background-image:url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=88'); }
-.gc:nth-child(3){ background-image:url('https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800&q=88'); }
-.gc:nth-child(4){ background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=700&q=88'); }
-.gc:nth-child(5){ background-image:url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=88'); }
-.gc:nth-child(6){ background-image:url('https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800&q=88'); }
+/* Gallery images — replace these with actual CCF install photos from Company Cam */
+.gc:nth-child(1){ background:linear-gradient(135deg,var(--navy-dk) 0%,var(--navy-mid) 100%); }
+.gc:nth-child(2){ background:linear-gradient(135deg,var(--navy-mid) 0%,var(--navy) 100%); }
+.gc:nth-child(3){ background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dk) 100%); }
+.gc:nth-child(4){ background:linear-gradient(135deg,var(--navy-dk) 0%,var(--navy) 100%); }
+.gc:nth-child(5){ background:linear-gradient(135deg,var(--navy-mid) 0%,var(--navy-dk) 100%); }
+.gc:nth-child(6){ background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%); }
+.gc-placeholder{
+  position:absolute;inset:0;z-index:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.25);font-size:32px;gap:8px;
+}
+.gc-placeholder span{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(255,255,255,0.18);
+}
 .gc-over{
   position:absolute;inset:0;
   background:linear-gradient(
@@ -841,7 +853,17 @@ nav{flex:1;padding:8px 0 16px}
 }
 .sec:nth-child(even) .at{background:var(--off)}
 .at:hover{background:var(--surface)}
-.at-bar{height:3px;border-radius:1px;margin-bottom:14px}
+.at-bar{height:3px;border-radius:1px;margin-bottom:14px;display:none}
+.at-icon{
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;color:white;font-weight:700;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  font-size:13px;letter-spacing:-0.01em;
+  overflow:hidden;position:relative;
+}
+.at-icon img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.at-icon svg{width:30px;height:30px}
 .at h4{
   font-family:'Cormorant Garamond',serif;
   font-size:18px;font-weight:600;color:var(--ink);margin-bottom:5px;
@@ -1003,9 +1025,9 @@ nav{flex:1;padding:8px 0 16px}
 <aside id="sb">
   <div class="sb-top">
     <img class="sb-logo"
-      src="https://mlr4zezkusej.i.optimole.com/w:auto/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/2023/04/NEW-CCF-logo-2.png"
+      src="NEW-CCF-logo-2.avif"
       alt="Complete Custom Fence"
-      onerror="this.style.opacity='0'"
+      onerror="this.src='https://mlr4zezkusej.i.optimole.com/w:auto/h:auto/q:mauto/f:best/https://completecustomfence.com/wp-content/uploads/2023/04/NEW-CCF-logo-2.png';this.onerror=null;"
     />
     <div class="sb-tagline">New Hire Orientation Kit</div>
   </div>
@@ -1019,6 +1041,7 @@ nav{flex:1;padding:8px 0 16px}
     <a class="ni on" href="#hero" onclick="sa(this)"><span class="nn">—</span><span class="nl">Letter from Luke</span><span class="nc">&#10003;</span></a>
     <a class="ni" href="#gallery" onclick="sa(this)"><span class="nn">—</span><span class="nl">Our Work</span><span class="nc">&#10003;</span></a>
     <a class="ni" href="#reviews" onclick="sa(this)"><span class="nn">—</span><span class="nl">Customer Reviews</span><span class="nc">&#10003;</span></a>
+    <a class="ni" href="#win" onclick="sa(this)"><span class="nn">—</span><span class="nl">Why Reps Win Here</span><span class="nc">&#10003;</span></a>
     <a class="ni" href="#promise" onclick="sa(this)"><span class="nn">—</span><span class="nl">CCF's Promise to You</span><span class="nc">&#10003;</span></a>
     <a class="ni" href="#team" onclick="sa(this)"><span class="nn">—</span><span class="nl">Meet the Team</span><span class="nc">&#10003;</span></a>
     <div class="ng">Orientation</div>
@@ -1058,13 +1081,13 @@ nav{flex:1;padding:8px 0 16px}
   <div class="hero-content">
     <div class="hero-tag">Complete Custom Fence &nbsp;·&nbsp; Groveland, FL</div>
     <h1>Welcome to<br><span>the team.</span></h1>
-    <p class="hero-sub">You didn't just get a job. You joined a company that has spent over 20 years earning the trust of Central Florida homeowners — one post, one panel, one satisfied customer at a time.</p>
+    <p class="hero-sub">You didn't just get a job. You joined a company with a 20-year reputation, a lifetime warranty competitors can't touch, and a sales pipeline that actually delivers. The product is proven. The territory is growing. Now it's your turn.</p>
     <div class="hero-pills">
-      <span class="pill">20+ Years in Business</span>
+      <span class="pill">20+ Years &middot; 5-Star Reputation</span>
       <span class="pill">100% American-Made Materials</span>
       <span class="pill">Lifetime Warranty</span>
-      <span class="pill">50+ Years Combined Experience</span>
-      <span class="pill">Lake · Orange · Seminole Counties</span>
+      <span class="pill">Real Leads &middot; Real Commissions</span>
+      <span class="pill">Lake &middot; Orange &middot; Seminole Counties</span>
     </div>
   </div>
 </div>
@@ -1077,6 +1100,7 @@ nav{flex:1;padding:8px 0 16px}
       <p>Complete Custom Fence was built on a simple idea: do the job right, treat people like they matter, and the reputation takes care of itself. Twenty years later, that's still the whole strategy.</p>
       <p>What that means for you is this — when you show up to a job site wearing this company's name, you're carrying something we worked hard to build. We're going to do everything on our end to make sure you're proud to carry it.</p>
       <p>This kit isn't a rulebook. It's a roadmap. It tells you who we are, what we do, what we promise you as an employer, and what we need from you in return. Read it. Ask questions. The people around you have been doing this a long time and they will set you up to succeed.</p>
+      <p>If you're in sales, here's what I want you to know: the hardest part of selling is already done. We spent 20 years building a reputation that homeowners trust before you ever knock on their door or take their call. Lifetime warranty, American-made materials, five-star reviews you can pull up on your phone at the kitchen table. You're not starting from scratch — you're closing on a foundation that took two decades to build. Now it's yours to leverage.</p>
       <p>We don't hire people to fill seats. We hire people we want to build something with. You're one of those people — now let's get to work.</p>
       <div class="l-sig">
         <strong>Luke Payne</strong>
@@ -1102,6 +1126,7 @@ nav{flex:1;padding:8px 0 16px}
   </div>
   <div class="g-grid">
     <div class="gc">
+      <div class="gc-placeholder">&#128247;<span>CCF Install Photo</span></div>
       <div class="gc-over"></div>
       <span class="gc-badge">Residential</span>
       <div class="gc-info">
@@ -1111,6 +1136,7 @@ nav{flex:1;padding:8px 0 16px}
       </div>
     </div>
     <div class="gc">
+      <div class="gc-placeholder">&#128247;<span>CCF Install Photo</span></div>
       <div class="gc-over"></div>
       <div class="gc-info">
         <div class="gc-type">Aluminum Ornamental</div>
@@ -1119,6 +1145,7 @@ nav{flex:1;padding:8px 0 16px}
       </div>
     </div>
     <div class="gc">
+      <div class="gc-placeholder">&#128247;<span>CCF Install Photo</span></div>
       <div class="gc-over"></div>
       <span class="gc-badge">Commercial</span>
       <div class="gc-info">
@@ -1128,6 +1155,7 @@ nav{flex:1;padding:8px 0 16px}
       </div>
     </div>
     <div class="gc">
+      <div class="gc-placeholder">&#128247;<span>CCF Install Photo</span></div>
       <div class="gc-over"></div>
       <div class="gc-info">
         <div class="gc-type">Cedar Wood</div>
@@ -1136,6 +1164,7 @@ nav{flex:1;padding:8px 0 16px}
       </div>
     </div>
     <div class="gc">
+      <div class="gc-placeholder">&#128247;<span>CCF Install Photo</span></div>
       <div class="gc-over"></div>
       <span class="gc-badge">5-Star Job</span>
       <div class="gc-info">
@@ -1145,6 +1174,7 @@ nav{flex:1;padding:8px 0 16px}
       </div>
     </div>
     <div class="gc">
+      <div class="gc-placeholder">&#128247;<span>CCF Install Photo</span></div>
       <div class="gc-over"></div>
       <div class="gc-info">
         <div class="gc-type">Vinyl Scallop Picket</div>
@@ -1184,6 +1214,52 @@ nav{flex:1;padding:8px 0 16px}
     </div>
   </div>
 </div>
+<!-- WHY REPS WIN -->
+<section class="sec" id="win" style="background:var(--navy-dk);border-bottom:4px solid var(--red);opacity:1;transform:none">
+  <div class="sec-hd" style="border-bottom-color:rgba(255,255,255,0.1)">
+    <div class="sn" style="background:rgba(191,17,32,0.2);border-color:rgba(191,17,32,0.3);color:#F4A8B0">&#9733; Advantage</div>
+    <div>
+      <div class="st" style="color:var(--white)">Why Sales Reps Win at CCF</div>
+      <div class="ss" style="color:rgba(255,255,255,0.5)">You're not selling a commodity. You're selling a 20-year reputation with a lifetime warranty. Here's why that matters for your paycheck.</div>
+    </div>
+  </div>
+  <div class="pg-grid" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.06)">
+    <div class="pg" style="background:rgba(255,255,255,0.02)">
+      <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128176;</div>
+      <h3 style="color:var(--white)">The Product Sells Itself</h3>
+      <p style="color:rgba(255,255,255,0.6)">Lifetime warranty on vinyl and aluminum. 100% American-made materials. 20+ years of 5-star reviews backing every word you say. Homeowners already trust the name — you're not starting from zero, you're closing on a foundation of proof.</p>
+    </div>
+    <div class="pg" style="background:rgba(255,255,255,0.02)">
+      <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128200;</div>
+      <h3 style="color:var(--white)">Leads Come to You</h3>
+      <p style="color:rgba(255,255,255,0.6)">Google Ads, website inbound, Active Knocker D2D pipeline, and 20 years of referral momentum. You're not cold-calling into silence — you're working warm leads backed by real marketing spend and a CRM that tracks every touchpoint.</p>
+    </div>
+    <div class="pg" style="background:rgba(255,255,255,0.02)">
+      <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128170;</div>
+      <h3 style="color:var(--white)">We Crush the Big Box Stores</h3>
+      <p style="color:rgba(255,255,255,0.6)">Home Depot and Lowe's subcontract to the lowest bidder. We don't. Our crews are W-2 employees trained to CCF standards. Our materials are premium American-made. Our warranty is lifetime, not 1-year. When a homeowner compares us side-by-side, we win. Every time.</p>
+    </div>
+    <div class="pg" style="background:rgba(255,255,255,0.02)">
+      <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#127919;</div>
+      <h3 style="color:var(--white)">Close Rate You Can Feel</h3>
+      <p style="color:rgba(255,255,255,0.6)">When the quality is real, the reviews are real, and the warranty is real — objections shrink. You're not defending a shaky product. You're presenting the obvious best choice and watching homeowners come to the same conclusion you already did.</p>
+    </div>
+    <div class="pg" style="background:rgba(255,255,255,0.02)">
+      <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#128640;</div>
+      <h3 style="color:var(--white)">Tech-Backed, Not Tech-Buried</h3>
+      <p style="color:rgba(255,255,255,0.6)">9 platforms that actually make the job easier. ARC Site for instant field estimates. JobNimbus for CRM. Active Knocker for D2D optimization. Zapier automations pushing leads to closers in real time. You sell — the systems handle the rest.</p>
+    </div>
+    <div class="pg" style="background:rgba(255,255,255,0.02)">
+      <div class="pg-ic" style="background:rgba(191,17,32,0.15);border-color:rgba(191,17,32,0.25)">&#127793;</div>
+      <h3 style="color:var(--white)">Three-County Territory, Zero Saturation</h3>
+      <p style="color:rgba(255,255,255,0.6)">Lake, Orange, and Seminole counties — Central Florida's fastest-growing corridor. Every new subdivision is a pipeline. Every aging fence is an opportunity. This territory has room for reps who want to run, not walk.</p>
+    </div>
+  </div>
+  <div class="call" style="margin-top:24px;background:rgba(191,17,32,0.1);border-color:rgba(191,17,32,0.25)">
+    <div class="call-i">&#128293;</div>
+    <div class="call-b" style="color:rgba(255,255,255,0.8)"><strong style="color:#F4A8B0">Bottom Line</strong>CCF doesn't hire salespeople to survive. We hire salespeople to thrive. The reputation, the product, the territory, and the tech are already built. Your job is to show up, work the system, and close. The results take care of themselves.</div>
+  </div>
+</section>
 <!-- PROMISE -->
 <div class="promise" id="promise">
   <div class="p-head">
@@ -1220,11 +1296,11 @@ nav{flex:1;padding:8px 0 16px}
       <div class="team-contact">&#9742; (352) 429-9999</div>
     </div>
     <div class="team-card">
-      <div class="team-avatar" style="background:var(--navy-mid)">SM</div>
-      <h3>[Supervisor Name]</h3>
-      <div class="team-role">Your Direct Supervisor</div>
-      <p>Your supervisor is your go-to person for everything in the field — questions about the work, schedule changes, customer situations, or just figuring out the best way to handle something. They've been where you are and they genuinely want to help you succeed here.</p>
-      <div class="team-contact">&#9742; [Supervisor Phone]</div>
+      <div class="team-avatar" style="background:var(--navy-mid)">MW</div>
+      <h3>Matthew Woodward</h3>
+      <div class="team-role">Your Direct Report</div>
+      <p>Matt is your go-to person for everything in the field — questions about the work, schedule changes, customer situations, or just figuring out the best way to handle something. He's been where you are and he genuinely wants to help you succeed here. Don't hesitate to call — that's what he's there for.</p>
+      <div class="team-contact">&#9742; (737) 600-1422</div>
     </div>
     <div class="team-card">
       <div class="team-avatar" style="background:var(--muted)">GO</div>
@@ -1350,14 +1426,25 @@ nav{flex:1;padding:8px 0 16px}
 <!-- 05 COMP -->
 <section class="sec" id="s5">
   <div class="sec-hd"><div class="sn">05</div><div>
-    <div class="st">Compensation & Benefits</div>
-    <div class="ss">Transparent, specific, and confirmed in writing at signing.</div>
+    <div class="st">Compensation & Earning Potential</div>
+    <div class="ss">This isn't a mystery. Here's how you get paid, how you grow your income, and why top performers stay.</div>
   </div></div>
   <div class="cgrid">
-    <div class="c"><div class="c-ic">&#128181;</div><h3>Pay Structure</h3><p>Hourly or salary confirmed at onboarding. Overtime per Florida labor law. Pay schedule weekly or biweekly — confirmed with the office at signing.</p></div>
-    <div class="c"><div class="c-ic">&#127873;</div><h3>Performance Incentives</h3><p>Bonuses and crew efficiency incentives are active and real. Specifics reviewed at your 30-day check-in. High performance gets recognized and compensated.</p></div>
-    <div class="c"><div class="c-ic">&#127958;</div><h3>Time Off</h3><p>PTO and holiday policy reviewed at onboarding. Weather-related days handled case-by-case through your crew lead. Ask early, not after the fact.</p></div>
-    <div class="c"><div class="c-ic">&#10084;</div><h3>Benefits</h3><p>Health insurance and retirement options reviewed with management. Full details in your offer letter. Read it, ask questions, understand what you signed.</p></div>
+    <div class="c"><div class="c-ic">&#128181;</div><h3>Base + Performance</h3><p>Your base pay structure (hourly or salary) is confirmed at onboarding and paid weekly or biweekly via direct deposit. But the real story is what you earn on top of that — performance incentives, crew bonuses, and efficiency pay are active and designed to reward the people who show up and produce.</p></div>
+    <div class="c"><div class="c-ic">&#128200;</div><h3>Commission & Bonuses</h3><p>Sales reps earn on closed deals. D2D reps earn on qualified leads that convert. Crew bonuses are tied to efficiency and quality scores. The specifics are reviewed at your 30-day check-in — this is real money, not a corporate carrot on a stick.</p></div>
+    <div class="c"><div class="c-ic">&#128640;</div><h3>Growth = More Money</h3><p>Crew leads earn more. Closers earn more. People who learn the full stack — from D2D to estimate to close — earn the most. CCF promotes from within. Your income ceiling isn't set by your title, it's set by your effort and skill development.</p></div>
+    <div class="c"><div class="c-ic">&#127942;</div><h3>90-Day Comp Review</h3><p>At 90 days, you sit down with management for a formal compensation review. If you've hit your milestones, expect your comp to reflect it. No vague promises. No "we'll talk about it later." Performance gets recognized on a schedule.</p></div>
+  </div>
+  <div class="call grn" style="margin-top:4px">
+    <div class="call-i">&#128176;</div>
+    <div class="call-b"><strong>The Math Is Simple</strong>High-quality leads + a product that closes itself + a territory that's growing = reps who earn. The top performers at CCF don't leave because no one else can match what they build here. Your 30-day check-in will lay out the exact numbers — come ready to set targets.</div>
+  </div>
+  <div class="div"></div>
+  <div class="cgrid">
+    <div class="c"><div class="c-ic">&#127958;</div><h3>Time Off & Flexibility</h3><p>PTO and holiday policy reviewed at onboarding. Weather-related days handled through your crew lead. Ask early, plan ahead — the team respects people who communicate.</p></div>
+    <div class="c"><div class="c-ic">&#10084;</div><h3>Benefits Package</h3><p>Health insurance and retirement options reviewed with management. Full details in your offer letter. This is a company that invests in the people who invest in it.</p></div>
+    <div class="c"><div class="c-ic">&#9201;</div><h3>Overtime Available</h3><p>OT is paid per Florida labor law (time-and-a-half over 40 hours). When the schedule is busy — and in Central Florida, it often is — the hours are there for people who want them.</p></div>
+    <div class="c"><div class="c-ic">&#128178;</div><h3>Weekly or Biweekly Pay</h3><p>Confirmed at signing. Direct deposit is default. If there's ever a question about your check, the office resolves it same-day. No runaround, no waiting.</p></div>
   </div>
 </section>
 <!-- 06 POLICIES -->
@@ -1526,15 +1613,60 @@ nav{flex:1;padding:8px 0 16px}
     <div class="ss">CCF runs on 9 platforms. Functional in all of them by Day 30 — not Day 60, not eventually.</div>
   </div></div>
   <div class="apps">
-    <div class="at"><div class="at-bar" style="background:#EA4335"></div><h4>Gmail</h4><p>Primary communication. The office reaches you here first. Check it daily.</p><span class="at-tag tag-r">Required</span></div>
-    <div class="at"><div class="at-bar" style="background:#1565C0"></div><h4>Company Cam</h4><p>Photo documentation — start, mid, completion. Every job. Non-negotiable.</p><span class="at-tag tag-f">Field</span></div>
-    <div class="at"><div class="at-bar" style="background:#2563EB"></div><h4>JobNimbus</h4><p>CRM and job management. All customer records and scheduling live here.</p><span class="at-tag tag-r">Required</span></div>
-    <div class="at"><div class="at-bar" style="background:#E07B28"></div><h4>Active Knocker</h4><p>D2D tracking. Pin drops, routes, and lead logging for field reps.</p><span class="at-tag tag-f">Field</span></div>
-    <div class="at"><div class="at-bar" style="background:#5865F2"></div><h4>Discord</h4><p>Team communication hub. Crew coordination and company announcements.</p><span class="at-tag tag-r">Required</span></div>
-    <div class="at"><div class="at-bar" style="background:#2ECC71"></div><h4>Natural Forms</h4><p>Digital forms — job docs, customer forms, and field data entry.</p><span class="at-tag tag-f">Field</span></div>
-    <div class="at"><div class="at-bar" style="background:#BF1120"></div><h4>ARC Site</h4><p>Mobile estimating and site measurement. Logged per job, every time.</p><span class="at-tag tag-f">Field</span></div>
-    <div class="at"><div class="at-bar" style="background:#445568"></div><h4>Turbo Scan</h4><p>Mobile scanning for permits, signed quotes, and paper documents.</p><span class="at-tag tag-o">Office</span></div>
-    <div class="at"><div class="at-bar" style="background:#1A3461"></div><h4>Measure App</h4><p>Quick on-site confirmations. Secondary to ARC Site for speed checks.</p><span class="at-tag tag-f">Field</span></div>
+    <div class="at">
+      <div class="at-icon" style="background:#fff;border:1px solid #e0e0e0">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M5.5 8.5l18.5 13 18.5-13" stroke="#EA4335" stroke-width="3" fill="none"/><rect x="4" y="8" width="40" height="32" rx="4" stroke="#4285F4" stroke-width="2.5" fill="none"/><path d="M5.5 39.5l15-12" stroke="#34A853" stroke-width="2.5"/><path d="M42.5 39.5l-15-12" stroke="#FBBC05" stroke-width="2.5"/></svg>
+      </div>
+      <h4>Gmail</h4><p>Primary communication. The office reaches you here first. Check it daily — this is how scheduling, customer updates, and announcements hit your inbox.</p><span class="at-tag tag-r">Required — Day 1</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#E8630A">
+        <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="8" width="28" height="32" rx="4" stroke="#fff" stroke-width="2.5" fill="none"/><circle cx="24" cy="20" r="6" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M16 38l4-6h8l4 6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+      </div>
+      <h4>Company Cam</h4><p>Photo documentation — start, mid, completion on every single job. This is how we prove quality, protect the warranty, and generate the project photos that close future sales.</p><span class="at-tag tag-f">Field — Every Job</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#2563EB">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M12 30c0-8 5-16 12-16s12 8 12 16" stroke="#fff" stroke-width="2.5" fill="none"/><circle cx="24" cy="32" r="6" fill="#fff" opacity="0.9"/><path d="M21 18c-2-4 0-8 3-8s5 4 3 8" stroke="#fff" stroke-width="2" fill="none"/></svg>
+      </div>
+      <h4>JobNimbus</h4><p>CRM and job management. Every customer record, every appointment, every job status lives here. This is the command center — learn it fast, use it daily.</p><span class="at-tag tag-r">Required — Day 1</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#F59E0B">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v8" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="28" r="10" stroke="#fff" stroke-width="2.5" fill="none"/><circle cx="24" cy="28" r="3" fill="#fff"/><path d="M18 10l6 6 6-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+      </div>
+      <h4>Active Knocker</h4><p>D2D tracking and lead generation. Pin drops, optimized routes, and lead logging. This is how you track territory, log contacts, and feed the sales pipeline.</p><span class="at-tag tag-f">Field — D2D Reps</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#5865F2">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M18.6 20.4c-.9 0-1.6.8-1.6 1.8s.7 1.8 1.6 1.8c.9 0 1.6-.8 1.6-1.8s-.7-1.8-1.6-1.8zm10.8 0c-.9 0-1.6.8-1.6 1.8s.7 1.8 1.6 1.8c.9 0 1.6-.8 1.6-1.8s-.7-1.8-1.6-1.8z" fill="#fff"/><path d="M38.4 8H9.6A3.6 3.6 0 006 11.6v24a3.6 3.6 0 003.6 3.6h24.4l-1.1-4 2.7 2.5 2.6 2.4L42 44V11.6A3.6 3.6 0 0038.4 8zm-7.5 23.5s-.8-.9-1.4-1.7c2.8-.8 3.9-2.5 3.9-2.5a12.3 12.3 0 01-2.5 1.3 14 14 0 01-8.8.9 17 17 0 01-3.2-1 7 7 0 01-1.2-.6l-.1-.1c0-.1-.1-.1-.1-.1l-.5-.3a8.3 8.3 0 003.7 2.5c-1.5 1.8-3.4 2.5-3.4 2.5-5.5-.2-7.6-3.8-7.6-3.8 0-8 3.6-14.5 3.6-14.5 3.6-2.7 7-2.6 7-2.6l.3.3c-4.5 1.3-6.5 3.2-6.5 3.2s.5-.3 1.4-.7a19 19 0 015.5-1.5h.4a21 21 0 015 0 20 20 0 016 2.2s-2-1.8-6.2-3.1l.4-.4s3.4-.1 7 2.6c0 0 3.6 6.5 3.6 14.5 0 0-2.1 3.6-7.6 3.8z" fill="#fff"/></svg>
+      </div>
+      <h4>Discord</h4><p>Team communication hub. Crew coordination, company announcements, real-time updates. This is where the team talks — check it like you check your texts.</p><span class="at-tag tag-r">Required — Day 1</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#22C55E">
+        <svg viewBox="0 0 48 48" fill="none"><rect x="10" y="6" width="28" height="36" rx="3" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M16 16h16M16 22h16M16 28h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="34" cy="34" r="6" fill="#fff" opacity="0.9"/><path d="M32 34l2 2 4-4" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h4>Natural Forms</h4><p>Digital forms — job documents, customer sign-offs, and field data entry. Eliminates paper, eliminates lost docs, keeps everything trackable.</p><span class="at-tag tag-f">Field</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#DC2626">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M8 40l16-32 16 32H8z" stroke="#fff" stroke-width="2.5" fill="none" stroke-linejoin="round"/><path d="M24 8l8 16" stroke="#fff" stroke-width="1.5" opacity="0.5"/><circle cx="24" cy="30" r="2" fill="#fff"/><path d="M16 36h16" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h4>ARC Site</h4><p>Mobile estimating and site measurement. Logged per job, every time. Accurate measurements = accurate quotes = closed deals. Learn this one well.</p><span class="at-tag tag-f">Field — Estimates</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:#475569">
+        <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="10" width="32" height="28" rx="3" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M8 18h32" stroke="#fff" stroke-width="2"/><path d="M16 26h16M16 32h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><path d="M36 10l-20 28" stroke="#fff" stroke-width="8" opacity="0.08"/></svg>
+      </div>
+      <h4>Turbo Scan</h4><p>Mobile scanning for permits, signed quotes, and paper documents. Snap it, scan it, done — everything goes digital and into the job file.</p><span class="at-tag tag-o">Office</span>
+    </div>
+    <div class="at">
+      <div class="at-icon" style="background:var(--navy)">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M10 38V10h6v28h-6z" stroke="#fff" stroke-width="2" fill="none"/><path d="M10 10h28" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M10 18h20" stroke="#fff" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/><path d="M10 26h12" stroke="#fff" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/><circle cx="34" cy="28" r="8" stroke="#fff" stroke-width="2" fill="none"/><path d="M34 24v8M30 28h8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <h4>Measure App</h4><p>Quick on-site measurement confirmations. Secondary to ARC Site for speed checks when you need a fast verify in the field.</p><span class="at-tag tag-f">Field</span>
+    </div>
   </div>
   <div class="div"></div>
   <div class="wf">
@@ -1634,7 +1766,7 @@ nav{flex:1;padding:8px 0 16px}
   <div class="sig-wrap">
     <div class="sig-top">
       <h3>Employee Signature Block</h3>
-      <span>Complete Custom Fence · New Hire Orientation Kit · 2025</span>
+      <span>Complete Custom Fence · New Hire Orientation Kit · 2026</span>
     </div>
     <div class="sig-body">
       <div class="sig-g">
@@ -1648,7 +1780,7 @@ nav{flex:1;padding:8px 0 16px}
 </section>
 <!-- BOTTOM BAR -->
 <div class="bbar">
-  <p>Complete Custom Fence &nbsp;·&nbsp; 720 W Broad St, Groveland FL 34736 &nbsp;·&nbsp; (352) 429-9999 &nbsp;·&nbsp; Confidential 2025</p>
+  <p>Complete Custom Fence &nbsp;·&nbsp; 720 W Broad St, Groveland FL 34736 &nbsp;·&nbsp; (352) 429-9999 &nbsp;·&nbsp; Confidential 2026</p>
   <div class="bbtns">
     <button class="btn btn-g" onclick="reset()">&#8634; Reset</button>
     <button class="btn btn-r" onclick="window.print()">&#11015; Save / Print PDF</button>
@@ -1662,7 +1794,7 @@ function sa(el){
 }
 const smap={
   'hero':'#hero','letter':'#letter','gallery':'#gallery',
-  'reviews':'#reviews','promise':'#promise','team':'#team',
+  'reviews':'#reviews','win':'#win','promise':'#promise','team':'#team',
   's1':'#s1','s2':'#s2','s3':'#s3','s4':'#s4','s5':'#s5',
   's6':'#s6','s7':'#s7','s8':'#s8','s9':'#s9','s10':'#s10',
   's11':'#s11','s12':'#s12','s13':'#s13','s14':'#s14'
