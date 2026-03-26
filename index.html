@@ -6315,52 +6315,54 @@
       padding: 0 12px;
     }
 
-    /* Day cells — clean, no border by default */
+    /* Day cells — modern minimal with hover glow */
     .cal-day {
-      min-height: 56px;
-      border-radius: 12px;
+      min-height: 64px;
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      padding: 4px 2px 3px;
+      padding: 6px 3px 4px;
       font-size: 15px; font-weight: 600;
       color: var(--text);
       cursor: pointer;
       position: relative;
-      transition: background 0.10s, transform 0.10s;
+      transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
       -webkit-tap-highlight-color: transparent;
       border: none;
       background: none;
       overflow: hidden;
     }
-    .cal-day:active { transform: scale(0.95); }
-    .cal-day--other-month { color: var(--text-3); opacity: 0.30; pointer-events: none; }
-    /* Day number sits at top-center */
+    .cal-day:active { transform: scale(0.92); }
+    .cal-day:hover { background: var(--g1); }
+    .cal-day--other-month { color: var(--text-3); opacity: 0.25; pointer-events: none; }
+    html.dark-mode .cal-day:hover { background: rgba(255,255,255,0.04); }
+    /* Day number — centered, refined */
     .cal-day-num {
       display: block;
       text-align: center;
       line-height: 1;
-      margin-bottom: 2px;
-      font-size: 13px;
+      margin-bottom: 3px;
+      font-size: 14px;
       font-weight: 600;
       position: relative;
       z-index: 1;
     }
-    /* Event chip stack */
+    /* Event chip stack — rounded, tighter */
     .cal-chip {
       display: block;
-      width: calc(100% - 2px);
-      margin: 0 1px 1px;
-      padding: 1px 3px;
-      border-radius: 3px;
-      font-size: 10px;
+      width: calc(100% - 4px);
+      margin: 0 2px 2px;
+      padding: 2px 4px;
+      border-radius: 6px;
+      font-size: 9px;
       font-weight: 700;
-      line-height: 1.4;
+      line-height: 1.3;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-align: left;
+      text-align: center;
       position: relative;
       z-index: 1;
     }
@@ -6374,41 +6376,51 @@
       position: relative;
       z-index: 1;
     }
-    /* Today — highlight the day number */
+    /* Today — bold ring around number */
+    .cal-day--today {
+      background: rgba(20,143,152,0.06);
+    }
     .cal-day--today .cal-day-num {
       color: var(--amber);
-      font-weight: 700;
+      font-weight: 800;
     }
     .cal-day--today .cal-day-num::before {
       content: '';
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 28px; height: 28px;
+      width: 30px; height: 30px;
       border-radius: 50%;
-      background: rgba(20,143,152,0.15);
+      background: rgba(20,143,152,0.12);
       border: 2px solid var(--amber);
       z-index: -1;
     }
-    /* Selected — filled circle on the number */
+    /* Selected — filled pill background */
+    .cal-day--selected {
+      background: rgba(20,143,152,0.10);
+      box-shadow: inset 0 0 0 1.5px rgba(20,143,152,0.25);
+    }
     .cal-day--selected .cal-day-num {
       color: #fff;
-      font-weight: 700;
+      font-weight: 800;
     }
     .cal-day--selected .cal-day-num::before {
       content: '';
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 22px; height: 22px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       background: var(--amber);
-      box-shadow: 0 2px 8px rgba(20,143,152,0.50);
+      box-shadow: 0 2px 12px rgba(20,143,152,0.55);
       z-index: -1;
     }
     .cal-day--today.cal-day--selected .cal-day-num::before {
       background: var(--amber);
       border: none;
+    }
+    .cal-day--today.cal-day--selected {
+      background: rgba(20,143,152,0.14);
     }
 
     /* Dark mode day states */
@@ -6548,19 +6560,19 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      border-radius: 16px;
+      border-radius: 20px;
       padding: 16px 18px;
       position: relative;
       overflow: hidden;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      /* Light mode: clean glass */
       background: var(--g1);
+      backdrop-filter: var(--blur-md); -webkit-backdrop-filter: var(--blur-md);
       border: 1px solid var(--g-border);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      transition: transform 0.12s, box-shadow 0.12s;
+      box-shadow: 0 1px 0 var(--g-shine) inset, 0 4px 16px rgba(0,0,0,0.10);
+      transition: transform 0.15s var(--spring), box-shadow 0.15s;
     }
-    .cal-appt-card:active { transform: scale(0.97); }
+    .cal-appt-card:active { transform: scale(0.96); }
     .cal-appt-card.dash-upcoming-card--needs-closer {
       border-left: 3px solid #f59e0b;
       animation: pulse-amber 2s infinite;
@@ -6667,6 +6679,21 @@
     }
     html.dark-mode .cal-appt-chevron {
       stroke: rgba(255,255,255,0.30);
+    }
+    html.dark-mode .cal-appt-card {
+      background: linear-gradient(145deg, rgba(18,41,74,0.72) 0%, rgba(6,13,24,0.92) 100%);
+      border-color: rgba(255,255,255,0.07);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 24px rgba(0,0,0,0.55);
+    }
+    html.dark-mode .cal-day--selected {
+      background: rgba(20,143,152,0.08);
+      box-shadow: inset 0 0 0 1.5px rgba(20,143,152,0.20);
+    }
+    html.dark-mode .cal-day--today {
+      background: rgba(20,143,152,0.05);
+    }
+    html.dark-mode .cal-day--today.cal-day--selected {
+      background: rgba(20,143,152,0.10);
     }
     html.dark-mode #cal-day-sheet { background: #0d1f33; }
     html.dark-mode #cal-day-sheet-close { background: rgba(255,255,255,0.08); }
