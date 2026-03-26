@@ -1046,6 +1046,87 @@
       width: 100%; transition: width 0.2s ease;
     }
 
+    /* ── Dispo Appointment Sheet — dark tactical theme ───────────────── */
+    #dispo-appt-sheet {
+      display: flex; position: fixed; inset: 0; z-index: 9998;
+      background: rgba(0,0,0,0); opacity: 0; pointer-events: none;
+      transition: background 0.25s, opacity 0.25s;
+    }
+    #dispo-appt-sheet.dispo-open {
+      background: rgba(0,0,0,0.65); opacity: 1; pointer-events: auto;
+    }
+    .dispo-inner {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      max-height: 85vh; background: #0a0f14;
+      border-radius: 24px 20px 0 0; overflow: hidden;
+      display: flex; flex-direction: column;
+      transform: translateY(30px);
+      transition: transform 0.3s var(--spring);
+    }
+    #dispo-appt-sheet.dispo-open .dispo-inner { transform: translateY(0); }
+    .dispo-handle {
+      width: 36px; height: 4px; background: rgba(255,255,255,0.20);
+      border-radius: 2px; margin: 12px auto 0; flex-shrink: 0;
+    }
+    .dispo-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px 10px; flex-shrink: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .dispo-title { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.95); }
+    .dispo-subtitle { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+    .dispo-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: none;
+      color: rgba(255,255,255,0.6); font-size: 20px;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; -webkit-tap-highlight-color: transparent;
+    }
+    .dispo-close:active { opacity: 0.6; }
+    #dispo-appt-list { overflow-y: auto; flex: 1; padding: 10px 0; }
+    .dispo-appt-row {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; text-align: left; background: none; border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 18px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s;
+    }
+    .dispo-appt-row:active { background: rgba(255,255,255,0.06); }
+    .dispo-appt-name {
+      font-size: 14px; font-weight: 700; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .dispo-appt-meta { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+    .dispo-appt-badge {
+      flex-shrink: 0; padding: 3px 10px; border-radius: 50px;
+      color: #fff; font-size: 11px; font-weight: 700;
+    }
+    .dispo-appt-chevron {
+      width: 16px; height: 16px; stroke: rgba(255,255,255,0.3);
+      fill: none; stroke-width: 2; flex-shrink: 0;
+    }
+    #dispo-result-picker {
+      display: none; padding: 14px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04); flex-shrink: 0;
+    }
+    .dispo-result-label {
+      font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.45);
+      margin-bottom: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    #dispo-result-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dispo-cancel-btn {
+      margin-top: 14px; width: 100%; padding: 11px;
+      border-radius: 50px; border: 1.5px solid rgba(255,255,255,0.12);
+      background: none; color: rgba(255,255,255,0.5);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .dispo-empty {
+      text-align: center; padding: 32px;
+      color: rgba(255,255,255,0.35); font-size: 13px;
+    }
+
     /* ── Bottom nav ──────────────────────────────────────────────────────── */
     #bottom-nav {
       position: fixed;
@@ -23220,25 +23301,21 @@ function initInstallsMap() {
 </script>
 
 <!-- ── Dispo Appt Sheet ──────────────────────────────────────────────── -->
-<div id="dispo-appt-sheet" style="display:flex;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0);opacity:0;pointer-events:none;transition:background .25s,opacity .25s;" onclick="if(event.target===this)closeDIspoSheet()">
-  <div style="position:absolute;bottom:0;left:0;right:0;max-height:85vh;background:var(--g3);border-radius:24px 20px 0 0;overflow:hidden;display:flex;flex-direction:column;transform:translateY(30px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);">
-    <!-- Handle -->
-    <div style="width:36px;height:4px;background:var(--g-border);border-radius:2px;margin:12px auto 0;flex-shrink:0;"></div>
-    <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--g-border);">
+<div id="dispo-appt-sheet" onclick="if(event.target===this)closeDIspoSheet()">
+  <div class="dispo-inner">
+    <div class="dispo-handle"></div>
+    <div class="dispo-header">
       <div>
-        <div style="font-size:16px;font-weight:700;color:var(--text)">Dispo Appointment</div>
-        <div style="font-size:12px;color:var(--text-2);margin-top:2px">Select an appointment to update its result</div>
+        <div class="dispo-title">What happened at this door?</div>
+        <div class="dispo-subtitle">Select an appointment to update its result</div>
       </div>
-      <button onclick="closeDIspoSheet()" style="background:none;border:none;color:var(--text-3);font-size:24px;cursor:pointer;padding:0 4px;line-height:1;">×</button>
+      <button class="dispo-close" onclick="closeDIspoSheet()">×</button>
     </div>
-    <!-- Appt list -->
-    <div id="dispo-appt-list" style="overflow-y:auto;flex:1;padding:10px 0;"></div>
-    <!-- Result picker (hidden until appt selected) -->
-    <div id="dispo-result-picker" style="display:none;padding:14px 18px;border-top:1px solid var(--g-border);background:var(--g2);flex-shrink:0;">
-      <div style="font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:12px;letter-spacing:0.06em;text-transform:uppercase;">Set Result</div>
-      <div id="dispo-result-options" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-      <button onclick="closeDIspoSheet()" style="margin-top:14px;width:100%;padding:11px;border-radius:50px;border:1.5px solid var(--g-border);background:none;color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
+    <div id="dispo-appt-list"></div>
+    <div id="dispo-result-picker">
+      <div class="dispo-result-label">Set Result</div>
+      <div id="dispo-result-options"></div>
+      <button class="dispo-cancel-btn" onclick="closeDIspoSheet()">Cancel</button>
     </div>
   </div>
 </div>
@@ -23425,7 +23502,7 @@ function openDispoSheet() {
   dispoApptId = null;
 
   if (!appts.length) {
-    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-3);font-size:13px">No appointments booked yet.</div>';
+    list.innerHTML = '<div class="dispo-empty">No appointments booked yet.</div>';
   } else {
     // Sort: pending first, then by date
     const sorted = [...appts].sort((a, b) => {
@@ -23442,13 +23519,13 @@ function openDispoSheet() {
       const result = a.result || 'Pending';
       const color  = APPT_RESULT_COLORS[result] || '#9ca3af';
       return `
-        <button class="dispo-appt-row" data-id="${escHtml(a.id)}" style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--g-border);padding:12px 18px;cursor:pointer;">
+        <button class="dispo-appt-row" data-id="${escHtml(a.id)}">
           <div style="flex:1;overflow:hidden;">
-            <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(name)}</div>
-            <div style="font-size:12px;color:var(--text-2);margin-top:2px">${escHtml(dtStr)}${a.street ? ' · ' + escHtml(a.street) : ''}</div>
+            <div class="dispo-appt-name">${escHtml(name)}</div>
+            <div class="dispo-appt-meta">${escHtml(dtStr)}${a.street ? ' · ' + escHtml(a.street) : ''}</div>
           </div>
-          <span style="flex-shrink:0;padding:3px 10px;border-radius:50px;background:${color};color:#fff;font-size:11px;font-weight:700">${escHtml(result)}</span>
-          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text-3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="dispo-appt-badge" style="background:${color}">${escHtml(result)}</span>
+          <svg class="dispo-appt-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>`;
     }).join('');
 
@@ -23457,7 +23534,7 @@ function openDispoSheet() {
         dispoApptId = row.dataset.id;
         // Highlight selected
         list.querySelectorAll('.dispo-appt-row').forEach(r => r.style.background = '');
-        row.style.background = 'var(--g3)';
+        row.style.background = 'rgba(255,255,255,0.06)';
         // Build result options
         const appt   = loadAppointments().find(a => a.id === dispoApptId);
         const current = appt?.result || 'Pending';
@@ -23525,27 +23602,19 @@ function openDispoSheet() {
   const pending = appts.filter(a => !a.result || a.result === 'Pending').length;
   document.getElementById('dispo-appt-desc').textContent = pending ? `${pending} pending` : 'All dispositioned';
 
-  const _ds = document.getElementById('dispo-appt-sheet');
-  const _di = _ds.querySelector('div');
-  _ds.style.pointerEvents = 'auto';
+  var _ds = document.getElementById('dispo-appt-sheet');
   /* Use two rAFs so browser has time to paint before triggering transition */
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      _ds.style.background = 'rgba(0,0,0,0.65)';
-      _ds.style.opacity = '1';
-      if (_di) _di.style.transform = 'translateY(0)';
+      _ds.classList.add('dispo-open');
     });
   });
   /* Do NOT toggle body overflow — it causes white flash repaint on iOS */
 }
 
 function closeDIspoSheet() {
-  const _ds = document.getElementById('dispo-appt-sheet');
-  const _di = _ds.querySelector('div');
-  _ds.style.background = 'rgba(0,0,0,0)';
-  _ds.style.opacity = '0';
-  _ds.style.pointerEvents = 'none';
-  if (_di) _di.style.transform = 'translateY(30px)';
+  var _ds = document.getElementById('dispo-appt-sheet');
+  _ds.classList.remove('dispo-open');
 }
 
 document.getElementById('dispo-appt-btn').addEventListener('click', openDispoSheet);
