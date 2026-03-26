@@ -1172,7 +1172,7 @@
     #dash-greeting-text {
       font-size: 22px; font-weight: 700;
       letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #111827 20%, var(--amber) 110%);
+      background: linear-gradient(135deg, var(--text) 20%, var(--amber) 110%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -2322,7 +2322,7 @@
       width: 22px; height: 22px; stroke: #fff; fill: none;
       stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
     }
-    .resource-icon--teal  { background: linear-gradient(135deg, var(--amber), #1ec8d5); }
+    .resource-icon--teal  { background: linear-gradient(135deg, var(--amber), var(--amber-bright)); }
     .resource-icon--amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
     .resource-icon--dark  { background: linear-gradient(135deg, #1f2937, #374151); }
     .resource-icon--red   { background: linear-gradient(135deg, #dc2626, #ef4444); }
@@ -2910,7 +2910,7 @@
     #install-banner strong { color: var(--text); }
 
     #install-btn {
-      background: linear-gradient(135deg, var(--amber) 0%, #1ec8d5 100%);
+      background: linear-gradient(135deg, var(--amber) 0%, var(--amber-bright) 100%);
       color: #fff;
       border: none;
       border-radius: 12px;
@@ -2990,7 +2990,7 @@
 
     .appt-hero-title {
       font-size: 22px; font-weight: 700; letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #111827 20%, var(--amber) 100%);
+      background: linear-gradient(135deg, var(--text) 20%, var(--amber) 100%);
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
@@ -3057,7 +3057,7 @@
       background-repeat: no-repeat; background-position: right 14px center;
       transition: border-color 0.18s, box-shadow 0.18s;
     }
-    .form-select option { background: #fff; color: #111827; }
+    .form-select option { background: #fff; color: var(--text); }
     html.dark-mode .form-select option { background: #0d1e20; color: var(--text); }
     html.dark-mode .form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23a8d4e8' stroke-width='2' stroke-linecap='round' d='M2 4l4 4 4-4'/%3E%3C/svg%3E"); }
     .form-select:focus {
@@ -3949,11 +3949,11 @@
     .sopt-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-align: center; line-height: 1.2; transition: color 0.15s; }
 
     .status-opt[data-val="no-answer"].sel      { background: rgba(107,114,128,0.14); border-color: rgba(107,114,128,0.28); }
-    .status-opt[data-val="no-answer"].sel      .sopt-dot { background: #9ca3af; }
-    .status-opt[data-val="no-answer"].sel      .sopt-label { color: #9ca3af; }
+    .status-opt[data-val="no-answer"].sel      .sopt-dot { background: var(--text-3); }
+    .status-opt[data-val="no-answer"].sel      .sopt-label { color: var(--text-3); }
     .status-opt[data-val="not-home"].sel       { background: rgba(107,114,128,0.14); border-color: rgba(107,114,128,0.28); }
-    .status-opt[data-val="not-home"].sel       .sopt-dot { background: #9ca3af; }
-    .status-opt[data-val="not-home"].sel       .sopt-label { color: #9ca3af; }
+    .status-opt[data-val="not-home"].sel       .sopt-dot { background: var(--text-3); }
+    .status-opt[data-val="not-home"].sel       .sopt-label { color: var(--text-3); }
     .status-opt[data-val="not-interested"].sel { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.28); }
     .status-opt[data-val="not-interested"].sel .sopt-dot { background: #f87171; }
     .status-opt[data-val="not-interested"].sel .sopt-label { color: #f87171; }
@@ -4272,7 +4272,7 @@
     }
     #splash-bar {
       height: 100%; width: 0%; border-radius: 99px;
-      background: linear-gradient(90deg, #1a6b7a 0%, #1ec8d5 50%, #30e8f5 100%);
+      background: linear-gradient(90deg, #1a6b7a 0%, var(--amber-bright) 50%, #30e8f5 100%);
       box-shadow: 0 0 12px rgba(30,200,213,0.80), 0 0 28px rgba(30,200,213,0.35);
       animation: splashBarFill 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
     }
@@ -4320,7 +4320,7 @@
 
   /* The card itself — Sprint 2: Bold brand gradient */
   #bcard-card {
-    background: linear-gradient(135deg, #107d96 0%, #148f98 40%, #1ec8d5 100%);
+    background: linear-gradient(135deg, var(--amber-dim) 0%, var(--amber) 40%, var(--amber-bright) 100%);
     border-radius: 24px;
     padding: 24px 22px 22px;
     margin: 16px 0 20px;
@@ -4865,7 +4865,7 @@
   .ma-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; padding: 11px 16px; border-radius: 8px;
-    background: linear-gradient(135deg, #1a9db8 0%, var(--amber-bright) 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-bright) 100%);
     border: none; color: #fff;
     font-size: 12px; font-weight: 700; font-family: var(--font-body); letter-spacing: 0.04em;
     cursor: pointer; -webkit-tap-highlight-color: transparent;
@@ -4998,7 +4998,7 @@
   .sa-btn:disabled { opacity: 0.40; cursor: not-allowed; transform: none !important; }
   .sa-btn--full { display: block; width: 100%; text-align: center; }
   .sa-btn--primary {
-    background: linear-gradient(135deg, #1a9db8 0%, var(--amber-bright) 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-bright) 100%);
     border-color: transparent; color: #fff;
     box-shadow: 0 0 14px rgba(20,143,152,0.35);
   }
@@ -6888,7 +6888,7 @@
   .otd-cam-btn--dropcall { color: #a78bfa; border-color: rgba(167,139,250,0.22); }
   /* Full form button (inside info card) */
   .otd-cam-btn--form {
-    background: linear-gradient(145deg, #148f98 0%, #107d96 100%);
+    background: linear-gradient(145deg, var(--amber) 0%, var(--amber-dim) 100%);
     color: #fff; border-color: rgba(20,143,152,0.4);
     box-shadow: 0 4px 16px rgba(20,143,152,0.3);
     padding: 12px 16px;
@@ -7085,7 +7085,7 @@
   /* ── Save & next door button (inline with dispo, shown when status selected) ── */
   #otd-quick-save-btn {
     width: 100%; padding: 16px; border-radius: 16px; border: none;
-    background: linear-gradient(135deg, #148f98 0%, #107d96 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-dim) 100%);
     color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
     font-family: var(--font-display); letter-spacing: -.01em;
     box-shadow: 0 6px 24px rgba(20,143,152,0.45);
@@ -7146,7 +7146,7 @@
   .otd-consent-allow {
     display: block; width: 100%; padding: 15px; border-radius: 16px; border: none; cursor: pointer;
     font-size: 15px; font-weight: 700; font-family: var(--font-display);
-    background: linear-gradient(135deg, #148f98 0%, #107d96 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-dim) 100%);
     color: #fff; box-shadow: 0 4px 20px rgba(20,143,152,0.4);
     margin-bottom: 10px; -webkit-tap-highlight-color: transparent;
     transition: transform .13s var(--spring);
@@ -7351,7 +7351,7 @@
   }
   .otd-confirm-go {
     width: 100%; padding: 17px; border-radius: 16px; border: none; cursor: pointer;
-    background: linear-gradient(135deg, #148f98 0%, #107d96 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-dim) 100%);
     color: #fff; font-size: 16px; font-weight: 700; font-family: var(--font-display);
     box-shadow: 0 6px 24px rgba(20,143,152,0.5);
     transition: transform .13s var(--spring);
@@ -7713,7 +7713,7 @@
     font-size: 14px; line-height: 1.55; word-wrap: break-word;
   }
   .trainer-msg--user .trainer-bubble {
-    background: linear-gradient(135deg, #1a9db8 0%, var(--amber-bright) 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-bright) 100%);
     color: #fff; border-bottom-right-radius: 4px;
     box-shadow: 0 2px 10px rgba(20,143,152,0.3);
   }
@@ -7796,7 +7796,7 @@
   #trainer-input::placeholder { color: rgba(255,255,255,0.28); }
   #trainer-send-btn {
     width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, #1a9db8 0%, var(--amber-bright) 100%);
+    background: linear-gradient(135deg, var(--amber) 0%, var(--amber-bright) 100%);
     border: none; color: #fff; font-size: 18px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 2px 12px rgba(20,143,152,0.4); transition: transform 0.12s, box-shadow 0.15s;
@@ -7957,9 +7957,9 @@
 <!-- ── Pre-login invite gate ───────────────────────────────────────────── -->
 <div id="invite-gate-screen" class="hidden">
   <div class="login-card">
-    <div id="invite-gate-pwa-notice" style="display:none;background:rgba(26,157,184,0.12);border:1px solid rgba(26,157,184,0.3);border-radius:12px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,0.8);text-align:center;line-height:1.4">
+    <div id="invite-gate-pwa-notice" style="display:none;background:rgba(20,143,152,0.12);border:1px solid rgba(20,143,152,0.3);border-radius:12px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,0.8);text-align:center;line-height:1.4">
       For the best experience, add this app to your home screen first.
-      <button id="invite-gate-install-btn" style="display:block;width:100%;margin-top:8px;background:rgba(26,157,184,0.25);border:1px solid rgba(26,157,184,0.5);border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;padding:7px 0">Add to Home Screen</button>
+      <button id="invite-gate-install-btn" style="display:block;width:100%;margin-top:8px;background:rgba(20,143,152,0.25);border:1px solid rgba(20,143,152,0.5);border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;padding:7px 0">Add to Home Screen</button>
     </div>
     <div class="login-logo">
       <img src="W.png" alt="WC App" />
@@ -7973,7 +7973,7 @@
       <div id="invite-gate-status" style="font-size:13px;text-align:center;min-height:18px;color:rgba(255,255,255,0.5)"></div>
       <button class="login-btn login-btn--primary" id="invite-gate-submit-btn">Verify Code →</button>
       <button id="invite-gate-skip-btn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;padding:8px 0;text-align:center;width:100%">Skip — I don't have a code</button>
-      <button id="invite-gate-back-btn" style="display:none;background:rgba(26,157,184,0.12);border:1.5px solid rgba(26,157,184,0.6);border-radius:10px;color:#20d8ec;font-size:14px;font-weight:600;cursor:pointer;padding:10px 0;text-align:center;width:100%">&#8592; Back</button>
+      <button id="invite-gate-back-btn" style="display:none;background:rgba(20,143,152,0.12);border:1.5px solid rgba(20,143,152,0.6);border-radius:10px;color:var(--amber-bright);font-size:14px;font-weight:600;cursor:pointer;padding:10px 0;text-align:center;width:100%">&#8592; Back</button>
     </div>
   </div>
 </div>
@@ -8012,9 +8012,9 @@
 
 <!-- ── Dev bypass menu (localhost / netlify.app only) ─────────────────── -->
 <div id="dev-bypass-menu" style="display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;background:rgba(0,0,0,0.65)">
-  <div style="background:#0d1e2c;border:1.5px solid rgba(26,157,184,0.45);border-radius:18px;padding:24px 20px;width:min(300px,86vw);display:flex;flex-direction:column;gap:10px">
-    <div style="color:#1a9db8;font-size:11px;font-weight:800;letter-spacing:0.1em;text-align:center;margin-bottom:2px">🛠 DEV BYPASS</div>
-    <button onclick="_devBypass('skip')"    style="padding:12px;border-radius:10px;border:1px solid rgba(26,157,184,0.35);background:rgba(26,157,184,0.12);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Skip to App (bypass auth)</button>
+  <div style="background:#0d1e2c;border:1.5px solid rgba(20,143,152,0.45);border-radius:18px;padding:24px 20px;width:min(300px,86vw);display:flex;flex-direction:column;gap:10px">
+    <div style="color:var(--amber);font-size:11px;font-weight:800;letter-spacing:0.1em;text-align:center;margin-bottom:2px">🛠 DEV BYPASS</div>
+    <button onclick="_devBypass('skip')"    style="padding:12px;border-radius:10px;border:1px solid rgba(20,143,152,0.35);background:rgba(20,143,152,0.12);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Skip to App (bypass auth)</button>
     <button onclick="_devBypass('reset')"   style="padding:12px;border-radius:10px;border:1px solid rgba(251,191,36,0.35);background:rgba(251,191,36,0.08);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Reset Onboarding</button>
     <button onclick="_devBypass('role')"    style="padding:12px;border-radius:10px;border:1px solid rgba(251,191,36,0.35);background:rgba(251,191,36,0.08);color:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer">Force Role Picker</button>
     <button onclick="_devBypass('cancel')"  style="padding:10px;border-radius:10px;border:none;background:none;color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer">Cancel</button>
@@ -8075,7 +8075,7 @@
         <div class="profile-dropdown-identity-email" id="pdd-identity-email"></div>
       </div>
     </div>
-    <div class="profile-dropdown-item" id="pdd-super-admin" style="display:none;color:#20d8ec">
+    <div class="profile-dropdown-item" id="pdd-super-admin" style="display:none;color:var(--amber-bright)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       ⚡ WC Platform Admin
     </div>
@@ -8294,7 +8294,7 @@
       <!-- Pipeline funnel -->
       <div class="funnel-wrap" id="funnel-wrap">
         <div class="funnel-title">Pipeline</div>
-        <div class="funnel-row"><div class="funnel-label">Doors</div><div class="funnel-bar-wrap"><div class="funnel-bar" id="fbar-doors" style="background:#9ca3af;width:100%"></div></div><div class="funnel-count" id="fcount-doors">0</div></div>
+        <div class="funnel-row"><div class="funnel-label">Doors</div><div class="funnel-bar-wrap"><div class="funnel-bar" id="fbar-doors" style="background:var(--text-3);width:100%"></div></div><div class="funnel-count" id="fcount-doors">0</div></div>
         <div class="funnel-row"><div class="funnel-label">Answered</div><div class="funnel-bar-wrap"><div class="funnel-bar" id="fbar-answered" style="background:#597dff;width:0%"></div></div><div class="funnel-count" id="fcount-answered">0</div></div>
         <div class="funnel-row"><div class="funnel-label">Go Back</div><div class="funnel-bar-wrap"><div class="funnel-bar" id="fbar-goback" style="background:#f59e0b;width:0%"></div></div><div class="funnel-count" id="fcount-goback">0</div></div>
         <div class="funnel-row"><div class="funnel-label">Made Contact</div><div class="funnel-bar-wrap"><div class="funnel-bar" id="fbar-contact" style="background:#22c55e;width:0%"></div></div><div class="funnel-count" id="fcount-contact">0</div></div>
@@ -8365,7 +8365,7 @@
 
       <!-- Upcoming Appointments (closer + manager only, inside Today) -->
       <div id="dash-upcoming-section" style="display:none;margin-bottom:14px">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,157,184,0.55);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(20,143,152,0.55);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
           <span>Upcoming</span>
           <button class="dash-section-action" id="dash-upcoming-view-all" style="font-size:12px">View all</button>
         </div>
@@ -8597,7 +8597,7 @@
 
         <!-- Status grid -->
         <div class="ql-status-grid" id="ql-status-grid">
-          <button class="ql-status-btn ql-sel" data-status="not-home"        style="background:#9ca3af">Not Home</button>
+          <button class="ql-status-btn ql-sel" data-status="not-home"        style="background:var(--text-3)">Not Home</button>
           <button class="ql-status-btn"         data-status="dq"             style="background:#f59e0b">DQ</button>
           <button class="ql-status-btn"         data-status="not-interested"  style="background:#ef4444">Not Int.</button>
           <button class="ql-status-btn"         data-status="go-back"         style="background:#597dff">Go Back</button>
@@ -10669,7 +10669,7 @@
           <div class="ma-about-text" id="ma-about-text">Loading…</div>
         </div>
         <div class="ma-field">
-          <a href="#" onclick="openBrowser('https://tritonenergy.netlify.app/wc-app-guide.html','WC App Guide');return false;" style="display:block;color:#20d8ec;font-size:13px;font-weight:600;text-decoration:none;padding:6px 0">📖 Getting Started Guide →</a>
+          <a href="#" onclick="openBrowser('https://tritonenergy.netlify.app/wc-app-guide.html','WC App Guide');return false;" style="display:block;color:var(--amber-bright);font-size:13px;font-weight:600;text-decoration:none;padding:6px 0">📖 Getting Started Guide →</a>
         </div>
         <div class="ma-field">
           <button class="ma-btn ma-btn--danger" id="ma-lock-btn">🔒 Lock &amp; Exit Master Admin</button>
@@ -10713,7 +10713,7 @@
     border-bottom:1px solid var(--g-border);">
     <div style="flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:13px; font-weight:600; color:var(--text-2);" id="browser-title">CPTL Grid</div>
     <a id="browser-open-tab" target="_blank" rel="noopener" style="
-      padding:6px 12px; border-radius:50px; background:rgba(26,157,184,0.10);
+      padding:6px 12px; border-radius:50px; background:rgba(20,143,152,0.10);
       color:var(--amber); font-size:12px; font-weight:600; text-decoration:none; white-space:nowrap;">
       Open in Tab
     </a>
@@ -10941,7 +10941,7 @@
         <div class="sa-row">
           <div class="sa-field">
             <label class="sa-label">Primary Color</label>
-            <input class="sa-input" id="sa-org-color" type="color" value="#1a9db8" style="height:42px;padding:4px 8px;cursor:pointer" />
+            <input class="sa-input" id="sa-org-color" type="color" value="#148f98" style="height:42px;padding:4px 8px;cursor:pointer" />
           </div>
           <div class="sa-field">
             <label class="sa-label">Logo (optional)</label>
@@ -14131,7 +14131,7 @@ async function _saCreateOrg() {
   const result = document.getElementById('sa-create-org-result');
   const name   = (document.getElementById('sa-org-name')?.value || '').trim();
   const niche  = document.getElementById('sa-org-niche')?.value || 'Solar';
-  const color  = document.getElementById('sa-org-color')?.value || '#1a9db8';
+  const color  = document.getElementById('sa-org-color')?.value || '#148f98';
   const logoInput = document.getElementById('sa-org-logo-file');
   const iconInput = document.getElementById('sa-org-icon-file');
 
@@ -15249,7 +15249,7 @@ function renderGameStats(passedEntries, passedAppts) {
       goalDesc.textContent  = 'Quick knock entry';
       levelBadge.textContent = '▲ ' + pct + '%';
       levelBadge.className   = 'ql-level-badge';
-      levelBadge.style.cssText = 'display:inline-block;background:rgba(26,157,184,0.16);color:var(--amber);border:1px solid rgba(26,157,184,0.25)';
+      levelBadge.style.cssText = 'display:inline-block;background:rgba(20,143,152,0.16);color:var(--amber);border:1px solid rgba(20,143,152,0.25)';
     } else {
       goalLabel.textContent = 'Goal: ' + DAILY_GOAL + ' doors today';
       goalDesc.textContent  = 'Quick knock entry';
@@ -15824,14 +15824,14 @@ function renderUtilityCheatsheet(utilityKey) {
           <tr><td>Credit</td><td>${escHtml(nm.credit)}</td></tr>
         </tbody>
       </table>
-      <div style="padding:8px 12px;background:rgba(26,157,184,0.04);border-radius:0 0 var(--r-sm) var(--r-sm);font-size:12px;color:var(--text-2);line-height:1.5">
+      <div style="padding:8px 12px;background:rgba(20,143,152,0.04);border-radius:0 0 var(--r-sm) var(--r-sm);font-size:12px;color:var(--text-2);line-height:1.5">
         <strong style="color:var(--text)">📋 Key Notes:</strong> ${escHtml(nm.notes)}
       </div>
     </div>
 
     <div class="utility-cheat-section">
       <div class="utility-cheat-title">🔋 Battery Storage Strategy</div>
-      <div class="utility-objection-card" style="background:rgba(26,157,184,0.06);border-color:rgba(26,157,184,0.20)">
+      <div class="utility-objection-card" style="background:rgba(20,143,152,0.06);border-color:rgba(20,143,152,0.20)">
         <div class="utility-objection-q">💬 Ready-to-Use Door Script</div>
         <div class="utility-objection-a" style="font-style:italic">${escHtml(bat.pitch)}</div>
       </div>
@@ -16062,7 +16062,7 @@ function renderMaAdderList() {
   list.innerHTML = sheets.map((s, i) => `
     <div class="ma-field" style="display:flex;align-items:center;gap:8px">
       <input class="ma-input" style="flex:1;min-width:0" value="${(s.label||'').replace(/"/g,'&quot;')}" id="ma-adder-label-${i}" placeholder="Label" />
-      <label style="white-space:nowrap;padding:8px 12px;border-radius:var(--r-sm);background:rgba(26,157,184,0.08);color:#20d8ec;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(26,157,184,0.2);flex-shrink:0">
+      <label style="white-space:nowrap;padding:8px 12px;border-radius:var(--r-sm);background:rgba(20,143,152,0.08);color:var(--amber-bright);font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(20,143,152,0.2);flex-shrink:0">
         ${s.pdfName ? '✓ PDF' : '↑ PDF'}
         <input type="file" accept=".pdf,image/*" style="display:none" onchange="maAdderUpload(this,${i})" />
       </label>
@@ -18378,7 +18378,7 @@ updateLogBadge();
     // v93: use CSS variables for theme-aware autocomplete dropdown
     list.style.cssText = [
       'position:absolute','left:0','right:0','top:100%','z-index:99999',
-      'background:var(--card-bg, #0d1e2e)','border:1.5px solid var(--border, rgba(26,157,184,0.35))',
+      'background:var(--card-bg, #0d1e2e)','border:1.5px solid var(--border, rgba(20,143,152,0.35))',
       'border-radius:16px','overflow:hidden','box-shadow:0 8px 32px rgba(0,0,0,0.25)',
       'margin-top:4px'
     ].join(';');
@@ -18393,7 +18393,7 @@ updateLogBadge();
         'cursor:pointer','text-align:left','-webkit-tap-highlight-color:transparent'
       ].join(';');
       item.innerHTML = [
-        '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--amber, rgba(26,157,184,0.7));fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+        '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--amber, rgba(20,143,152,0.7));fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
         '<div>',
           '<div style="font-size:13px;font-weight:700;color:var(--text-1, #fff);line-height:1.3">' + _escHtmlAddr(r.short || r.display) + '</div>',
           '<div style="font-size:11px;color:var(--text-3, rgba(255,255,255,0.4));margin-top:2px;line-height:1.3">' + _escHtmlAddr(r.city && r.state ? r.city + ', ' + r.state + (r.postcode ? ' ' + r.postcode : '') : '') + '</div>',
@@ -19979,8 +19979,8 @@ document.getElementById('ma-logo-upload')?.addEventListener('change', e => {
     if (!container) return;
     const cfg = _loadQuickLinkConfig() || DEFAULT_QUICK_LINKS;
     container.innerHTML = cfg.map((item, i) => `
-      <div style="margin-bottom:14px;padding:12px;border-radius:12px;background:rgba(26,157,184,0.04);border:1px solid rgba(26,157,184,0.12)">
-        <div style="font-size:11px;font-weight:700;color:#20d8ec;letter-spacing:0.08em;margin-bottom:8px;text-transform:uppercase">${escHtml(DEFAULT_QUICK_LINKS[i]?.name || item.name)}</div>
+      <div style="margin-bottom:14px;padding:12px;border-radius:12px;background:rgba(20,143,152,0.04);border:1px solid rgba(20,143,152,0.12)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber-bright);letter-spacing:0.08em;margin-bottom:8px;text-transform:uppercase">${escHtml(DEFAULT_QUICK_LINKS[i]?.name || item.name)}</div>
         <div style="margin-bottom:8px"><label style="font-size:10px;color:#7ab8d4;letter-spacing:0.06em;font-weight:600;text-transform:uppercase">Label</label>
           <input class="ma-input" type="text" id="ma-ql-name-${i}" value="${escHtml(item.name)}" placeholder="${escHtml(DEFAULT_QUICK_LINKS[i]?.name || '')}" style="margin-top:4px" /></div>
         <div style="margin-bottom:8px"><label style="font-size:10px;color:#7ab8d4;letter-spacing:0.06em;font-weight:600;text-transform:uppercase">Subtitle</label>
@@ -24207,7 +24207,7 @@ function _sendApptDispoEmail(appt, result) {
   }).join('');
 
   var resultColors = { 'Signed': '#22c55e', 'No Show': '#ef4444', 'Reschedule': '#a855f7', 'Confirmed': '#3b82f6', 'Pending': '#64748b' };
-  var headerColor = resultColors[result] || '#1a9db8';
+  var headerColor = resultColors[result] || '#148f98';
 
   var html = '<div style="font-family:sans-serif;max-width:520px;margin:0 auto">' +
     '<div style="background:' + headerColor + ';padding:16px 20px;border-radius:10px 10px 0 0">' +
@@ -24259,7 +24259,7 @@ function _sendDispoEmail(entry) {
   }).join('');
 
   var html = '<div style="font-family:sans-serif;max-width:520px;margin:0 auto">' +
-    '<div style="background:#1a9db8;padding:16px 20px;border-radius:10px 10px 0 0">' +
+    '<div style="background:#148f98;padding:16px 20px;border-radius:10px 10px 0 0">' +
     '<h2 style="color:#fff;margin:0;font-size:16px">🚪 Dispo: ' + statusLabel + '</h2></div>' +
     '<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:20px">' +
     '<table style="border-collapse:collapse;font-size:14px;width:100%">' + tableRows + '</table>' +
