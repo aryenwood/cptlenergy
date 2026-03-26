@@ -19344,6 +19344,22 @@ document.querySelectorAll('#booking-form .radio-group').forEach(group => {
   });
 });
 
+// ── Time preference radio buttons (Best Available Closer) ────────────────
+document.querySelectorAll('#b-best-available-wrap .radio-opt').forEach(function(label) {
+  label.addEventListener('click', function() {
+    document.querySelectorAll('#b-best-available-wrap .radio-opt').forEach(function(l) {
+      l.style.background = 'var(--g1)';
+      l.style.borderColor = 'var(--g-border)';
+      l.style.color = '';
+    });
+    label.style.background = 'rgba(20,143,152,0.18)';
+    label.style.borderColor = 'var(--amber)';
+    label.style.color = 'var(--amber)';
+    label.querySelector('input').checked = true;
+    haptic('light');
+  });
+});
+
 // ── Bill file label + preview ─────────────────────────────────────────────
 // v93: actually read the file and show preview so ubPhoto gets saved on submit
 document.getElementById('b-bill-file').addEventListener('change', function() {
