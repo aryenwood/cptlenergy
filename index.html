@@ -51,6 +51,10 @@
     /* ── Reset ───────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── Inline SVG icon wrapper ────────────────────────────────────────── */
+    .icon-svg { display: inline-flex; align-items: center; vertical-align: middle; line-height: 0; }
+    .icon-svg svg { display: block; }
+
     /* ── View Transitions CSS ── (ported from SvelteKit) ────────────────── */
     @keyframes smk-fade-in  { from { opacity: 0; } }
     @keyframes smk-fade-out { to   { opacity: 0; } }
@@ -8220,7 +8224,7 @@
     </div>
     <div class="profile-dropdown-item" id="pdd-super-admin" style="display:none;color:var(--amber-bright)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      ⚡ WC Platform Admin
+      <span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> WC Platform Admin
     </div>
     <div class="profile-dropdown-divider" id="pdd-super-admin-divider" style="display:none"></div>
     <div class="profile-dropdown-item" id="pdd-admin">
@@ -8285,7 +8289,7 @@
       <!-- ── On The Doors toggle card ──────────────────────────────────────── -->
       <button class="otd-toggle-card" id="otd-toggle-card" onclick="otdToggleTap()" aria-label="On The Doors Mode">
         <div class="otd-toggle-left">
-          <div class="otd-toggle-icon">🚪</div>
+          <div class="otd-toggle-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span></div>
           <div>
             <div class="otd-toggle-name">On The Doors</div>
             <div class="otd-toggle-desc" id="otd-toggle-desc">Tap to enter focus mode</div>
@@ -8411,7 +8415,7 @@
       <!-- ── Manager: Assign Closer Command Center ─────────────────────────── -->
       <div id="dash-assign-section" style="display:none">
         <div class="dash-section-label" style="margin-top:28px">
-          <span class="dash-section-title">⚡ Assign Closers</span>
+          <span class="dash-section-title"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Assign Closers</span>
           <span class="dash-assign-subtitle" id="dash-assign-subtitle"></span>
         </div>
         <div id="dash-assign-list"></div>
@@ -8801,7 +8805,7 @@
         <button class="res-subtab res-subtab--active" data-pane="wins">🏆 Wins</button>
         <button class="res-subtab" data-pane="adders">Adders</button>
         <button class="res-subtab" data-pane="books">📖 Books</button>
-        <button class="res-subtab" data-pane="utility">⚡ Utility</button>
+        <button class="res-subtab" data-pane="utility"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Utility</button>
         <button class="res-subtab" data-pane="videos">Videos</button>
         <button class="res-subtab" data-pane="training">Training</button>
         <button class="res-subtab" data-pane="gosolo">GoSolo</button>
@@ -9880,7 +9884,7 @@
 
       <!-- ══ UTILITY CHEATSHEET pane ════════════════════════════════════════ -->
       <div class="res-pane res-pane--hidden" id="res-pane-utility">
-        <div class="resources-section-label">⚡ Net Metering &amp; Utility Cheatsheet</div>
+        <div class="resources-section-label"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Net Metering &amp; Utility Cheatsheet</div>
         <p class="resources-section-sub">Market-specific closing data for your territory</p>
 
         <!-- Utility selector -->
@@ -9946,9 +9950,9 @@
           <div class="admin-field">
             <label class="admin-label" for="admin-role-select">Your Role</label>
             <select class="admin-role-select" id="admin-role-select">
-              <option value="canvasser">🚪 Canvasser / Knocker</option>
-              <option value="closer">🤝 Closer / Salesperson</option>
-              <option value="manager">📊 Manager / Dealer</option>
+              <option value="canvasser"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Canvasser / Knocker</option>
+              <option value="closer"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span> Closer / Salesperson</option>
+              <option value="manager"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Manager / Dealer</option>
             </select>
           </div>
         </div>
@@ -10029,18 +10033,18 @@
           <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </summary>
         <div class="admin-accordion-body">
-          <div class="team-role-header">🤝 Closers</div>
+          <div class="team-role-header"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span> Closers</div>
           <div class="team-list" id="admin-team-closers">
             <div class="team-empty">No closers added yet.</div>
           </div>
-          <div class="team-role-header" style="margin-top:14px">🚪 Canvassers</div>
+          <div class="team-role-header" style="margin-top:14px"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Canvassers</div>
           <div class="team-list" id="admin-team-canvassers">
             <div class="team-empty">No canvassers added yet.</div>
           </div>
           <div class="team-add-row" style="margin-top:14px">
             <select class="admin-input" id="admin-new-role" style="flex:0 0 110px;min-width:0">
-              <option value="closer">🤝 Closer</option>
-              <option value="canvasser">🚪 Canvasser</option>
+              <option value="closer"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span> Closer</option>
+              <option value="canvasser"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Canvasser</option>
             </select>
             <input class="admin-input" type="text" id="admin-new-name" placeholder="Full name" style="flex:1;min-width:0" />
             <input class="admin-input" type="tel" id="admin-new-phone" data-validate="phone" placeholder="Phone #" style="flex:0 0 95px;min-width:0" inputmode="tel" />
@@ -10078,7 +10082,7 @@
       <!-- Adder Sheets — Manager/Master Admin -->
       <details class="admin-accordion" id="admin-adder-section">
         <summary class="admin-accordion-header">
-          <span class="admin-accordion-icon">📊</span>
+          <span class="admin-accordion-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span></span>
           <span class="admin-accordion-label">Adder Sheets</span>
           <svg class="admin-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </summary>
@@ -10189,7 +10193,7 @@
       <!-- Filter bar -->
       <div id="cal-filter-bar" role="group" aria-label="Filter calendar events by type">
         <button class="cal-filter-pill cal-filter-active" data-cal-filter="all">All</button>
-        <button class="cal-filter-pill" data-cal-filter="appts">📅 Appts</button>
+        <button class="cal-filter-pill" data-cal-filter="appts"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Appts</button>
         <button class="cal-filter-pill" data-cal-filter="gobacks">🔄 Go-Backs</button>
       </div>
 
@@ -10247,7 +10251,7 @@
       <!-- v76: Show Rate panel (closer + manager only) -->
       <div id="lb-show-rate-panel" style="display:none;padding:0 16px 8px;">
         <div class="lb-show-rate-header">
-          <span class="lb-show-rate-title">📅 Appointment Show Rate</span>
+          <span class="lb-show-rate-title"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Appointment Show Rate</span>
           <span class="lb-show-rate-hint">Dispositioned appts only</span>
         </div>
         <div id="lb-show-rate-rows"></div>
@@ -10451,7 +10455,7 @@
 
   <div class="role-cards">
     <div class="role-card" data-role="canvasser">
-      <div class="role-card-icon">🚪</div>
+      <div class="role-card-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span></div>
       <div class="role-card-info">
         <div class="role-card-name">Canvasser / Knocker</div>
         <div class="role-card-desc">I knock doors and set appointments</div>
@@ -10459,7 +10463,7 @@
       <div class="role-card-check"></div>
     </div>
     <div class="role-card" data-role="closer">
-      <div class="role-card-icon">🤝</div>
+      <div class="role-card-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span></div>
       <div class="role-card-info">
         <div class="role-card-name">Closer / Salesperson</div>
         <div class="role-card-desc">I run appointments and close deals</div>
@@ -10467,7 +10471,7 @@
       <div class="role-card-check"></div>
     </div>
     <div class="role-card" data-role="manager">
-      <div class="role-card-icon">📊</div>
+      <div class="role-card-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span></div>
       <div class="role-card-info">
         <div class="role-card-name">Manager / Dealer</div>
         <div class="role-card-desc">I manage a team of reps</div>
@@ -10490,17 +10494,17 @@
 <div id="onboarding-overlay">
   <div id="onboarding-card">
     <div class="onboard-step" data-step="0">
-      <div class="onboard-emoji">🚪</div>
+      <div class="onboard-emoji"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span></div>
       <div class="onboard-title">Log your first door</div>
       <div class="onboard-desc">Tap the <strong>Log</strong> tab, then hit <strong>+ New Entry</strong> to record your first knock. Every door counts.</div>
     </div>
     <div class="onboard-step onboard-hidden" data-step="1">
-      <div class="onboard-emoji">📅</div>
+      <div class="onboard-emoji"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div>
       <div class="onboard-title">Book appointments fast</div>
       <div class="onboard-desc">When a homeowner is interested, tap <strong>Book Appointment</strong> on the dashboard to assign a closer instantly.</div>
     </div>
     <div class="onboard-step onboard-hidden" data-step="2">
-      <div class="onboard-emoji">📊</div>
+      <div class="onboard-emoji"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span></div>
       <div class="onboard-title">Track your pipeline</div>
       <div class="onboard-desc">Your dashboard shows doors knocked, contacts made, appointments set, and your live conversion rate.</div>
     </div>
@@ -10523,7 +10527,7 @@
       <div class="onboard-desc">The leaderboard updates in real-time. Stay consistent and climb to the top of your team.</div>
     </div>
     <div class="onboard-step onboard-hidden" data-step="5">
-      <div class="onboard-emoji">🎙️</div>
+      <div class="onboard-emoji"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span></div>
       <div class="onboard-title">Recording &amp; Privacy Notice</div>
       <div class="onboard-desc" style="text-align:left">
         WC App may record sales conversations for coaching and training purposes.<br><br>
@@ -10551,8 +10555,8 @@
   <div class="invite-field">
     <label class="invite-label">Role</label>
     <select class="admin-input" id="invite-role" style="width:100%">
-      <option value="canvasser">🚪 Canvasser</option>
-      <option value="closer">🤝 Closer</option>
+      <option value="canvasser"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Canvasser</option>
+      <option value="closer"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span> Closer</option>
     </select>
   </div>
   <div class="invite-field">
@@ -10722,7 +10726,7 @@
           <button class="ma-btn" id="ma-export-btn">⬇ Export All Data (JSON)</button>
         </div>
         <div class="ma-field">
-          <button class="ma-btn" id="ma-export-csv-btn">📊 Export Activity Log (CSV)</button>
+          <button class="ma-btn" id="ma-export-csv-btn"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Export Activity Log (CSV)</button>
         </div>
         <div class="ma-field">
           <button class="ma-btn ma-btn--danger" id="ma-clear-btn">⚠ Clear All Data</button>
@@ -10771,7 +10775,7 @@
           <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Clears ce_user_phone, ce_user_region, ce_user_headshot.</span>
         </div>
         <div class="ma-field">
-          <button class="ma-btn" id="ma-dev-force-drain">⚡ Force Drain to Firestore</button>
+          <button class="ma-btn" id="ma-dev-force-drain"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Force Drain to Firestore</button>
           <span style="display:block;margin-top:5px;font-size:11px;color:rgba(240,248,255,0.3)">Manually triggers drainToFirestore() now.</span>
         </div>
       </div>
@@ -11068,7 +11072,7 @@
 <div id="super-admin-panel">
   <div id="sa-header">
     <div>
-      <div id="sa-title">⚡ WC PLATFORM ADMIN</div>
+      <div id="sa-title"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> WC PLATFORM ADMIN</div>
       <div id="sa-uid-badge">UID: yyyDjhfDgDSQIxJEq9xRd5dLbw42</div>
     </div>
     <button id="sa-close-btn" onclick="closeSuperAdmin()">✕</button>
@@ -11278,7 +11282,7 @@
   <div class="otd-ds-scroll">
     <div class="otd-dispo-list">
       <button class="otd-dispo-card otd-dispo-card--not-home" data-status="not-home" onclick="otdSelectStatus(this)">
-        <span class="otd-dispo-card-icon">🚪</span>
+        <span class="otd-dispo-card-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span></span>
         <div class="otd-dispo-card-text">
           <div class="otd-dispo-card-label">Not Home</div>
           <div class="otd-dispo-card-desc">No answer at the door</div>
@@ -11299,14 +11303,14 @@
         </div>
       </button>
       <button class="otd-dispo-card otd-dispo-card--go-back" data-status="go-back" onclick="otdSelectStatus(this)">
-        <span class="otd-dispo-card-icon">📅</span>
+        <span class="otd-dispo-card-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></span>
         <div class="otd-dispo-card-text">
           <div class="otd-dispo-card-label">Go Back</div>
           <div class="otd-dispo-card-desc">Come back later — they showed interest</div>
         </div>
       </button>
       <button class="otd-dispo-card otd-dispo-card--contact" data-status="made-contact" onclick="otdSelectStatus(this)">
-        <span class="otd-dispo-card-icon">🤝</span>
+        <span class="otd-dispo-card-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span></span>
         <div class="otd-dispo-card-text">
           <div class="otd-dispo-card-label">Made Contact</div>
           <div class="otd-dispo-card-desc">Collect homeowner info &amp; book or pitch</div>
@@ -11367,7 +11371,7 @@
     <div style="padding:0 18px;flex-shrink:0;padding-top:calc(env(safe-area-inset-top, 14px) + 10px)">
       <div class="otd-int-handle"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div class="otd-book-title">📅 Book Appointment</div>
+        <div class="otd-book-title"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Book Appointment</div>
         <button onclick="otdCloseBookingSheet()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:7px 13px;font-size:13px;font-weight:700;color:rgba(255,255,255,0.65);cursor:pointer;font-family:inherit">✕ Close</button>
       </div>
       <div class="otd-book-sub">Schedule a closer visit for this homeowner</div>
@@ -11422,7 +11426,7 @@
         <input class="otd-book-input" type="text" id="otd-b-bill" placeholder="$200" />
       </div>
 
-      <button class="otd-book-submit" id="otd-book-submit-btn">📅 Book Appointment</button>
+      <button class="otd-book-submit" id="otd-book-submit-btn"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Book Appointment</button>
       <button class="otd-book-cancel" onclick="otdCloseBookingSheet()">Cancel</button>
     </div>
   </div>
@@ -11447,11 +11451,11 @@
 <div id="otd-consent-overlay"></div>
 <div id="otd-consent-sheet">
   <div class="otd-consent-handle"></div>
-  <span class="otd-consent-emoji">🎙️</span>
+  <span class="otd-consent-emoji"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span></span>
   <div class="otd-consent-title">Enable Session Recording</div>
   <div class="otd-consent-body">Capital Energy records door visits to help with coaching and conversation tracking. Recordings are stored securely and only accessible to your manager.</div>
   <div class="otd-consent-note">⚠️ In all-party consent states (CA, FL, IL, WA, etc.) you must disclose to the homeowner that the conversation may be recorded.</div>
-  <button class="otd-consent-allow" onclick="otdConsentAllow()">🎙️ Allow Recording</button>
+  <button class="otd-consent-allow" onclick="otdConsentAllow()"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Allow Recording</button>
   <button class="otd-consent-skip" onclick="otdConsentSkip()">Skip — No Recording</button>
 </div>
 
@@ -11459,7 +11463,7 @@
 <div id="otd-confirm-overlay" onclick="otdDismissConfirm()"></div>
 <div id="otd-confirm-sheet">
   <div class="otd-confirm-handle"></div>
-  <div class="otd-confirm-title">🚪 On The Doors Mode</div>
+  <div class="otd-confirm-title"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> On The Doors Mode</div>
   <div class="otd-confirm-sub">Full focus mode — optimized for canvassing. Dispo in one tap, camera-ready, GPS-locked.</div>
   <div class="otd-confirm-checklist">
     <div class="otd-confirm-check"><div class="otd-confirm-check-dot"></div>GPS auto-captures each door address</div>
@@ -11467,7 +11471,7 @@
     <div class="otd-confirm-check"><div class="otd-confirm-check-dot"></div>Camera-ready for utility bill capture</div>
     <div class="otd-confirm-check"><div class="otd-confirm-check-dot"></div>Voice memo for instant field notes</div>
   </div>
-  <button class="otd-confirm-go" onclick="otdConfirmGo()">🚀 Start On The Doors</button>
+  <button class="otd-confirm-go" onclick="otdConfirmGo()"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Start On The Doors</button>
   <button class="otd-confirm-cancel" onclick="otdDismissConfirm()">Cancel</button>
 </div>
 
@@ -11788,7 +11792,7 @@
       <textarea class="form-input" id="f-notes"
                 placeholder="Objections, follow-up details, anything useful…"
                 rows="3"></textarea>
-      <button type="button" id="btn-dictate" class="btn-dictate">🎙️ Dictate</button>
+      <button type="button" id="btn-dictate" class="btn-dictate"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Dictate</button>
       <div id="dq-note-hint">⚠ Please add a reason before saving a DQ.</div>
     </div>
 
@@ -15068,12 +15072,12 @@ function renderDashboard() {
       const sr = computeShowRate(dashRange);
       if (sr === null) {
         showRateEl.textContent = '—';
-        if (showRateXp) { showRateXp.textContent = '📅 No data yet'; showRateXp.className = 'stat-xp stat-xp--teal'; showRateXp.style.display = ''; }
+        if (showRateXp) { showRateXp.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> No data yet'; showRateXp.className = 'stat-xp stat-xp--teal'; showRateXp.style.display = ''; }
       } else {
         countTo(showRateEl, sr, { suffix: '%' });
         if (showRateXp) {
           if (sr >= 90)      { showRateXp.textContent = '👑 Elite Shows';   showRateXp.className = 'stat-xp stat-xp--purple'; showRateXp.style.display = ''; }
-          else if (sr >= 75) { showRateXp.textContent = '🚀 Strong Shows';  showRateXp.className = 'stat-xp stat-xp--good';   showRateXp.style.display = ''; }
+          else if (sr >= 75) { showRateXp.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Strong Shows';  showRateXp.className = 'stat-xp stat-xp--good';   showRateXp.style.display = ''; }
           else if (sr >= 60) { showRateXp.textContent = '🔥 Decent Shows';  showRateXp.className = 'stat-xp stat-xp--hot';    showRateXp.style.display = ''; }
           else               { showRateXp.textContent = '📉 Improve Shows'; showRateXp.className = 'stat-xp';                  showRateXp.style.display = ''; }
         }
@@ -15370,15 +15374,15 @@ function renderGameStats(passedEntries, passedAppts) {
     streakEl.classList.add('streak-active');
     // Pick fire emoji based on streak length
     const fireEl = document.getElementById('streak-fire');
-    if (fireEl) fireEl.textContent = streak >= 14 ? '🚀' : streak >= 7 ? '⚡' : '🔥';
+    if (fireEl) fireEl.innerHTML = streak >= 14 ? '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>' : streak >= 7 ? '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>' : '🔥';
     // Milestone badge
     let msText = '', msCls = '';
     if      (streak >= 30) { msText = '👑 Legend';  msCls = 'streak-milestone--legend'; }
-    else if (streak >= 14) { msText = '🚀 On Fire'; msCls = 'streak-milestone--gold'; }
-    else if (streak >=  7) { msText = '⚡ Week+';   msCls = 'streak-milestone--silver'; }
+    else if (streak >= 14) { msText = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> On Fire'; msCls = 'streak-milestone--gold'; }
+    else if (streak >=  7) { msText = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Week+';   msCls = 'streak-milestone--silver'; }
     else if (streak >=  3) { msText = '🔥 Heating'; msCls = 'streak-milestone--bronze'; }
     if (msText) {
-      milestoneEl.textContent = msText;
+      milestoneEl.innerHTML = msText;
       milestoneEl.className = 'streak-milestone ' + msCls;
       milestoneEl.style.display = '';
     } else {
@@ -15416,7 +15420,7 @@ function renderGameStats(passedEntries, passedAppts) {
       goalLabel.className = 'goal-label';
       goalLabel.textContent = todayDoors + '/' + DAILY_GOAL + ' doors — almost there!';
       goalDesc.textContent  = 'Almost at goal!';
-      levelBadge.textContent = '⚡ SO CLOSE';
+      levelBadge.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> SO CLOSE';
       levelBadge.className   = 'ql-level-badge';
       levelBadge.style.cssText = 'display:inline-block;background:rgba(251,146,60,0.18);color:#f97316;border:1px solid rgba(251,146,60,0.30)';
     } else if (todayDoors > 0) {
@@ -15441,7 +15445,7 @@ function renderGameStats(passedEntries, passedAppts) {
     if (!el) return;
     for (const [min, text, cls] of tiers) {
       if (val >= min) {
-        el.textContent = text; el.className = 'stat-xp ' + cls;
+        el.innerHTML = text; el.className = 'stat-xp ' + cls;
         el.style.display = ''; return;
       }
     }
@@ -15450,28 +15454,28 @@ function renderGameStats(passedEntries, passedAppts) {
 
   setXp('xp-today', todayDoors, [
     [DAILY_GOAL, '🎯 Goal Crushed!', 'stat-xp--good'],
-    [Math.ceil(DAILY_GOAL * 0.75), '⚡ Almost There', 'stat-xp--hot'],
+    [Math.ceil(DAILY_GOAL * 0.75), '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Almost There', 'stat-xp--hot'],
     [Math.ceil(DAILY_GOAL * 0.4),  '🔥 On a Roll',   'stat-xp--hot'],
     [10, '👊 Keep Going',          'stat-xp--teal'],
     [1,  '✅ Started',             'stat-xp--teal'],
   ]);
   setXp('xp-total', rangeEntries.length, [
     [500, '👑 Legend',     'stat-xp--purple'],
-    [200, '🚀 Grinder',    'stat-xp--hot'],
+    [200, '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Grinder',    'stat-xp--hot'],
     [100, '💪 Veteran',    'stat-xp--good'],
     [50,  '🔥 Building',   'stat-xp--teal'],
     [10,  '✅ Active',     'stat-xp--teal'],
   ]);
   setXp('xp-contacts', contacts.length, [
-    [20, '🚀 Machine',   'stat-xp--purple'],
+    [20, '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Machine',   'stat-xp--purple'],
     [10, '💪 Connecting','stat-xp--good'],
     [5,  '🔥 Warming Up','stat-xp--hot'],
     [1,  '👋 First!',    'stat-xp--teal'],
   ]);
   setXp('xp-appts', appts.length, [
     [10, '👑 Booking Beast', 'stat-xp--purple'],
-    [5,  '🚀 Deal Maker',   'stat-xp--hot'],
-    [2,  '📅 Stacking Up',  'stat-xp--teal'],
+    [5,  '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Deal Maker',   'stat-xp--hot'],
+    [2,  '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Stacking Up',  'stat-xp--teal'],
     [1,  '🎯 First Appt!',  'stat-xp--good'],
   ]);
   setXp('xp-sales', madeContact.length, [
@@ -15481,10 +15485,10 @@ function renderGameStats(passedEntries, passedAppts) {
     [1,  '✅ First Contact','stat-xp--good'],
   ]);
   setXp('xp-rate', convRate, [
-    [20, '🚀 Elite Rate',  'stat-xp--purple'],
+    [20, '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Elite Rate',  'stat-xp--purple'],
     [10, '🔥 Hot Rate',    'stat-xp--hot'],
     [5,  '📈 Solid Rate',  'stat-xp--teal'],
-    [1,  '📊 Getting Data','stat-xp--teal'],
+    [1,  '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Getting Data','stat-xp--teal'],
   ]);
 
   // v76: Rank badge row — compute rank from ALL-TIME data (not range-filtered)
@@ -16023,7 +16027,7 @@ function renderUtilityCheatsheet(utilityKey) {
 
     <!-- Why Switch Now — urgency section -->
     <div class="utility-cheat-section">
-      <div class="utility-cheat-title">🚀 Why Switch Now — Urgency Points</div>
+      <div class="utility-cheat-title"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span> Why Switch Now — Urgency Points</div>
       <div style="padding:12px;display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;gap:8px;align-items:flex-start">
           <span style="font-size:16px;flex-shrink:0">📈</span>
@@ -16038,7 +16042,7 @@ function renderUtilityCheatsheet(utilityKey) {
           <span style="font-size:12px;color:var(--text);line-height:1.5">Zillow: solar homes sell 4.1% higher and 20% faster than comparable non-solar homes.</span>
         </div>
         <div style="display:flex;gap:8px;align-items:flex-start">
-          <span style="font-size:16px;flex-shrink:0">⚡</span>
+          <span style="font-size:16px;flex-shrink:0"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span></span>
           <span style="font-size:12px;color:var(--text);line-height:1.5">Battery storage = energy independence. Grid failures (like TX Winter Storm Uri) are becoming more common.</span>
         </div>
       </div>
@@ -16743,12 +16747,12 @@ logSheet.addEventListener('touchend', e => {
     };
     _rec.onend = function() {
       _going = false;
-      btn.textContent = '🎙️ Dictate';
+      btn.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Dictate';
       btn.classList.remove('btn-dictate--active');
     };
     _rec.onerror = function() {
       _going = false;
-      btn.textContent = '🎙️ Dictate';
+      btn.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Dictate';
       btn.classList.remove('btn-dictate--active');
     };
     try { _rec.start(); } catch(e2) {}
@@ -17925,8 +17929,8 @@ function openCustomerDetail(idx) {
 function _buildCustDetailHTML({ c, initials, hasSigned, latestResult, latestColor, timeline, photos, bestAppt, allReps }) {
   // ── Hero stat chips ───────────────────────────────────────────────────────
   const statChips = [
-    c.logEntries.length  ? `<span class="cust-d-stat-chip" style="background:rgba(250,189,0,0.15);color:#fabd00">🚪 ${c.logEntries.length} knock${c.logEntries.length!==1?'s':''}</span>` : '',
-    c.appointments.length? `<span class="cust-d-stat-chip" style="background:rgba(59,130,246,0.15);color:#3b82f6">📅 ${c.appointments.length} appt${c.appointments.length!==1?'s':''}</span>` : '',
+    c.logEntries.length  ? `<span class="cust-d-stat-chip" style="background:rgba(250,189,0,0.15);color:#fabd00"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> ${c.logEntries.length} knock${c.logEntries.length!==1?'s':''}</span>` : '',
+    c.appointments.length? `<span class="cust-d-stat-chip" style="background:rgba(59,130,246,0.15);color:#3b82f6"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> ${c.appointments.length} appt${c.appointments.length!==1?'s':''}</span>` : '',
     hasSigned            ? `<span class="cust-d-stat-chip" style="background:rgba(34,197,94,0.18);color:#22c55e">✅ Signed</span>` : '',
     latestResult && !hasSigned ? `<span class="cust-d-stat-chip" style="background:${latestColor}22;color:${latestColor}">${latestResult}</span>` : '',
     photos.length        ? `<span class="cust-d-stat-chip" style="background:rgba(168,85,247,0.15);color:#a855f7">📷 ${photos.length} photo${photos.length!==1?'s':''}</span>` : '',
@@ -18054,7 +18058,7 @@ function _buildCustDetailHTML({ c, initials, hasSigned, latestResult, latestColo
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
               Upload File
             </button>
-            <button class="cust-files-record-btn" id="cust-files-record-btn-${c.id}">🎙️ Record Memo</button>
+            <button class="cust-files-record-btn" id="cust-files-record-btn-${c.id}"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Record Memo</button>
           </div>
           <input type="file" id="cust-files-input-${c.id}" accept="*/*" style="display:none" />
           <div id="cust-files-list-${c.id}" class="cust-files-list"></div>
@@ -18086,8 +18090,8 @@ function _fileIcon(ext) {
   if (['pdf'].includes(e))                    return { emoji: '📄', cls: 'file-card-icon--pdf' };
   if (['jpg','jpeg','png','gif','webp','heic'].includes(e)) return { emoji: '🖼️', cls: 'file-card-icon--img' };
   if (['doc','docx'].includes(e))             return { emoji: '📝', cls: 'file-card-icon--doc' };
-  if (['xls','xlsx','csv'].includes(e))       return { emoji: '📊', cls: 'file-card-icon--xls' };
-  if (['webm','mp4','m4a','ogg','mp3','wav'].includes(e)) return { emoji: '🎙️', cls: 'file-card-icon--audio' };
+  if (['xls','xlsx','csv'].includes(e))       return { emoji: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>', cls: 'file-card-icon--xls' };
+  if (['webm','mp4','m4a','ogg','mp3','wav'].includes(e)) return { emoji: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span>', cls: 'file-card-icon--audio' };
   if (['txt'].includes(e))                    return { emoji: '📋', cls: 'file-card-icon--misc' };
   return { emoji: '📎', cls: 'file-card-icon--misc' };
 }
@@ -18330,7 +18334,7 @@ function _setupRecordTimer(custId, recorder) {
   btn.onclick = function() {
     clearInterval(_vmTimerInt);
     _vmTimerInt = null;
-    btn.textContent = '🎙️ Record Memo';
+    btn.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Record Memo';
     btn.classList.remove('cust-files-record-btn--rec');
     if (recorder && recorder.state !== 'inactive') recorder.stop();
     // restore click handler
@@ -19565,7 +19569,7 @@ function openCalDaySheet(dateStr) {
   events.sort((a, b) => a.hour !== b.hour ? a.hour - b.hour : a.minute - b.minute);
 
   if (!events.length) {
-    body.innerHTML = `<div class="cal-day-empty"><strong>📅</strong>No appointments or go-backs scheduled.</div>`;
+    body.innerHTML = `<div class="cal-day-empty"><strong><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></strong>No appointments or go-backs scheduled.</div>`;
   } else {
     // Group by hour
     const byHour = {};
@@ -19676,7 +19680,7 @@ function renderCalAppts() {
   }).sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
 
   if (!appts.length) {
-    list.innerHTML = `<div class="cal-appt-empty"><strong>📅</strong>No appointments scheduled${isToday ? ' today' : ' this day'}.</div>`;
+    list.innerHTML = `<div class="cal-appt-empty"><strong><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></strong>No appointments scheduled${isToday ? ' today' : ' this day'}.</div>`;
     return;
   }
 
@@ -19821,9 +19825,9 @@ function applyRoleUI() {
   // ── Hub badge: personalize per role ──
   const hubBadge = document.getElementById('dash-hub-badge');
   if (hubBadge) {
-    if (isManager)      hubBadge.textContent = '📊 Manager Hub';
-    else if (isCloser)  hubBadge.textContent = '🤝 Closer Hub';
-    else                hubBadge.textContent = '🚪 Solar Sales Hub';
+    if (isManager)      hubBadge.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Manager Hub';
+    else if (isCloser)  hubBadge.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span> Closer Hub';
+    else                hubBadge.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Solar Sales Hub';
   }
 }
 
@@ -20465,7 +20469,7 @@ document.getElementById('ma-dev-force-drain').addEventListener('click', async ()
     showToast('Drain error: ' + e.message);
     console.error('[DevTools] Force drain error:', e);
   }
-  if (btn) { btn.disabled = false; btn.textContent = '⚡ Force Drain to Firestore'; }
+  if (btn) { btn.disabled = false; btn.innerHTML = '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> Force Drain to Firestore'; }
 });
 
 // Change PIN
@@ -20616,7 +20620,7 @@ function lbInitials(name) {
 
 function renderLBBoard(container, stats, youName, unit) {
   if (!stats.length) {
-    container.innerHTML = `<div class="lb-empty">No entries yet —<br>get out there! 🚪</div>`;
+    container.innerHTML = `<div class="lb-empty">No entries yet —<br>get out there! <span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span></div>`;
     return;
   }
 
@@ -20697,13 +20701,13 @@ function renderLBBoard(container, stats, youName, unit) {
 // ── Leaderboard Achievements ──────────────────────────────────────────────────
 const ACHIEVEMENTS = [
   // Doors knocked milestones
-  { id: 'doors_10',    icon: '🚪', name: 'First Steps',      desc: 'Knock 10 doors',              check: s => s.totalDoors >= 10 },
+  { id: 'doors_10',    icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span>', name: 'First Steps',      desc: 'Knock 10 doors',              check: s => s.totalDoors >= 10 },
   { id: 'doors_50',    icon: '👊', name: 'Hustle Mode',       desc: 'Knock 50 doors',              check: s => s.totalDoors >= 50 },
   { id: 'doors_100',   icon: '💯', name: 'Century Club',      desc: 'Knock 100 doors',             check: s => s.totalDoors >= 100 },
   { id: 'doors_500',   icon: '🔥', name: 'Door Destroyer',    desc: 'Knock 500 doors',             check: s => s.totalDoors >= 500 },
   { id: 'doors_1000',  icon: '💎', name: 'Diamond Knuckles',  desc: 'Knock 1,000 doors',           check: s => s.totalDoors >= 1000 },
   // Appointments set
-  { id: 'appt_1',      icon: '📅', name: 'Booked!',           desc: 'Set your first appointment',  check: s => s.totalAppts >= 1 },
+  { id: 'appt_1',      icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>', name: 'Booked!',           desc: 'Set your first appointment',  check: s => s.totalAppts >= 1 },
   { id: 'appt_5',      icon: '📆', name: 'Appointment Setter',desc: 'Set 5 appointments',          check: s => s.totalAppts >= 5 },
   { id: 'appt_25',     icon: '🗓️', name: 'Calendar Full',    desc: 'Set 25 appointments',         check: s => s.totalAppts >= 25 },
   // Deals signed
@@ -20716,8 +20720,8 @@ const ACHIEVEMENTS = [
   { id: 'conv_20',     icon: '🔬', name: 'Precision',         desc: 'Achieve 20% contact rate',    check: s => s.totalDoors >= 20 && (s.totalContacts / s.totalDoors) >= 0.20 },
   // Streaks
   { id: 'streak_3',    icon: '🔥', name: 'On a Roll',         desc: '3-day activity streak',       check: s => s.streak >= 3 },
-  { id: 'streak_7',    icon: '⚡', name: 'Week Warrior',       desc: '7-day activity streak',       check: s => s.streak >= 7 },
-  { id: 'streak_30',   icon: '🚀', name: 'Unstoppable',       desc: '30-day activity streak',      check: s => s.streak >= 30 },
+  { id: 'streak_7',    icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>', name: 'Week Warrior',       desc: '7-day activity streak',       check: s => s.streak >= 7 },
+  { id: 'streak_30',   icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>', name: 'Unstoppable',       desc: '30-day activity streak',      check: s => s.streak >= 30 },
   // Special
   { id: 'early_bird',  icon: '🌅', name: 'Early Bird',        desc: 'Log a door before 8 AM',      check: s => s.hasEarlyEntry },
   { id: 'night_owl',   icon: '🦉', name: 'Night Owl',         desc: 'Log a door after 8 PM',       check: s => s.hasLateEntry },
@@ -20835,7 +20839,7 @@ function renderLeaderboard() {
   boards.innerHTML = `
     <div class="lb-board" id="lb-board-canvasser">
       <div class="lb-board-header">
-        <div class="lb-board-icon">🚪</div>
+        <div class="lb-board-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span></div>
         <div>
           <div class="lb-board-name">Canvassers</div>
           <div class="lb-board-sub">Doors knocked</div>
@@ -20845,7 +20849,7 @@ function renderLeaderboard() {
     </div>
     <div class="lb-board" id="lb-board-closer">
       <div class="lb-board-header">
-        <div class="lb-board-icon">🤝</div>
+        <div class="lb-board-icon"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span></div>
         <div>
           <div class="lb-board-name">Closers</div>
           <div class="lb-board-sub">Deals signed</div>
@@ -21018,11 +21022,11 @@ function renderMomentum() {
     '<div class="lb-momentum-header">📈 Trend — ' + label + '</div>' +
     '<div class="mom-filter-tabs">' + filterTabs + '</div>' +
     '<div class="lb-momentum-section">' +
-      '<div class="lb-momentum-section-hd">🚪 Canvassers — Doors Knocked</div>' +
+      '<div class="lb-momentum-section-hd"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Canvassers — Doors Knocked</div>' +
       _buildMomentumRows(data.canvassers, 'doors') +
     '</div>' +
     '<div class="lb-momentum-section">' +
-      '<div class="lb-momentum-section-hd">🤝 Closers — Deals Signed</div>' +
+      '<div class="lb-momentum-section-hd"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span> Closers — Deals Signed</div>' +
       _buildMomentumRows(data.closers, 'deals') +
     '</div>';
 
@@ -21074,7 +21078,7 @@ function generateTeamSummary(range) {
   const pct = n => doors ? `(${Math.round(n/doors*100)}%)` : '(—%)';
   const pctA = n => apptSet ? `(${Math.round(n/apptSet*100)}%)` : '(—%)';
 
-  return `📊 TEAM SUMMARY — ${getReportRangeLabel(range)}
+  return `<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> TEAM SUMMARY — ${getReportRangeLabel(range)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Doors Knocked:    ${String(doors).padStart(4)}
 Made Contact:     ${String(contact).padStart(4)}  ${pct(contact)}
@@ -21119,9 +21123,9 @@ function generateFunnel(range) {
 
   return `📉 CONVERSION FUNNEL — ${getReportRangeLabel(range)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚪 Doors:         ${String(doors).padStart(5)}
+<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Doors:         ${String(doors).padStart(5)}
 👋 Contacts:      ${String(contact).padStart(5)}  ${bar(contact, doors)}  ${pct(contact, doors)}
-📅 Appointments:  ${String(apptSet).padStart(5)}  ${bar(apptSet, contact)}  ${pct(apptSet, contact)}
+<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Appointments:  ${String(apptSet).padStart(5)}  ${bar(apptSet, contact)}  ${pct(apptSet, contact)}
 ✅ Signed:        ${String(signed).padStart(5)}  ${bar(signed, apptSet)}  ${pct(signed, apptSet)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 }
@@ -21265,11 +21269,11 @@ function renderReports() {
 
     // ── Render ─────────────────────────────────────────────────────────────
     body.innerHTML = [
-      visualBlock('📊', 'Team Summary',          summaryHtml,    0),
+      visualBlock('<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>', 'Team Summary',          summaryHtml,    0),
       visualBlock('🏆', 'Top Performers',        performersHtml, 1),
       visualBlock('📉', 'Conversion Funnel',     funnelHtml,     2),
       visualBlock('👤', 'Rep Conversion Rates',  convByRepHtml,  3),
-      visualBlock('🤝', 'Close Rate by Closer',  closerTableHtml,4),
+      visualBlock('<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 2.42-.36V7"/><path d="m21 11-4.2-4.2a1.8 1.8 0 0 0-2.6 0L12 9"/><path d="M3 3v2.5a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></span>', 'Close Rate by Closer',  closerTableHtml,4),
       visualBlock('⏱',  'Avg Sales Cycle',       cycleHtml,      5),
       visualBlock('📍', 'Best Territory',        bestAreaHtml,   6),
     ].join('');
@@ -23573,7 +23577,7 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
       ).join('');
     }
     const nb = document.getElementById('onboard-next');
-    if (nb) nb.textContent = _step < TOTAL - 1 ? 'Next →' : "I Understand — Let's Go 🚀";
+    if (nb) nb.innerHTML = _step < TOTAL - 1 ? 'Next →' : 'I Understand — Let\'s Go <span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>';
     if (_step === 4) { try { launchConfetti && launchConfetti('Go earn it! 🏆'); } catch(_){} }
   }
 
@@ -24089,7 +24093,7 @@ function shareInviteViaMessage() {
     'Your invite code:\n' + _currentInviteCode + '\n\n' +
     'Tap the link below to get started:\n' +
     'https://cptlenergy.netlify.app\n\n' +
-    'Code expires in 7 days. See you on the doors! 🚪';
+    'Code expires in 7 days. See you on the doors! <span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span>';
   window.open('sms:?body=' + encodeURIComponent(msg), '_self');
 }
 
@@ -24662,7 +24666,7 @@ function _sendApptDispoEmail(appt, result) {
 
   var html = '<div style="font-family:sans-serif;max-width:520px;margin:0 auto">' +
     '<div style="background:' + headerColor + ';padding:16px 20px;border-radius:10px 10px 0 0">' +
-    '<h2 style="color:#fff;margin:0;font-size:16px">📅 Appt Result: ' + result + '</h2></div>' +
+    '<h2 style="color:#fff;margin:0;font-size:16px"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Appt Result: ' + result + '</h2></div>' +
     '<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:20px">' +
     '<table style="border-collapse:collapse;font-size:14px;width:100%">' + tableRows + '</table>' +
     '</div>' +
@@ -24711,7 +24715,7 @@ function _sendDispoEmail(entry) {
 
   var html = '<div style="font-family:sans-serif;max-width:520px;margin:0 auto">' +
     '<div style="background:#148f98;padding:16px 20px;border-radius:10px 10px 0 0">' +
-    '<h2 style="color:#fff;margin:0;font-size:16px">🚪 Dispo: ' + statusLabel + '</h2></div>' +
+    '<h2 style="color:#fff;margin:0;font-size:16px"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Dispo: ' + statusLabel + '</h2></div>' +
     '<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:20px">' +
     '<table style="border-collapse:collapse;font-size:14px;width:100%">' + tableRows + '</table>' +
     '</div>' +
@@ -25171,7 +25175,7 @@ function _otdShowSaveSkip(duration, status, address) {
   var labelEl = document.getElementById('otd-ss-label');
   var subEl   = document.getElementById('otd-ss-sub');
   var dispoLabel = (status || '').replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-  var parts = ['🎙️ ' + durFmt];
+  var parts = ['<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> ' + durFmt];
   if (address) parts.push(address);
   if (dispoLabel) parts.push(dispoLabel);
   if (labelEl) labelEl.textContent = parts.join(' · ');
@@ -25626,7 +25630,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function _computeRepRank(score) {
   if (score >= 500) return { tier: 'Legend', cls: 'rank-badge--legend', emoji: '👑' };
-  if (score >= 200) return { tier: 'Elite',  cls: 'rank-badge--elite',  emoji: '⚡' };
+  if (score >= 200) return { tier: 'Elite',  cls: 'rank-badge--elite',  emoji: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>' };
   if (score >= 75)  return { tier: 'Pro',    cls: 'rank-badge--pro',    emoji: '🔥' };
   return                   { tier: 'Rookie', cls: 'rank-badge--rookie', emoji: '🌱' };
 }
@@ -25692,9 +25696,9 @@ function _buildRepProfileHTML(repName) {
       </div>
       <div class="rps-section-title" style="margin-top:18px">All-Time</div>
       <div class="rps-alltime-grid">
-        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalDoors}</div><div class="rps-alltime-lbl">🚪 Doors</div></div>
+        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalDoors}</div><div class="rps-alltime-lbl"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span> Doors</div></div>
         <div class="rps-alltime-card"><div class="rps-alltime-val">${totalContacts}</div><div class="rps-alltime-lbl">👋 Contacts</div></div>
-        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalBooked}</div><div class="rps-alltime-lbl">📅 Booked</div></div>
+        <div class="rps-alltime-card"><div class="rps-alltime-val">${totalBooked}</div><div class="rps-alltime-lbl"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Booked</div></div>
         <div class="rps-alltime-card"><div class="rps-alltime-val">${totalSigned}</div><div class="rps-alltime-lbl">✅ Signed</div></div>
       </div>
       ${recent.length ? `
