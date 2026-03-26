@@ -938,6 +938,26 @@
       animation: skeletonPulse 1.8s ease-in-out infinite;
     }
 
+    /* ── Inline Validation ─────────────────────────────────────────────── */
+    .input-error  { border-color: var(--danger) !important; }
+    .input-success { border-color: var(--success) !important; }
+    .field-error-msg {
+      font-size: 11px; color: var(--danger); margin-top: 4px;
+      animation: panelIn 0.15s var(--ease-out) both;
+    }
+    .field-wrap { position: relative; }
+    .field-check {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; color: var(--success);
+      pointer-events: none; opacity: 0; transition: opacity 0.15s;
+    }
+    .input-success ~ .field-check { opacity: 1; }
+    .form-error-summary {
+      background: var(--danger-bg); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--r-sm); padding: 10px 14px; margin-bottom: 12px;
+      font-size: 13px; font-weight: 600; color: var(--danger);
+    }
+
     /* ── Bottom nav ──────────────────────────────────────────────────────── */
     #bottom-nav {
       position: fixed;
@@ -9826,11 +9846,11 @@
           <div class="admin-field-row">
             <div class="admin-field" style="flex:1">
               <label class="admin-label" for="admin-rep-phone">Phone</label>
-              <input class="admin-input" type="tel" id="admin-rep-phone" placeholder="(555) 000-0000" />
+              <input class="admin-input" type="tel" id="admin-rep-phone" data-validate="phone" placeholder="(555) 000-0000" />
             </div>
             <div class="admin-field" style="flex:1">
               <label class="admin-label" for="admin-rep-email">Email</label>
-              <input class="admin-input" type="email" id="admin-rep-email" placeholder="you@company.com" />
+              <input class="admin-input" type="email" id="admin-rep-email" data-validate="email" placeholder="you@company.com" />
             </div>
           </div>
           <div class="admin-field">
@@ -9875,7 +9895,7 @@
           <p class="admin-section-hint">Paste your Google Business review URL. This link opens when reps send a review request.</p>
           <div class="admin-field">
             <label class="admin-label" for="admin-review-url">Google Review Link</label>
-            <input class="admin-input" type="url" id="admin-review-url" placeholder="https://g.page/r/YOUR_ID/review" />
+            <input class="admin-input" type="url" id="admin-review-url" data-validate="url" placeholder="https://g.page/r/YOUR_ID/review" />
           </div>
           <div class="admin-review-actions">
             <button class="admin-review-test-btn" id="admin-review-test-btn" type="button">
@@ -9902,10 +9922,10 @@
           <div id="admin-dispo-email-section" style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
             <p style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);margin:0 0 10px">Dispo Email Notifications</p>
             <label style="font-size:13px;color:var(--text-2);display:block;margin-bottom:4px">Send dispo results to</label>
-            <input type="email" id="admin-dispo-email-to" placeholder="manager@company.com"
+            <input type="email" id="admin-dispo-email-to" data-validate="email" placeholder="manager@company.com"
               style="width:100%;box-sizing:border-box;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:14px;background:var(--bg-2);color:var(--text-1);margin-bottom:10px">
             <label style="font-size:13px;color:var(--text-2);display:block;margin-bottom:4px">Send from (must match your SMTP account)</label>
-            <input type="email" id="admin-dispo-email-from" placeholder="noreply@company.com"
+            <input type="email" id="admin-dispo-email-from" data-validate="email" placeholder="noreply@company.com"
               style="width:100%;box-sizing:border-box;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:14px;background:var(--bg-2);color:var(--text-1)">
           </div>
         </div>
@@ -9933,7 +9953,7 @@
               <option value="canvasser">🚪 Canvasser</option>
             </select>
             <input class="admin-input" type="text" id="admin-new-name" placeholder="Full name" style="flex:1;min-width:0" />
-            <input class="admin-input" type="tel" id="admin-new-phone" placeholder="Phone #" style="flex:0 0 95px;min-width:0" inputmode="tel" />
+            <input class="admin-input" type="tel" id="admin-new-phone" data-validate="phone" placeholder="Phone #" style="flex:0 0 95px;min-width:0" inputmode="tel" />
             <button class="team-add-btn" id="admin-add-member">Add</button>
           </div>
           <button class="invite-rep-btn" onclick="openInviteSheet()">
@@ -10399,8 +10419,8 @@
       <div class="onboard-title">Quick intro</div>
       <div class="onboard-desc">So your rep card and team profile are ready from day one.</div>
       <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-top:4px">
-        <input id="onboard-phone" type="tel" inputmode="tel" class="onboard-input" placeholder="Phone number (required)" autocomplete="tel" />
-        <input id="onboard-region" type="text" class="onboard-input" placeholder="City / Region you work in (required)" autocomplete="address-level2" />
+        <input id="onboard-phone" data-validate="required,phone" type="tel" inputmode="tel" class="onboard-input" placeholder="Phone number (required)" autocomplete="tel" />
+        <input id="onboard-region" data-validate="required" type="text" class="onboard-input" placeholder="City / Region you work in (required)" autocomplete="address-level2" />
         <label class="onboard-photo-label">
           <input type="file" id="onboard-photo" accept="image/*" style="display:none" />
           <span id="onboard-photo-status">📷 Upload profile photo (optional)</span>
@@ -11392,17 +11412,17 @@
 
     <div class="form-group">
       <label class="form-label" for="b-email">Customer Email <span style="color:var(--c-red)">*</span></label>
-      <input class="form-input" type="email" id="b-email" placeholder="example@example.com" required inputmode="email" />
+      <input class="form-input" type="email" id="b-email" data-validate="email" placeholder="example@example.com" required inputmode="email" />
     </div>
 
     <div class="form-group">
       <label class="form-label">Phone Number <span style="color:var(--c-red)">*</span></label>
       <div class="form-row" style="margin-bottom:0">
         <div class="form-group" style="flex:0 0 100px;max-width:100px">
-          <input class="form-input" type="tel" id="b-area" placeholder="555" maxlength="3" inputmode="numeric" required />
+          <input class="form-input" type="tel" id="b-area" data-validate="required" placeholder="555" maxlength="3" inputmode="numeric" required />
         </div>
         <div class="form-group">
-          <input class="form-input" type="tel" id="b-phone" placeholder="123-4567" required inputmode="numeric" />
+          <input class="form-input" type="tel" id="b-phone" data-validate="required" placeholder="123-4567" required inputmode="numeric" />
         </div>
       </div>
     </div>
@@ -16296,6 +16316,73 @@ function formatNominatimAddress(data) {
     || `${data.lat}, ${data.lon}`;
 }
 
+// ── Inline Validation Controller ─────────────────────────────────────────
+var _validators = {
+  required: function(v) { return v.trim() ? '' : 'This field is required'; },
+  email:    function(v) { return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Enter a valid email address'; },
+  url:      function(v) { return !v || /^https?:\/\/.+/.test(v) ? '' : 'URL must start with https://'; },
+  phone:    function(v) { var d = (v || '').replace(/\D/g,''); return !v || d.length >= 10 ? '' : 'Enter a 10-digit phone number'; }
+};
+
+function _validateField(input) {
+  var rules = (input.dataset.validate || '').split(',').map(function(s) { return s.trim(); });
+  if (input.required && rules.indexOf('required') === -1) rules.unshift('required');
+  var val = input.value;
+  var errMsg = '';
+  for (var i = 0; i < rules.length; i++) {
+    var fn = _validators[rules[i]];
+    if (fn) { errMsg = fn(val); if (errMsg) break; }
+  }
+  // Remove old error
+  var existing = input.parentNode.querySelector('.field-error-msg');
+  if (existing) existing.remove();
+  input.classList.remove('input-error', 'input-success');
+  if (errMsg) {
+    input.classList.add('input-error');
+    var el = document.createElement('div');
+    el.className = 'field-error-msg';
+    el.textContent = errMsg;
+    input.parentNode.appendChild(el);
+    return false;
+  } else if (val.trim()) {
+    input.classList.add('input-success');
+  }
+  return true;
+}
+
+function _wireValidation(container) {
+  var inputs = container.querySelectorAll('input[data-validate], input[required], select[required], textarea[data-validate]');
+  inputs.forEach(function(input) {
+    if (input._valWired) return;
+    input._valWired = true;
+    input.addEventListener('blur', function() { _validateField(input); });
+    input.addEventListener('input', function() {
+      input.classList.remove('input-error');
+      var err = input.parentNode.querySelector('.field-error-msg');
+      if (err) err.remove();
+    });
+  });
+}
+
+function _validateForm(container) {
+  var inputs = container.querySelectorAll('input[data-validate], input[required], select[required], textarea[data-validate]');
+  var errors = 0;
+  inputs.forEach(function(input) { if (!_validateField(input)) errors++; });
+  // Show summary
+  var existing = container.querySelector('.form-error-summary');
+  if (existing) existing.remove();
+  if (errors > 0) {
+    var summary = document.createElement('div');
+    summary.className = 'form-error-summary';
+    summary.textContent = errors + ' field' + (errors > 1 ? 's need' : ' needs') + ' attention';
+    var firstChild = container.querySelector('.form-group, .admin-accordion, .ql-title');
+    if (firstChild) container.insertBefore(summary, firstChild);
+    else container.prepend(summary);
+    haptic('error');
+  }
+  return errors === 0;
+}
+
 // ── Reverse-geocode → fill f-address ────────────────────────────────────
 function geocodeIntoAddressField(lat, lng) {
   setAddrStatus('scanning', 'Getting address…');
@@ -18850,6 +18937,7 @@ function _bookingTouchMove(e) {
 }
 
 function openBookingSheet() {
+  _wireValidation(document.getElementById('booking-form'));
   // Grab GPS silently for the booking entry — does NOT touch log-sheet UI
   pendingLat = null; pendingLng = null;
   if (navigator.geolocation) {
@@ -18996,27 +19084,21 @@ document.getElementById('b-bill-file').addEventListener('change', function() {
 bookingForm.addEventListener('submit', e => {
   e.preventDefault();
 
-  const required = ['b-datetime','b-closer','b-first','b-last','b-email','b-area','b-phone','b-street','b-city','b-state','b-zip','b-utility-co','b-avg-bill'];
-  let firstInvalid = null;
-  required.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && !el.value.trim()) {
-      el.style.borderColor = 'rgba(239,68,68,0.6)';
-      setTimeout(() => el.style.borderColor = '', 2000);
-      if (!firstInvalid) firstInvalid = el;
-    }
-  });
-  if (firstInvalid) { firstInvalid.focus(); return; }
-
+  if (!_validateForm(bookingForm)) {
+    var firstErr = bookingForm.querySelector('.input-error');
+    if (firstErr) firstErr.focus();
+    return;
+  }
   // v93: validate required radio groups
+  var radioMissing = false;
   const requiredRadios = ['b-shade','b-roof','b-pitched','b-credit'];
   for (const rName of requiredRadios) {
     if (!document.querySelector(`input[name="${rName}"]:checked`)) {
       const group = document.querySelector(`.radio-group input[name="${rName}"]`)?.closest('.radio-group');
-      if (group) { group.style.outline = '2px solid rgba(239,68,68,0.6)'; group.style.borderRadius = '8px'; setTimeout(() => { group.style.outline = ''; }, 2000); if (!firstInvalid) { group.scrollIntoView({ behavior:'smooth', block:'center' }); firstInvalid = group; } }
+      if (group) { group.style.outline = '2px solid var(--danger)'; group.style.borderRadius = '8px'; setTimeout(() => { group.style.outline = ''; }, 3000); if (!radioMissing) { group.scrollIntoView({ behavior:'smooth', block:'center' }); radioMissing = true; } }
     }
   }
-  if (firstInvalid) return;
+  if (radioMissing) { haptic('error'); return; }
 
   // Block submit when no real closer is assigned
   const closerVal = document.getElementById('b-closer').value;
@@ -21145,6 +21227,7 @@ const ADMIN_DEFAULTS = {
 };
 
 function loadAdminSettings() {
+  _wireValidation(document.getElementById('panel-admin'));
   const s = _safeAdminSettings();
   // Hidden backward-compat fields (now managed by Master Admin)
   document.getElementById('admin-company-name').value = s.companyName || ADMIN_DEFAULTS.companyName;
@@ -21210,6 +21293,7 @@ function loadAdminSettings() {
 }
 
 function saveAdminSettings() {
+  if (!_validateForm(document.getElementById('panel-admin'))) return;
   // v93: merge into existing ce_admin instead of replacing — preserves logos, adder sheets, checklist, etc.
   const existing = _safeAdminSettings();
   const updates = {
@@ -23441,12 +23525,13 @@ document.getElementById('dispo-appt-btn').addEventListener('click', openDispoShe
     if (nb) nb.addEventListener('click', function() {
       // Validate contact info step
       if (_step === 3) {
-        const phone  = (document.getElementById('onboard-phone')?.value  || '').trim();
-        const region = (document.getElementById('onboard-region')?.value || '').trim();
-        if (!phone || !region) {
-          try { showToast('Please enter your phone number and city/region.'); } catch(_) {}
-          return;
-        }
+        var card = document.getElementById('onboarding-card') || document.getElementById('onboarding-overlay');
+        if (card) _wireValidation(card);
+        var phoneEl  = document.getElementById('onboard-phone');
+        var regionEl = document.getElementById('onboard-region');
+        var phoneOk  = phoneEl  ? _validateField(phoneEl)  : true;
+        var regionOk = regionEl ? _validateField(regionEl) : true;
+        if (!phoneOk || !regionOk) { haptic('error'); return; }
         _saveContactInfo();
       }
       if (_step < TOTAL - 1) { _step++; _render(); }
