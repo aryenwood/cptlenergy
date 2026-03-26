@@ -14369,6 +14369,9 @@ const navItems  = document.querySelectorAll('.nav-item');
 const panels    = document.querySelectorAll('.tab-panel');
 
 function activateTab(tabId) {
+  // Dismiss undo toast on tab switch
+  var _ut = document.getElementById('undo-toast');
+  if (_ut) { clearTimeout(_ut._timer); _ut.remove(); }
   // Redirect legacy 'installs' tab to map tab with installs view active
   if (tabId === 'installs') {
     activateTab('map');
@@ -19388,6 +19391,14 @@ document.querySelectorAll('#b-best-available-wrap .radio-opt').forEach(function(
     label.style.color = 'var(--amber)';
     label.querySelector('input').checked = true;
     haptic('light');
+  });
+});
+
+// ── Phone input: strip non-digits on input (all tel fields) ──────────────
+document.querySelectorAll('input[type="tel"]').forEach(function(el) {
+  el.addEventListener('input', function() {
+    var cleaned = this.value.replace(/[^\d\-\(\)\s\+]/g, '');
+    if (cleaned !== this.value) this.value = cleaned;
   });
 });
 
