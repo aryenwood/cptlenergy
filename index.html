@@ -14582,8 +14582,10 @@ renderChecklistPane();
 // renderAdderPane is called by renderAdderTabs() which runs inside the adder IIFE above
 
 // ── Block pinch-zoom globally except inside the PDF reader ────────────────
+var _hScrollSel = '.res-subtab-nav,.log-filters,.crm-subtab-nav,.cust-d-tabs,.lb-range-tabs,#ma-status-bar,#cal-filter-bar';
 document.addEventListener('touchmove', function(e) {
-  if (e.touches.length < 2) return;          // single finger — not a pinch
+  if (e.target.closest(_hScrollSel)) return;  // never interfere with horizontal pill scroll
+  if (e.touches.length < 2) return;           // single finger — not a pinch
   if (e.target.closest('#pdf-canvas-wrap')) return; // allow pinch in PDF reader
   e.preventDefault();
 }, { passive: false });
@@ -18391,6 +18393,7 @@ updateLogBadge();
     _touchStartY = e.touches[0].clientY;
   }, { passive: true });
   document.addEventListener('touchmove', function(e) {
+    if (e.target.closest(_hScrollSel)) return; // never interfere with horizontal pill scroll
     var y = e.touches[0].clientY;
     // If pulling down from top AND no scrollable parent is already scrolled down — prevent
     if (y > _touchStartY) {
