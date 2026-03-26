@@ -14984,7 +14984,26 @@ function getDashRangeFilter(range) {
   return () => true;
 }
 
+var _dashSkeletonShown = false;
 function renderDashboard() {
+  // Show skeleton placeholder on first render before data resolves
+  if (!_dashSkeletonShown) {
+    _dashSkeletonShown = true;
+    var dashPanel = document.getElementById('panel-dashboard');
+    if (dashPanel && !dashPanel.querySelector('.stat-card')) {
+      var sk = document.createElement('div');
+      sk.id = 'dash-skeleton';
+      sk.innerHTML = '<div class="skeleton-card" style="height:80px;margin-bottom:12px"></div>' +
+        '<div class="skeleton-card" style="height:80px;margin-bottom:12px"></div>' +
+        '<div class="skeleton-card" style="height:120px;margin-bottom:12px"></div>' +
+        '<div class="skeleton-line" style="width:60%;margin-bottom:8px"></div>' +
+        '<div class="skeleton-line" style="width:80%;margin-bottom:8px"></div>' +
+        '<div class="skeleton-line" style="width:40%"></div>';
+      dashPanel.prepend(sk);
+      // Remove after real content renders
+      requestAnimationFrame(function() { var el = document.getElementById('dash-skeleton'); if (el) el.remove(); });
+    }
+  }
   // v77: always re-apply role UI on every render (handles impersonation switches cleanly)
   applyRoleUI();
 
@@ -17125,6 +17144,15 @@ logForm.addEventListener('submit', e => {
 
 // ── List rendering ────────────────────────────────────────────────────────
 function renderLogList() {
+  // Skeleton placeholder while list builds
+  var _logList = document.getElementById('log-list');
+  if (_logList && !_logList.children.length) {
+    var skRow = '<div style="display:flex;align-items:center;gap:12px;padding:13px 14px">' +
+      '<div class="skeleton-circle" style="width:40px;height:40px"></div>' +
+      '<div style="flex:1"><div class="skeleton-line" style="width:65%;margin-bottom:6px"></div>' +
+      '<div class="skeleton-line skeleton-line--short"></div></div></div>';
+    _logList.innerHTML = skRow.repeat(5);
+  }
   syncNewEntryBtn();
   var all      = loadEntries();
 
@@ -20778,15 +20806,22 @@ document.addEventListener('click', function(e) {
 });
 
 function renderLeaderboard() {
+  const boards = document.getElementById('lb-boards');
+  const sub    = document.getElementById('lb-subtitle');
+  if (!boards) return;
+  // Skeleton placeholder while data computes
+  if (!boards.children.length) {
+    var skRow = '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px">' +
+      '<div class="skeleton-circle" style="width:40px;height:40px"></div>' +
+      '<div style="flex:1"><div class="skeleton-line" style="width:50%;margin-bottom:6px"></div>' +
+      '<div class="skeleton-line skeleton-line--short"></div></div></div>';
+    boards.innerHTML = skRow.repeat(5);
+  }
   const role    = getActiveRole();
   const youName = localStorage.getItem('ce_user_name') || '';
 
   const canvStats = computeCanvasserStats(_lbRange);
   const closerStats = computeCloserStats(_lbRange);
-
-  const boards = document.getElementById('lb-boards');
-  const sub    = document.getElementById('lb-subtitle');
-  if (!boards) return;
 
   const rangeLabel = { day: 'Today', week: 'This Week', month: 'This Month', year: 'This Year' };
   if (sub) sub.textContent = rangeLabel[_lbRange] || 'This Week';
