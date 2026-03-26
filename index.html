@@ -641,10 +641,6 @@
          Use dvh with -webkit-fill-available fallback for older Safari. */
       height: -webkit-fill-available;
       height: 100dvh;
-      /* Clip overflow so the document can never scroll — only #main scrolls.
-         Without this, scroll chains from position:fixed overlays propagate
-         to the document viewport, dragging #main with it. */
-      overflow: hidden;
       /* Lock pull-to-refresh and all overscroll bounce at root */
       overscroll-behavior: none;
       touch-action: manipulation;
@@ -693,12 +689,10 @@
       z-index: 1;
       display: flex;
       flex-direction: column;
-      height: -webkit-fill-available;
-      height: 100dvh;
+      min-height: -webkit-fill-available;
+      min-height: 100dvh;
       max-width: 540px;
       margin: 0 auto;
-      overflow: hidden;
-      padding-bottom: env(safe-area-inset-bottom);
     }
 
     /* ── Header ──────────────────────────────────────────────────────────── */
@@ -790,18 +784,12 @@
     /* ── Scroll area ─────────────────────────────────────────────────────── */
     #main {
       flex: 1;
-      min-height: 0; /* flexbox needs this to constrain below content size and enable scroll */
       overflow-y: auto; overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       position: relative; z-index: 1;
       /* No padding-top needed — #header is sticky in flex flow, not position:fixed */
       padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
     }
-    /* iOS PWA: scroll-lock via inline JS position:fixed — class kept for fallback only */
-    #main.scroll-locked {
-      overflow: hidden;
-    }
-
     /* ── Tab panels ──────────────────────────────────────────────────────── */
     .tab-panel {
       display: none;
