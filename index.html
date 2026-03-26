@@ -6317,13 +6317,13 @@
 
     /* Day cells — modern minimal with hover glow */
     .cal-day {
-      min-height: 64px;
+      min-height: 68px;
       border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      padding: 6px 3px 4px;
+      padding: 8px 3px 4px;
       font-size: 15px; font-weight: 600;
       color: var(--text);
       cursor: pointer;
@@ -10269,7 +10269,7 @@
             <label style="font-size:13px;color:var(--text-2);display:block;margin-bottom:4px">Send dispo results to</label>
             <input type="email" id="admin-dispo-email-to" data-validate="email" placeholder="manager@company.com"
               style="width:100%;box-sizing:border-box;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:14px;background:var(--bg-2);color:var(--text-1);margin-bottom:10px">
-            <label style="font-size:13px;color:var(--text-2);display:block;margin-bottom:4px">Send from (must match your SMTP account)</label>
+            <label style="font-size:13px;color:var(--text-2);display:block;margin-bottom:4px">Send from (your company email, e.g. appointments@yourcompany.com)</label>
             <input type="email" id="admin-dispo-email-from" data-validate="email" placeholder="noreply@company.com"
               style="width:100%;box-sizing:border-box;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:14px;background:var(--bg-2);color:var(--text-1)">
           </div>
@@ -19975,7 +19975,7 @@ function renderCalAppts() {
       : [a.closer ? `Closer: ${a.closer}` : '', a.city || ''].filter(Boolean).join(' · ');
     const ncCls = needsCloser ? ' dash-upcoming-card--needs-closer' : '';
     return `
-      <div class="cal-appt-card${ncCls}" data-appt-id="${a.id || ''}"
+      <div class="cal-appt-card${ncCls}" data-appt-id="${a.id || ''}">
         <div class="cal-appt-time-block">
           <div class="cal-appt-time">${hr12}:${min}</div>
           <div class="cal-appt-ampm">${ampm}</div>
@@ -19988,6 +19988,30 @@ function renderCalAppts() {
       </div>`;
   }).join('');
 }
+
+// ── Calendar appointment card tap → open customer record ─────────────────────
+document.getElementById('cal-appt-items')?.addEventListener('click', function(e) {
+  var card = e.target.closest('.cal-appt-card');
+  if (!card) return;
+  var apptId = card.dataset.apptId;
+  if (!apptId) return;
+  // If needs closer and manager, open assign modal
+  if (card.classList.contains('dash-upcoming-card--needs-closer')) {
+    var role = getActiveRole();
+    if (role === 'manager' || role === 'master_admin') {
+      openAssignCloser(apptId);
+      return;
+    }
+  }
+  // Otherwise open customer detail by matching appointment
+  if (typeof openCustomerByApptId === 'function') {
+    openCustomerByApptId(apptId);
+  } else {
+    // Fallback: switch to CRM appts view
+    activateTab('log');
+    setTimeout(function() { switchCrmPane('appointments'); }, 200);
+  }
+});
 
 // ── Calendar day sheet close ──────────────────────────────────────────────────
 document.getElementById('cal-day-sheet-close')?.addEventListener('click', closeCalDaySheet);
@@ -20983,13 +21007,13 @@ function renderLBBoard(container, stats, youName, unit) {
 // ── Leaderboard Achievements ──────────────────────────────────────────────────
 const ACHIEVEMENTS = [
   // Doors knocked milestones
-  { id: 'doors_10',    icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span>', name: 'First Steps',      desc: 'Knock 10 doors',              check: s => s.totalDoors >= 10 },
+  { id: 'doors_10',    icon: '\uD83D\uDEAA', name: 'First Steps',      desc: 'Knock 10 doors',              check: s => s.totalDoors >= 10 },
   { id: 'doors_50',    icon: '👊', name: 'Hustle Mode',       desc: 'Knock 50 doors',              check: s => s.totalDoors >= 50 },
   { id: 'doors_100',   icon: '💯', name: 'Century Club',      desc: 'Knock 100 doors',             check: s => s.totalDoors >= 100 },
   { id: 'doors_500',   icon: '🔥', name: 'Door Destroyer',    desc: 'Knock 500 doors',             check: s => s.totalDoors >= 500 },
   { id: 'doors_1000',  icon: '💎', name: 'Diamond Knuckles',  desc: 'Knock 1,000 doors',           check: s => s.totalDoors >= 1000 },
   // Appointments set
-  { id: 'appt_1',      icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>', name: 'Booked!',           desc: 'Set your first appointment',  check: s => s.totalAppts >= 1 },
+  { id: 'appt_1',      icon: '\uD83D\uDCC5', name: 'Booked!',           desc: 'Set your first appointment',  check: s => s.totalAppts >= 1 },
   { id: 'appt_5',      icon: '📆', name: 'Appointment Setter',desc: 'Set 5 appointments',          check: s => s.totalAppts >= 5 },
   { id: 'appt_25',     icon: '🗓️', name: 'Calendar Full',    desc: 'Set 25 appointments',         check: s => s.totalAppts >= 25 },
   // Deals signed
@@ -21002,8 +21026,8 @@ const ACHIEVEMENTS = [
   { id: 'conv_20',     icon: '🔬', name: 'Precision',         desc: 'Achieve 20% contact rate',    check: s => s.totalDoors >= 20 && (s.totalContacts / s.totalDoors) >= 0.20 },
   // Streaks
   { id: 'streak_3',    icon: '🔥', name: 'On a Roll',         desc: '3-day activity streak',       check: s => s.streak >= 3 },
-  { id: 'streak_7',    icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>', name: 'Week Warrior',       desc: '7-day activity streak',       check: s => s.streak >= 7 },
-  { id: 'streak_30',   icon: '<span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>', name: 'Unstoppable',       desc: '30-day activity streak',      check: s => s.streak >= 30 },
+  { id: 'streak_7',    icon: '\u26A1', name: 'Week Warrior',       desc: '7-day activity streak',       check: s => s.streak >= 7 },
+  { id: 'streak_30',   icon: '\uD83D\uDE80', name: 'Unstoppable',       desc: '30-day activity streak',      check: s => s.streak >= 30 },
   // Special
   { id: 'early_bird',  icon: '🌅', name: 'Early Bird',        desc: 'Log a door before 8 AM',      check: s => s.hasEarlyEntry },
   { id: 'night_owl',   icon: '🦉', name: 'Night Owl',         desc: 'Log a door after 8 PM',       check: s => s.hasLateEntry },
