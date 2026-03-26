@@ -958,6 +958,90 @@
       font-size: 13px; font-weight: 600; color: var(--danger);
     }
 
+    /* ── PDF Viewer ────────────────────────────────────────────────────── */
+    #pdf-viewer-modal {
+      display: flex; position: fixed; inset: 0; z-index: 9999;
+      background: #1a1a1a; flex-direction: column;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    #pdf-viewer-modal.pdf-open { opacity: 1; pointer-events: auto; }
+    .pdf-toolbar {
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+      padding: calc(env(safe-area-inset-top,0px) + 10px) 16px 12px;
+      background: #111; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .pdf-close-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.14); border: none; color: #fff;
+      font-size: 22px; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pdf-title-wrap { flex: 1; min-width: 0; }
+    .pdf-title { font-size: 13px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pdf-page-indicator { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+    .pdf-nav-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.10); border: none; color: #fff;
+      font-size: 18px; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pdf-nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+    .pdf-progress-track { height: 3px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+    .pdf-progress-fill { height: 100%; background: var(--amber); width: 0%; transition: width 0.3s ease; }
+    .pdf-canvas-wrap {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      display: flex; flex-direction: column; align-items: center;
+      background: #1a1a1a; padding: 12px 0;
+      padding-bottom: calc(env(safe-area-inset-bottom,0px) + 12px);
+      touch-action: pan-y pinch-zoom;
+    }
+    .pdf-canvas { max-width: 100%; height: auto; display: block; box-shadow: 0 4px 24px rgba(0,0,0,0.5); touch-action: pan-y pinch-zoom; }
+    .pdf-loading {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; padding: 48px; color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;
+    }
+    .pdf-spinner {
+      width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.12);
+      border-top-color: var(--amber); border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .pdf-error {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; padding: 48px; color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600;
+    }
+    .pdf-retry-btn {
+      padding: 10px 24px; border-radius: 50px; border: none;
+      background: var(--amber); color: #fff; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+    }
+
+    /* ── In-App Browser ───────────────────────────────────────────────────── */
+    .browser-url-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; margin: 0 16px;
+      background: rgba(0,0,0,0.06); border-radius: 8px;
+      font-size: 12px; color: var(--text-3); overflow: hidden;
+      white-space: nowrap; text-overflow: ellipsis;
+    }
+    .browser-url-bar svg { width: 12px; height: 12px; stroke: var(--text-3); flex-shrink: 0; }
+    html.dark-mode .browser-url-bar { background: rgba(255,255,255,0.06); }
+    .browser-progress {
+      height: 2px; background: transparent; position: relative; overflow: hidden;
+    }
+    .browser-progress-fill {
+      height: 100%; background: var(--amber); width: 0%;
+      transition: width 0.3s ease; position: absolute; left: 0; top: 0;
+    }
+    .browser-progress.loading .browser-progress-fill {
+      width: 80%; transition: width 2s ease;
+    }
+    .browser-progress.done .browser-progress-fill {
+      width: 100%; transition: width 0.2s ease;
+    }
+
     /* ── Bottom nav ──────────────────────────────────────────────────────── */
     #bottom-nav {
       position: fixed;
@@ -10758,22 +10842,37 @@
   flex-direction:column; background:var(--bg);
   opacity:0; pointer-events:none; transition:opacity .25s;">
   <div style="
-    display:flex; align-items:center; gap:12px;
+    display:flex; align-items:center; gap:8px;
     padding: env(safe-area-inset-top,0px) 16px 0;
     min-height:54px;
     background:var(--g2);
     backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
     border-bottom:1px solid var(--g-border);">
-    <div style="flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:13px; font-weight:600; color:var(--text-2);" id="browser-title">CPTL Grid</div>
+    <div style="flex:1; min-width:0;">
+      <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:13px; font-weight:600; color:var(--text-2);" id="browser-title">CPTL Grid</div>
+      <div class="browser-url-bar" id="browser-url-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span id="browser-url-text">—</span>
+      </div>
+    </div>
+    <button id="browser-refresh" style="
+      width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
+      background:var(--g1); font-size:16px;
+      display:flex; align-items:center; justify-content:center; color:var(--text-2);
+      -webkit-tap-highlight-color:transparent;">↻</button>
     <a id="browser-open-tab" target="_blank" rel="noopener" style="
       padding:6px 12px; border-radius:50px; background:rgba(20,143,152,0.10);
       color:var(--amber); font-size:12px; font-weight:600; text-decoration:none; white-space:nowrap;">
       Open in Tab
     </a>
     <button id="browser-close" style="
-      width:32px; height:32px; border-radius:50%; border:none; cursor:pointer;
+      width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
       background:var(--g3); font-size:18px; line-height:1;
-      display:flex; align-items:center; justify-content:center; color:var(--text-2);">✕</button>
+      display:flex; align-items:center; justify-content:center; color:var(--text-2);
+      -webkit-tap-highlight-color:transparent;">✕</button>
+  </div>
+  <div class="browser-progress" id="browser-progress">
+    <div class="browser-progress-fill" id="browser-progress-fill"></div>
   </div>
   <iframe id="browser-frame" style="flex:1; border:none; width:100%;"
     allow="fullscreen; camera; microphone; payment; geolocation"
@@ -22247,23 +22346,52 @@ document.getElementById('review-opt-link').addEventListener('click', () => {
 })();
 
 // ── In-app browser (CPTL Grid) ─────────────────────────────────────────────
+function _browserUrlDisplay(url) {
+  try { return new URL(url).hostname; } catch(_) { return url; }
+}
 function openBrowser(url, title) {
-  const modal = document.getElementById('browser-modal');
-  document.getElementById('browser-frame').src = url;
+  var modal   = document.getElementById('browser-modal');
+  var frame   = document.getElementById('browser-frame');
+  var prog    = document.getElementById('browser-progress');
+  var urlText = document.getElementById('browser-url-text');
+  frame.src = url;
   document.getElementById('browser-title').textContent = title || url;
   document.getElementById('browser-open-tab').href = url;
+  if (urlText) urlText.textContent = _browserUrlDisplay(url);
+  // Show loading progress
+  if (prog) { prog.className = 'browser-progress loading'; }
+  frame.onload = function() {
+    if (prog) {
+      prog.className = 'browser-progress done';
+      setTimeout(function() { prog.className = 'browser-progress'; }, 400);
+    }
+  };
   modal.style.opacity = '1';
   modal.style.pointerEvents = 'auto';
   lockBodyScroll();
 }
 function closeBrowser() {
-  const modal = document.getElementById('browser-modal');
+  var modal = document.getElementById('browser-modal');
+  var prog  = document.getElementById('browser-progress');
   modal.style.opacity = '0';
   modal.style.pointerEvents = 'none';
+  if (prog) prog.className = 'browser-progress';
   setTimeout(function() { document.getElementById('browser-frame').src = 'about:blank'; }, 260);
   unlockBodyScroll();
 }
 document.getElementById('browser-close').addEventListener('click', closeBrowser);
+document.getElementById('browser-refresh').addEventListener('click', function() {
+  var frame = document.getElementById('browser-frame');
+  var prog  = document.getElementById('browser-progress');
+  if (prog) prog.className = 'browser-progress loading';
+  try { frame.contentWindow.location.reload(); } catch(_) { frame.src = frame.src; }
+  frame.onload = function() {
+    if (prog) {
+      prog.className = 'browser-progress done';
+      setTimeout(function() { prog.className = 'browser-progress'; }, 400);
+    }
+  };
+});
 document.getElementById('gosolo-btn').addEventListener('click', () => {
   const s = _safeAdminSettings();
   window.open(s.gosoloUrl || 'https://phx.gosolo.io/', '_blank', 'noopener,noreferrer');
@@ -23070,60 +23198,29 @@ function initInstallsMap() {
 </div>
 
 <!-- ── PDF Viewer Modal ─────────────────────────────────────────────── -->
-<div id="pdf-viewer-modal" style="display:flex;position:fixed;inset:0;z-index:9999;background:#1a1a1a;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .25s;">
-
-  <!-- Toolbar — safe-area-aware, always above notch -->
-  <div id="pdf-toolbar" style="
-    display:flex;align-items:center;gap:12px;flex-shrink:0;
-    padding-top:calc(env(safe-area-inset-top,0px) + 10px);
-    padding-bottom:12px;padding-left:16px;padding-right:16px;
-    background:#111;border-bottom:1px solid rgba(255,255,255,0.08);">
-
-    <!-- Close — large tap target, top-left, always visible -->
-    <button onclick="closePdfViewer()" style="
-      width:44px;height:44px;border-radius:50%;
-      background:rgba(255,255,255,0.14);border:none;color:#fff;
-      font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;
-      -webkit-tap-highlight-color:transparent;">✕</button>
-
-    <!-- Title + progress -->
-    <div style="flex:1;min-width:0;">
-      <div id="pdf-viewer-title" style="font-size:13px;font-weight:700;color:#fff;
-           overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
-      <div id="pdf-page-indicator" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;"></div>
+<div id="pdf-viewer-modal">
+  <div class="pdf-toolbar">
+    <button class="pdf-close-btn" onclick="closePdfViewer()">✕</button>
+    <div class="pdf-title-wrap">
+      <div id="pdf-viewer-title" class="pdf-title"></div>
+      <div id="pdf-page-indicator" class="pdf-page-indicator"></div>
     </div>
-
-    <!-- Page nav -->
-    <button id="pdf-prev-btn" onclick="pdfChangePage(-1)" style="
-      width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.10);
-      border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;
-      -webkit-tap-highlight-color:transparent;">‹</button>
-    <button id="pdf-next-btn" onclick="pdfChangePage(1)" style="
-      width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.10);
-      border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;
-      -webkit-tap-highlight-color:transparent;">›</button>
+    <button id="pdf-prev-btn" class="pdf-nav-btn" onclick="pdfChangePage(-1)">‹</button>
+    <button id="pdf-next-btn" class="pdf-nav-btn" onclick="pdfChangePage(1)">›</button>
   </div>
-
-  <!-- Progress bar -->
-  <div style="height:3px;background:rgba(255,255,255,0.08);flex-shrink:0;">
-    <div id="pdf-progress-bar" style="height:100%;background:var(--amber);width:0%;transition:width 0.3s ease;"></div>
+  <div class="pdf-progress-track">
+    <div id="pdf-progress-bar" class="pdf-progress-fill"></div>
   </div>
-
-  <!-- Canvas scroll container — touch-action:pan-y allows native scroll+pinch -->
-  <div id="pdf-canvas-wrap" style="
-    flex:1;overflow-y:auto;overflow-x:hidden;
-    -webkit-overflow-scrolling:touch;
-    display:flex;flex-direction:column;align-items:center;
-    background:#1a1a1a;padding:12px 0;
-    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
-    touch-action:pan-y pinch-zoom;">
-    <canvas id="pdf-canvas" style="
-      max-width:100%;height:auto;display:block;
-      box-shadow:0 4px 24px rgba(0,0,0,0.5);
-      touch-action:pan-y pinch-zoom;"></canvas>
+  <div id="pdf-canvas-wrap" class="pdf-canvas-wrap">
+    <div id="pdf-loading-state" class="pdf-loading">
+      <div class="pdf-spinner"></div>
+      Loading document…
+    </div>
+    <canvas id="pdf-canvas" class="pdf-canvas" style="display:none"></canvas>
+    <div id="pdf-error-state" class="pdf-error" style="display:none">
+      Failed to load document
+      <button class="pdf-retry-btn" id="pdf-retry-btn">Retry</button>
+    </div>
   </div>
 </div>
 
@@ -23149,11 +23246,11 @@ function _pdfLoadProgress(src) {
 
 function _pdfUpdateUI() {
   if (!_pdfDoc) return;
-  const total = _pdfDoc.numPages;
-  document.getElementById('pdf-page-indicator').textContent = `Page ${_pdfPage} of ${total}`;
+  var total = _pdfDoc.numPages;
+  document.getElementById('pdf-page-indicator').textContent = 'Page ' + _pdfPage + ' of ' + total;
   document.getElementById('pdf-progress-bar').style.width = ((_pdfPage / total) * 100) + '%';
-  document.getElementById('pdf-prev-btn').style.opacity = _pdfPage <= 1 ? '0.3' : '1';
-  document.getElementById('pdf-next-btn').style.opacity = _pdfPage >= total ? '0.3' : '1';
+  document.getElementById('pdf-prev-btn').disabled = _pdfPage <= 1;
+  document.getElementById('pdf-next-btn').disabled = _pdfPage >= total;
 }
 
 function _pdfRenderPage(num) {
@@ -23194,7 +23291,6 @@ function pdfChangePage(delta) {
 
 function openPdfViewer(src, title) {
   if (typeof pdfjsLib === 'undefined') {
-    // PDF.js not loaded — fallback to native open
     window.open(src, '_blank', 'noopener');
     return;
   }
@@ -23205,30 +23301,47 @@ function openPdfViewer(src, title) {
   _pdfDoc  = null;
   _pdfPage = 1;
 
-  const modal = document.getElementById('pdf-viewer-modal');
+  var modal    = document.getElementById('pdf-viewer-modal');
+  var loading  = document.getElementById('pdf-loading-state');
+  var errState = document.getElementById('pdf-error-state');
+  var canvas   = document.getElementById('pdf-canvas');
   document.getElementById('pdf-viewer-title').textContent = title;
-  document.getElementById('pdf-page-indicator').textContent = 'Loading…';
+  document.getElementById('pdf-page-indicator').textContent = '';
   document.getElementById('pdf-progress-bar').style.width = '0%';
   document.getElementById('pdf-canvas-wrap').scrollTop = 0;
-  modal.style.opacity = '1';
-  modal.style.pointerEvents = 'auto';
+  // Show loading, hide canvas + error
+  if (loading)  loading.style.display = '';
+  if (errState) errState.style.display = 'none';
+  if (canvas)   canvas.style.display = 'none';
+  modal.classList.add('pdf-open');
   lockBodyScroll();
 
-  pdfjsLib.getDocument(src).promise.then(pdf => {
-    _pdfDoc  = pdf;
-    // Resume from saved page, clamp to valid range
-    const saved = Math.min(_pdfLoadProgress(src), pdf.numPages);
-    _pdfRenderPage(saved);
-  }).catch(() => {
-    document.getElementById('pdf-page-indicator').textContent = 'Could not load PDF';
-  });
+  function _loadPdf() {
+    if (loading)  loading.style.display = '';
+    if (errState) errState.style.display = 'none';
+    pdfjsLib.getDocument(src).promise.then(function(pdf) {
+      _pdfDoc = pdf;
+      if (loading) loading.style.display = 'none';
+      if (canvas)  canvas.style.display = '';
+      var saved = Math.min(_pdfLoadProgress(src), pdf.numPages);
+      _pdfRenderPage(saved);
+    }).catch(function(err) {
+      if (loading)  loading.style.display = 'none';
+      if (errState) errState.style.display = '';
+      if (typeof Sentry !== 'undefined') Sentry.captureException(err);
+    });
+  }
+  _loadPdf();
+
+  // Wire retry button
+  var retryBtn = document.getElementById('pdf-retry-btn');
+  if (retryBtn) retryBtn.onclick = _loadPdf;
 }
 
 function closePdfViewer() {
   _pdfSaveProgress();
-  const modal = document.getElementById('pdf-viewer-modal');
-  modal.style.opacity = '0';
-  modal.style.pointerEvents = 'none';
+  var modal = document.getElementById('pdf-viewer-modal');
+  modal.classList.remove('pdf-open');
   unlockBodyScroll();
   _pdfDoc = null; _pdfSrc = ''; _pdfPage = 1;
 }
