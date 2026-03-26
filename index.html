@@ -4644,6 +4644,7 @@
     background: rgba(0,0,0,0.30);
     border-bottom: 1px solid rgba(255,255,255,0.05);
     overflow-x: auto; -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
   }
   .ma-stat {
     display: flex; flex-direction: column; gap: 4px;
@@ -5008,6 +5009,7 @@
     padding: 4px; margin: 0 16px 16px;
     border: 1px solid var(--g-border);
     overflow-x: auto; -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
     scrollbar-width: none;
   }
   .lb-range-tabs::-webkit-scrollbar { display: none; }
@@ -13850,6 +13852,8 @@ function activateTab(tabId) {
   const doSwitch = () => {
     // Close booking sheet if open when switching tabs (cleans up scroll lock + touchmove listener)
     if (bookingSheet && bookingSheet.classList.contains('open')) closeBookingSheet();
+    // Reset scroll to top on tab switch
+    document.getElementById('main') && (document.getElementById('main').scrollTop = 0);
 
     navItems.forEach(btn => {
       const active = btn.dataset.tab === tabId;
@@ -16201,7 +16205,6 @@ function lockBodyScroll() {
   document.body.style.overflow = 'hidden';
   document.body.style.position = 'fixed';
   document.body.style.width = '100%';
-  document.getElementById('main') && document.getElementById('main').classList.add('scroll-locked');
 }
 function unlockBodyScroll() {
   document.body.style.overflow = '';
@@ -16209,7 +16212,6 @@ function unlockBodyScroll() {
   document.body.style.width = '';
   document.body.style.top = '';
   document.documentElement.style.overflow = '';
-  document.getElementById('main') && document.getElementById('main').classList.remove('scroll-locked');
 }
 
 function openSheet(entry = null) {
@@ -18537,7 +18539,7 @@ function openBookingSheet() {
   bookingOverlay.setAttribute('aria-hidden', 'false');
   lockBodyScroll();
   const _mainEl = document.getElementById('main');
-  if (_mainEl) { _mainEl._bsSavedScroll = _mainEl.scrollTop; _mainEl.classList.add('scroll-locked'); }
+  if (_mainEl) { _mainEl._bsSavedScroll = _mainEl.scrollTop; }
   document.addEventListener('touchmove', _bookingTouchMove, { passive: false });
   // Default datetime to next hour
   const now = new Date();
@@ -18554,7 +18556,7 @@ function closeBookingSheet() {
   bookingOverlay.setAttribute('aria-hidden', 'true');
   unlockBodyScroll();
   const _mainElC = document.getElementById('main');
-  if (_mainElC) { _mainElC.classList.remove('scroll-locked'); _mainElC.scrollTop = _mainElC._bsSavedScroll || 0; }
+  if (_mainElC) { _mainElC.scrollTop = _mainElC._bsSavedScroll || 0; }
   document.removeEventListener('touchmove', _bookingTouchMove);
   setTimeout(() => {
     bookingForm.reset();
