@@ -12688,8 +12688,7 @@ function applyOrgBranding(orgId, org) {
                 if (org.logoUrl) {
                   var _hbl = document.getElementById('header-brand-img');
                   if (_hbl) _hbl.src = org.logoUrl;
-                  var _sp = document.getElementById('splash-logo');
-                  if (_sp) _sp.src = org.logoUrl;
+                  // Don't overwrite #splash-logo — revealOrg uses #splash-org-logo
                   document.querySelectorAll('.login-logo img').forEach(function(i){ i.src = org.logoUrl; });
                 }
                 if (org.iconUrl) {
@@ -12698,8 +12697,9 @@ function applyOrgBranding(orgId, org) {
                 }
               } else {
                 console.warn('[Branding] No doc at organizations/' + _orgIdForBrand + ' — check Firestore');
+                _dismissSplash();
               }
-              _dismissSplash();
+              // revealOrg handles its own dismiss — only dismiss here if revealOrg was NOT called
             })
             .catch(function(e) {
               console.warn('[Branding] Load failed:', e.code, e.message);
