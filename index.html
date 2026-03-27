@@ -1766,6 +1766,10 @@
       gap: 12px;
       margin-bottom: 24px;
     }
+    /* Last dynamic quick link spans full width if odd count */
+    #dash-dynamic-quicklinks .ql-dynamic-btn:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
 
     .quick-link-btn {
       display: flex; flex-direction: column;
@@ -8498,25 +8502,8 @@
 
       <div class="quick-links-grid">
 
-        <button class="quick-link-btn quick-link-btn--primary" id="gosolo-btn" aria-label="Open GoSolo quoting tool">
-          <div class="ql-icon">
-            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </div>
-          <div class="ql-text">
-            <span class="ql-name">GoSolo</span>
-            <span class="ql-desc">Quoting Tool</span>
-          </div>
-        </button>
-
-        <button class="quick-link-btn" id="cptl-grid-btn" aria-label="Open CPTL Grid">
-          <div class="ql-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          </div>
-          <div class="ql-text">
-            <span class="ql-name">CPTL Grid</span>
-            <span class="ql-desc">Utility tool</span>
-          </div>
-        </button>
+        <!-- Dynamic quick links (from admin settings) -->
+        <div id="dash-dynamic-quicklinks" style="display:contents"></div>
 
         <!-- Trophy checklist card -->
         <button class="quick-link-btn quick-link-btn--trophy" id="checklist-shortcut-btn" aria-label="Open Clean Deal Checklist">
@@ -10298,15 +10285,16 @@
         <div class="admin-accordion-body">
           <p style="font-size:13px;color:var(--text-3);margin:0 0 12px;line-height:1.5">Customize dashboard quick-link labels, subtitles, and URLs.</p>
           <div id="admin-ql-list"></div>
-          <button class="admin-save-btn" id="admin-ql-save-btn" style="margin-top:10px">💾 Save Quick Links</button>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="admin-save-btn" id="admin-ql-add-btn" style="flex:1;background:var(--g2);color:var(--text-2);border:1px dashed var(--g-border)">+ Add Quick Link</button>
+            <button class="admin-save-btn" id="admin-ql-save-btn" style="flex:1">Save Quick Links</button>
+          </div>
         </div>
       </details>
 
       <!-- Hidden inputs for backward compat -->
       <input type="hidden" id="admin-company-name" value="" />
       <input type="hidden" id="admin-tagline" value="" />
-      <input type="hidden" id="admin-gosolo-url" value="" />
-      <input type="hidden" id="admin-grid-url" value="" />
       <input type="hidden" id="admin-logo-upload" />
       <div style="display:none"><img id="admin-logo-img" /></div>
 
@@ -10860,12 +10848,7 @@
       </summary>
       <div class="ma-card-body">
         <div class="ma-field">
-          <label class="ma-label">GOSOLO URL</label>
-          <input class="ma-input" type="url" id="ma-gosolo-url" placeholder="https://phx.gosolo.io/" />
-        </div>
-        <div class="ma-field">
-          <label class="ma-label">CPTL GRID URL</label>
-          <input class="ma-input" type="url" id="ma-grid-url" placeholder="https://procfu.com/..." />
+          <span style="font-size:12px;color:rgba(122,184,212,0.6)">Quick Links are now managed in Admin → Quick Links (dynamic add/delete)</span>
         </div>
         <div class="ma-field">
           <label class="ma-label">AI CHAT API URL</label>
@@ -12317,8 +12300,7 @@ function saveOrgSettingsToFirestore() {
   var payload = {
     companyName:    s.companyName    || '',
     tagline:        s.tagline        || '',
-    gosoloUrl:      s.gosoloUrl      || '',
-    gridUrl:        s.gridUrl        || '',
+    quickLinks:     s.quickLinks     || [],
     themePrimary:   localStorage.getItem('wc_theme_primary') || '',
     glassColor:     localStorage.getItem('wc_glass_color')   || '',
     appName:        localStorage.getItem('wc_app_name')      || '',
@@ -12350,12 +12332,19 @@ function applyOrgSettings(data) {
     if (_hbAlt) _hbAlt.alt = data.companyName;
   }
   if (data.tagline)        s.tagline        = data.tagline;
-  if (data.gosoloUrl)      s.gosoloUrl      = data.gosoloUrl;
-  if (data.gridUrl)        s.gridUrl        = data.gridUrl;
+  if (data.quickLinks)     s.quickLinks     = data.quickLinks;
+  // Legacy migration: gosoloUrl/gridUrl → quickLinks
+  if (!s.quickLinks && (data.gosoloUrl || data.gridUrl)) {
+    s.quickLinks = [];
+    if (data.gosoloUrl) s.quickLinks.push({ title: 'GoSolo', url: data.gosoloUrl });
+    if (data.gridUrl)   s.quickLinks.push({ title: 'CPTL Grid', url: data.gridUrl });
+  }
   if (data.notificationEmail) s.notificationEmail = data.notificationEmail;
   if (data.dispoEmailTo)     s.dispoEmailTo     = data.dispoEmailTo;
   if (data.dispoEmailFrom)   s.dispoEmailFrom   = data.dispoEmailFrom;
   try { localStorage.setItem('wc_admin', JSON.stringify(s)); } catch(_) {}
+  // Re-render dynamic quick links
+  if (typeof renderDashQuickLinks === 'function') renderDashQuickLinks();
 
   // Populate admin settings inputs if visible
   var _neI = document.getElementById('admin-notify-email');
@@ -12407,8 +12396,6 @@ function applyOrgSettings(data) {
   var fieldMap = {
     'admin-company-name': data.companyName,
     'admin-tagline':      data.tagline,
-    'admin-gosolo-url':   data.gosoloUrl,
-    'admin-grid-url':     data.gridUrl
   };
   Object.keys(fieldMap).forEach(function(id) {
     if (!fieldMap[id]) return;
@@ -20275,12 +20262,7 @@ function openMasterAdmin() {
   if (!sheet) return;
 
   // Populate fields
-  const s = _safeAdminSettings();
-  const maGoSolo  = document.getElementById('ma-gosolo-url');
-  const maGrid    = document.getElementById('ma-grid-url');
   const maChatApi = document.getElementById('ma-chat-api-url');
-  if (maGoSolo)   maGoSolo.value   = s.gosoloUrl || 'https://phx.gosolo.io/';
-  if (maGrid)     maGrid.value     = s.gridUrl   || 'https://procfu.com/widgets/mcapp/qWhbwtv797R7';
   if (maChatApi)  maChatApi.value  = localStorage.getItem('wc_chat_api_url') || '';
 
   // Storage info
@@ -20364,18 +20346,9 @@ function applyGlassColor(hex) {
   document.documentElement.style.setProperty('--g-border-hi', hex + '47');
 }
 
-// Save dev quick links
+// Save dev settings (AI Chat API URL)
 document.getElementById('ma-save-links-btn').addEventListener('click', () => {
-  const gosoloUrl = document.getElementById('ma-gosolo-url').value.trim();
-  const gridUrl   = document.getElementById('ma-grid-url').value.trim();
   const chatApiUrl = document.getElementById('ma-chat-api-url').value.trim();
-  const s = _safeAdminSettings();
-  if (gosoloUrl) s.gosoloUrl = gosoloUrl;
-  if (gridUrl)   s.gridUrl   = gridUrl;
-  localStorage.setItem('wc_admin', JSON.stringify(s));
-  // Update hidden admin fields so GoSolo/Grid buttons still work
-  document.getElementById('admin-gosolo-url').value = gosoloUrl || s.gosoloUrl;
-  document.getElementById('admin-grid-url').value   = gridUrl   || s.gridUrl;
   // Save AI Chat API URL — updates TrainerBot live
   if (chatApiUrl) {
     localStorage.setItem('wc_chat_api_url', chatApiUrl);
@@ -20547,37 +20520,7 @@ document.getElementById('ma-logo-upload')?.addEventListener('change', e => {
     if (el) el.textContent = s.checklistPdf ? `✓ ${s.checklistPdf.name}` : 'No custom checklist — default shown.';
   })();
 
-  // Quick Links editor in Master Admin
-  function _renderMaQuickLinks() {
-    const container = document.getElementById('ma-ql-list');
-    if (!container) return;
-    const cfg = _loadQuickLinkConfig() || DEFAULT_QUICK_LINKS;
-    container.innerHTML = cfg.map((item, i) => `
-      <div style="margin-bottom:14px;padding:12px;border-radius:12px;background:rgba(20,143,152,0.04);border:1px solid rgba(20,143,152,0.12)">
-        <div style="font-size:11px;font-weight:700;color:var(--amber-bright);letter-spacing:0.08em;margin-bottom:8px;text-transform:uppercase">${escHtml(DEFAULT_QUICK_LINKS[i]?.name || item.name)}</div>
-        <div style="margin-bottom:8px"><label style="font-size:10px;color:#7ab8d4;letter-spacing:0.06em;font-weight:600;text-transform:uppercase">Label</label>
-          <input class="ma-input" type="text" id="ma-ql-name-${i}" value="${escHtml(item.name)}" placeholder="${escHtml(DEFAULT_QUICK_LINKS[i]?.name || '')}" style="margin-top:4px" /></div>
-        <div style="margin-bottom:8px"><label style="font-size:10px;color:#7ab8d4;letter-spacing:0.06em;font-weight:600;text-transform:uppercase">Subtitle</label>
-          <input class="ma-input" type="text" id="ma-ql-desc-${i}" value="${escHtml(item.desc)}" placeholder="${escHtml(DEFAULT_QUICK_LINKS[i]?.desc || '')}" style="margin-top:4px" /></div>
-        <div><label style="font-size:10px;color:#7ab8d4;letter-spacing:0.06em;font-weight:600;text-transform:uppercase">Custom URL (optional)</label>
-          <input class="ma-input" type="url" id="ma-ql-url-${i}" value="${escHtml(item.url || '')}" placeholder="https://..." style="margin-top:4px" /></div>
-      </div>
-    `).join('');
-  }
-
-  document.getElementById('ma-ql-save-btn')?.addEventListener('click', () => {
-    const cfg = (_loadQuickLinkConfig() || DEFAULT_QUICK_LINKS).map((item, i) => ({
-      ...item,
-      name: document.getElementById(`ma-ql-name-${i}`)?.value.trim() || item.name,
-      desc: document.getElementById(`ma-ql-desc-${i}`)?.value.trim() || item.desc,
-      url:  document.getElementById(`ma-ql-url-${i}`)?.value.trim()  || '',
-    }));
-    _saveQuickLinkConfig(cfg);
-    _applyQuickLinkConfig();
-    showToast('Quick links saved!');
-    const btn = document.getElementById('ma-ql-save-btn');
-    if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = '💾 Save Quick Links'; }, 1500); }
-  });
+  // Quick Links now managed via Admin → Quick Links (dynamic add/delete)
 
   // Hook master admin open to populate fields
   const maSheet = document.getElementById('master-admin-sheet');
@@ -21555,8 +21498,6 @@ document.querySelectorAll('.reports-range-tab').forEach(btn => {
 const ADMIN_DEFAULTS = {
   companyName: 'Capital Energy',
   tagline:     'Solar Sales Hub',
-  gosoloUrl:   'https://phx.gosolo.io/',
-  gridUrl:     'https://procfu.com/widgets/mcapp/qWhbwtv797R7',
   repName:     '',
   repTitle:    'Solar Energy Consultant',
   repPhone:    '',
@@ -21570,8 +21511,6 @@ function loadAdminSettings() {
   // Hidden backward-compat fields (now managed by Master Admin)
   document.getElementById('admin-company-name').value = s.companyName || ADMIN_DEFAULTS.companyName;
   document.getElementById('admin-tagline').value       = s.tagline     || ADMIN_DEFAULTS.tagline;
-  document.getElementById('admin-gosolo-url').value    = s.gosoloUrl   || ADMIN_DEFAULTS.gosoloUrl;
-  document.getElementById('admin-grid-url').value      = s.gridUrl     || ADMIN_DEFAULTS.gridUrl;
   // Visible fields
   document.getElementById('admin-rep-name').value      = s.repName     || localStorage.getItem('wc_user_name') || '';
   document.getElementById('admin-rep-title').value     = s.repTitle    || ADMIN_DEFAULTS.repTitle;
@@ -21639,8 +21578,6 @@ function saveAdminSettings() {
   const updates = {
     companyName: document.getElementById('admin-company-name').value.trim() || ADMIN_DEFAULTS.companyName,
     tagline:     document.getElementById('admin-tagline').value.trim()       || ADMIN_DEFAULTS.tagline,
-    gosoloUrl:   document.getElementById('admin-gosolo-url').value.trim()    || ADMIN_DEFAULTS.gosoloUrl,
-    gridUrl:     document.getElementById('admin-grid-url').value.trim()      || ADMIN_DEFAULTS.gridUrl,
     repName:        document.getElementById('admin-rep-name').value.trim(),
     repTitle:       document.getElementById('admin-rep-title').value.trim()     || ADMIN_DEFAULTS.repTitle,
     repPhone:       document.getElementById('admin-rep-phone').value.trim(),
@@ -21995,71 +21932,79 @@ document.getElementById('admin-add-member').addEventListener('click', () => {
 })();
 
 // ── Admin: Quick Links configuration ─────────────────────────────────────
-const DEFAULT_QUICK_LINKS = [
-  { id: 'gosolo-btn',       name: 'GoSolo',     desc: 'Quoting Tool',             url: '' },
-  { id: 'cptl-grid-btn',    name: 'CPTL Grid',  desc: 'Utility tool',             url: '' },
-  { id: 'checklist-shortcut-btn', name: 'Checklist', desc: 'Just closed a deal?', url: '' },
-  { id: 'dispo-appt-btn',   name: 'Dispo Appt', desc: 'Pending results',          url: '' },
-  { id: 'bcard-btn',        name: 'My Card',    desc: 'Digital business card',    url: '' },
-  { id: 'review-btn',       name: 'Review',     desc: 'Send review request',      url: '' },
-];
-
-function _loadQuickLinkConfig() {
-  try { return JSON.parse(localStorage.getItem('wc_quicklinks') || 'null'); } catch(_) { return null; }
+function _loadQuickLinks() {
+  var s = _safeAdminSettings();
+  if (s.quickLinks && s.quickLinks.length) return s.quickLinks;
+  return null;
 }
 
-function _saveQuickLinkConfig(arr) {
-  try { localStorage.setItem('wc_quicklinks', JSON.stringify(arr)); } catch(_) {}
-}
-
-function _applyQuickLinkConfig() {
-  const cfg = _loadQuickLinkConfig();
-  if (!cfg) return;
-  cfg.forEach(item => {
-    const btn = document.getElementById(item.id);
-    if (!btn) return;
-    const nameEl = btn.querySelector('.ql-name');
-    const descEl = btn.querySelector('.ql-desc');
-    if (nameEl && item.name) nameEl.textContent = item.name;
-    if (descEl && item.desc) descEl.textContent = item.desc;
-    // Store URL for later — buttons with custom URLs open browser modal
-    if (item.url) btn.dataset.customUrl = item.url;
-  });
+function _saveQuickLinks(arr) {
+  var s = _safeAdminSettings();
+  s.quickLinks = arr;
+  // Remove legacy fields
+  delete s.gosoloUrl;
+  delete s.gridUrl;
+  localStorage.setItem('wc_admin', JSON.stringify(s));
 }
 
 function renderAdminQuickLinks() {
-  const container = document.getElementById('admin-ql-list');
+  var container = document.getElementById('admin-ql-list');
   if (!container) return;
-  const cfg = _loadQuickLinkConfig() || DEFAULT_QUICK_LINKS;
-  container.innerHTML = cfg.map((item, i) => `
-    <div class="admin-ql-item">
-      <div class="admin-ql-item-title">${escHtml(DEFAULT_QUICK_LINKS[i]?.name || item.name)}</div>
-      <div class="admin-field">
-        <label class="admin-label" for="ql-cfg-name-${i}">Label</label>
-        <input class="admin-input" type="text" id="ql-cfg-name-${i}" value="${escHtml(item.name)}" placeholder="${escHtml(DEFAULT_QUICK_LINKS[i]?.name || '')}" />
-      </div>
-      <div class="admin-field">
-        <label class="admin-label" for="ql-cfg-desc-${i}">Subtitle</label>
-        <input class="admin-input" type="text" id="ql-cfg-desc-${i}" value="${escHtml(item.desc)}" placeholder="${escHtml(DEFAULT_QUICK_LINKS[i]?.desc || '')}" />
-      </div>
-      <div class="admin-field">
-        <label class="admin-label" for="ql-cfg-url-${i}">Custom URL <span style="font-weight:400;font-size:11px;color:var(--text-2)">(optional — overrides default action)</span></label>
-        <input class="admin-input" type="url" id="ql-cfg-url-${i}" value="${escHtml(item.url || '')}" placeholder="https://..." />
-      </div>
-    </div>
-  `).join('');
+  var links = _loadQuickLinks() || [];
+  container.innerHTML = links.map(function(item, i) {
+    return '<div class="admin-ql-item" style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;padding:10px 12px;background:var(--g1);border:1px solid var(--g-border);border-radius:12px">' +
+      '<div style="flex:1;display:flex;flex-direction:column;gap:6px">' +
+        '<input class="admin-input ql-dyn-title" type="text" value="' + escHtml(item.title || '') + '" placeholder="Quick Link Title" data-idx="' + i + '" style="font-weight:700" />' +
+        '<input class="admin-input ql-dyn-url" type="url" value="' + escHtml(item.url || '') + '" placeholder="https://your-link-here" data-idx="' + i + '" data-validate="url" />' +
+      '</div>' +
+      '<button class="ql-dyn-delete" data-idx="' + i + '" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--g-border);background:none;color:var(--danger);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" title="Remove">×</button>' +
+    '</div>';
+  }).join('');
+  if (!links.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-3);font-size:13px">No quick links yet. Tap + Add to create one.</div>';
+  }
 }
 
-document.getElementById('admin-ql-save-btn')?.addEventListener('click', () => {
-  const cfg = (_loadQuickLinkConfig() || DEFAULT_QUICK_LINKS).map((item, i) => ({
-    ...item,
-    name: document.getElementById(`ql-cfg-name-${i}`)?.value.trim() || item.name,
-    desc: document.getElementById(`ql-cfg-desc-${i}`)?.value.trim() || item.desc,
-    url:  document.getElementById(`ql-cfg-url-${i}`)?.value.trim()  || '',
-  }));
-  _saveQuickLinkConfig(cfg);
-  _applyQuickLinkConfig();
-  showToast('Quick links saved!');
+function _readQuickLinksFromAdmin() {
+  var titles = document.querySelectorAll('.ql-dyn-title');
+  var urls   = document.querySelectorAll('.ql-dyn-url');
+  var links = [];
+  titles.forEach(function(el, i) {
+    var title = el.value.trim();
+    var url   = urls[i] ? urls[i].value.trim() : '';
+    if (title || url) links.push({ title: title, url: url });
+  });
+  return links;
+}
+
+// Admin QL save
+document.getElementById('admin-ql-save-btn')?.addEventListener('click', function() {
+  var links = _readQuickLinksFromAdmin();
+  _saveQuickLinks(links);
+  renderDashQuickLinks();
+  if (typeof saveOrgSettingsToFirestore === 'function') saveOrgSettingsToFirestore();
+  showToast('\u2705 Quick links saved');
+  haptic('light');
+});
+
+// Admin QL add button
+document.getElementById('admin-ql-add-btn')?.addEventListener('click', function() {
+  var links = _readQuickLinksFromAdmin();
+  links.push({ title: '', url: '' });
+  _saveQuickLinks(links);
+  renderAdminQuickLinks();
+});
+
+// Admin QL delete (event delegation)
+document.getElementById('admin-ql-list')?.addEventListener('click', function(e) {
+  var del = e.target.closest('.ql-dyn-delete');
+  if (!del) return;
+  var idx = parseInt(del.dataset.idx, 10);
+  var links = _readQuickLinksFromAdmin();
+  links.splice(idx, 1);
+  _saveQuickLinks(links);
+  renderAdminQuickLinks();
+  haptic('light');
 });
 
 // Hook into admin panel open to populate quick links editor + drop call numbers
@@ -22081,8 +22026,6 @@ document.getElementById('admin-ql-save-btn')?.addEventListener('click', () => {
       }
     }).observe(adminPanel, { attributes: true, attributeFilter: ['class'] });
   }
-  // Apply on load
-  _applyQuickLinkConfig();
   // Hide drop call section by default (role check runs when panel opens)
   const dcSection = document.getElementById('admin-drop-call-section');
   if (dcSection) {
@@ -22634,14 +22577,39 @@ document.getElementById('browser-refresh').addEventListener('click', function() 
     }
   };
 });
-document.getElementById('gosolo-btn').addEventListener('click', () => {
-  const s = _safeAdminSettings();
-  window.open(s.gosoloUrl || 'https://phx.gosolo.io/', '_blank', 'noopener,noreferrer');
+// ── Dynamic Quick Links renderer ─────────────────────────────────────────
+function renderDashQuickLinks() {
+  var container = document.getElementById('dash-dynamic-quicklinks');
+  if (!container) return;
+  var links = _loadQuickLinks() || [];
+  if (!links.length) { container.innerHTML = ''; return; }
+  container.innerHTML = links.map(function(item, i) {
+    if (!item.title && !item.url) return '';
+    var isPrimary = i === 0 ? ' quick-link-btn--primary' : '';
+    return '<button class="quick-link-btn' + isPrimary + ' ql-dynamic-btn" data-ql-url="' + escHtml(item.url || '') + '" data-ql-title="' + escHtml(item.title || '') + '" aria-label="' + escHtml(item.title || 'Link') + '">' +
+      '<div class="ql-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>' +
+      '<div class="ql-text"><span class="ql-name">' + escHtml(item.title || 'Link') + '</span>' +
+      '<span class="ql-desc">' + escHtml(item.url ? new URL(item.url).hostname : '') + '</span></div></button>';
+  }).filter(Boolean).join('');
+}
+
+// Dynamic quick link click handler (event delegation)
+document.getElementById('dash-dynamic-quicklinks')?.addEventListener('click', function(e) {
+  var btn = e.target.closest('.ql-dynamic-btn');
+  if (!btn) return;
+  var url = btn.dataset.qlUrl;
+  var title = btn.dataset.qlTitle;
+  if (!url) return;
+  // Open in browser modal if same-ish domain, otherwise new tab
+  if (url.includes('gosolo') || url.includes('procfu') || url.includes('netlify')) {
+    openBrowser(url, title || url);
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 });
-document.getElementById('cptl-grid-btn').addEventListener('click', () => {
-  const s = _safeAdminSettings();
-  openBrowser(s.gridUrl || 'https://procfu.com/widgets/mcapp/qWhbwtv797R7', 'CPTL Grid');
-});
+
+// Render on load
+renderDashQuickLinks();
 
 // ── Map ────────────────────────────────────────────────────────────────────
 const DISPO_COLORS = {
