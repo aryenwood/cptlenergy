@@ -22585,8 +22585,7 @@ function renderDashQuickLinks() {
   if (!links.length) { container.innerHTML = ''; return; }
   container.innerHTML = links.map(function(item, i) {
     if (!item.title && !item.url) return '';
-    var isPrimary = i === 0 ? ' quick-link-btn--primary' : '';
-    return '<button class="quick-link-btn' + isPrimary + ' ql-dynamic-btn" data-ql-url="' + escHtml(item.url || '') + '" data-ql-title="' + escHtml(item.title || '') + '" aria-label="' + escHtml(item.title || 'Link') + '">' +
+    return '<button class="quick-link-btn ql-dynamic-btn" data-ql-url="' + escHtml(item.url || '') + '" data-ql-title="' + escHtml(item.title || '') + '" aria-label="' + escHtml(item.title || 'Link') + '">' +
       '<div class="ql-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>' +
       '<div class="ql-text"><span class="ql-name">' + escHtml(item.title || 'Link') + '</span>' +
       '<span class="ql-desc">' + escHtml(item.url ? new URL(item.url).hostname : '') + '</span></div></button>';
