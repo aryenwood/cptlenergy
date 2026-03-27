@@ -13215,9 +13215,9 @@ const SMK = SvelteMotionKit;
 // ══════════════════════════════════════════════════════════════════════════
 const DataStore = (() => {
   const KEYS = {
-    entries:      'ce_log_entries',
-    appointments: 'ce_appointments',
-    team:         'ce_team',
+    entries:      'wc_log_entries',
+    appointments: 'wc_appointments',
+    team:         'wc_team',
   };
   const _cache = {};  // In-memory cache to avoid repeated JSON.parse
   function _read(key, fallback) {
@@ -15065,10 +15065,10 @@ function renderDashboard() {
   if (typeof _updatePendingCard === 'function') _updatePendingCard();
 
   let entries = [];
-  try { entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) {}
+  try { entries = JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) {}
 
   let appointments = [];
-  try { appointments = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  try { appointments = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
 
   // Role-based filtering: canvassers/closers see only their own data
   // v93: use impersonation-aware helpers instead of raw localStorage
@@ -15308,7 +15308,7 @@ function renderDashAssign() {
 
   // Load closer roster
   let closers = [];
-  try { closers = JSON.parse(localStorage.getItem('ce_team') || '[]').filter(m => (m.role || 'closer') === 'closer').map(m => m.name); } catch(_) {}
+  try { closers = JSON.parse(localStorage.getItem('wc_team') || '[]').filter(m => (m.role || 'closer') === 'closer').map(m => m.name); } catch(_) {}
 
   if (!appts.length) {
     list.innerHTML = `<div style="color:var(--text-3);font-size:13px;padding:10px 0">No upcoming appointments to assign.</div>`;
@@ -15407,7 +15407,7 @@ function renderGameStats(passedEntries, passedAppts) {
   // Accept pre-parsed data from renderDashboard() to avoid redundant localStorage reads;
   // fall back to parsing from storage when called standalone.
   const entries = passedEntries ?? (() => {
-    try { return JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) { return []; }
+    try { return JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) { return []; }
   })();
 
   const todayStr     = new Date().toDateString();
@@ -15419,7 +15419,7 @@ function renderGameStats(passedEntries, passedAppts) {
   const contacts     = rangeEntries.filter(e => ['go-back','made-contact'].includes(e.status));
   const rawAppts     = passedAppts ?? (() => {
     let a = [];
-    try { a = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+    try { a = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
     return a;
   })();
   const appts        = rawAppts.filter(x => rangeFn({ timestamp: new Date(x.datetime || x.createdAt || 0).getTime() }));
@@ -15555,8 +15555,8 @@ function renderGameStats(passedEntries, passedAppts) {
   try {
     const role2   = getActiveRole();
     const myName2 = (localStorage.getItem('wc_user_name') || '').toLowerCase();
-    const allEntries2 = passedEntries ?? (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries')||'[]'); } catch(_){return [];} })();
-    const allAppts2   = passedAppts   ?? (() => { try { return JSON.parse(localStorage.getItem('ce_appointments')||'[]'); } catch(_){return [];} })();
+    const allEntries2 = passedEntries ?? (() => { try { return JSON.parse(localStorage.getItem('wc_log_entries')||'[]'); } catch(_){return [];} })();
+    const allAppts2   = passedAppts   ?? (() => { try { return JSON.parse(localStorage.getItem('wc_appointments')||'[]'); } catch(_){return [];} })();
     const myE2 = myName2 ? allEntries2.filter(e => (e.repName||e.name||'').toLowerCase()===myName2) : allEntries2;
     const myA2 = myName2 ? allAppts2.filter(a   => (a.closer||a.repName||'').toLowerCase()===myName2) : allAppts2;
     const allDoors2    = myE2.length;
@@ -18749,7 +18749,7 @@ renderLogList();
 // ── Log badge ─────────────────────────────────────────────────────────────
 function updateLogBadge() {
   try {
-    const entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]');
+    const entries = JSON.parse(localStorage.getItem('wc_log_entries') || '[]');
     const badge   = document.getElementById('log-badge');
     const count   = entries.length;
     badge.textContent = count > 99 ? '99+' : count;
@@ -19212,7 +19212,7 @@ function populateCloserDropdown() {
 
   // Team closers
   try {
-    var team = JSON.parse(localStorage.getItem('ce_team') || '[]');
+    var team = JSON.parse(localStorage.getItem('wc_team') || '[]');
     var closers = team.filter(function(m) { return m.role === 'closer'; });
     closers.forEach(function(m) {
       var o = document.createElement('option');
@@ -19569,7 +19569,7 @@ function renderCalendar() {
   // Also add go-backs from log entries (those with status 'go-back' and a goBackDate)
   // Skip if filtering to appts only
   if (calFilter !== 'appts') {
-    const allEntries = (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) { return []; } })();
+    const allEntries = (() => { try { return JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) { return []; } })();
     allEntries.forEach(e => {
       if ((e.status || '').toLowerCase() !== 'go-back') return;
       if (!e.goBackDate) return;
@@ -19695,7 +19695,7 @@ function openCalDaySheet(dateStr) {
   }).sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
   // Get go-backs for this day from log entries
-  const allEntries = (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) { return []; } })();
+  const allEntries = (() => { try { return JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) { return []; } })();
   const gobacks = allEntries.filter(e => {
     if ((e.status || '').toLowerCase() !== 'go-back') return false;
     if (!e.goBackDate) return false;
@@ -20707,7 +20707,7 @@ function getLBRangeMs(range) {
 
 function computeCanvasserStats(range) {
   let entries = [];
-  try { entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) {}
+  try { entries = JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) {}
   const cutoff = Date.now() - getLBRangeMs(range);
   const filtered = entries.filter(e => e.timestamp >= cutoff);
   const counts = {};
@@ -20720,7 +20720,7 @@ function computeCanvasserStats(range) {
 
 function computeCloserStats(range) {
   let appts = [];
-  try { appts = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  try { appts = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
   const cutoff = Date.now() - getLBRangeMs(range);
   const filtered = appts.filter(a => {
     const ts = new Date(a.datetime || a.createdAt || 0).getTime();
@@ -20738,7 +20738,7 @@ function computeCloserStats(range) {
 // Returns array of [name, { showRate, showed, total }] sorted by showRate desc
 function computeShowRateStats(range) {
   let appts = [];
-  try { appts = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  try { appts = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
   const cutoff = Date.now() - getLBRangeMs(range);
   const rangeAppts = appts.filter(a => {
     const ts = new Date(a.datetime || a.createdAt || 0).getTime();
@@ -20763,7 +20763,7 @@ function computeShowRate(range) {
   const role   = getActiveRole();
   const myName = (localStorage.getItem('wc_user_name') || '').toLowerCase();
   let appts = [];
-  try { appts = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  try { appts = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
   if (myName && (role === 'canvasser' || role === 'closer')) {
     appts = appts.filter(a => (a.closer || '').toLowerCase() === myName);
   }
@@ -20910,7 +20910,7 @@ const ACHIEVEMENTS = [
 
 function _getAchievementStats(name) {
   const nameLower = (name || '').trim().toLowerCase();
-  const entries   = (() => { try { return JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) { return []; } })();
+  const entries   = (() => { try { return JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) { return []; } })();
   const appts     = loadAppointments();
   const role      = getActiveRole();
 
@@ -21243,8 +21243,8 @@ function getReportRangeLabel(range) {
 
 function generateTeamSummary(range) {
   let entries = [], appts = [];
-  try { entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) {}
-  try { appts   = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  try { entries = JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) {}
+  try { appts   = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
   const cutoff = Date.now() - getReportRangeMs(range);
   const rangeEntries = entries.filter(e => e.timestamp >= cutoff);
   const rangeAppts   = appts.filter(a => {
@@ -21285,8 +21285,8 @@ ${top(closerStats, 3)}
 
 function generateFunnel(range) {
   let entries = [], appts = [];
-  try { entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) {}
-  try { appts   = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+  try { entries = JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) {}
+  try { appts   = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
   const cutoff = Date.now() - getReportRangeMs(range);
   const re = entries.filter(e => e.timestamp >= cutoff);
   const ra = appts.filter(a => new Date(a.datetime || a.createdAt || 0).getTime() >= cutoff);
@@ -21371,8 +21371,8 @@ function renderReports() {
   try {
     // ── Load data ──────────────────────────────────────────────────────────
     let entries = [], appts = [];
-    try { entries = JSON.parse(localStorage.getItem('ce_log_entries') || '[]'); } catch(_) {}
-    try { appts   = JSON.parse(localStorage.getItem('ce_appointments') || '[]'); } catch(_) {}
+    try { entries = JSON.parse(localStorage.getItem('wc_log_entries') || '[]'); } catch(_) {}
+    try { appts   = JSON.parse(localStorage.getItem('wc_appointments') || '[]'); } catch(_) {}
     const cutoff = Date.now() - getReportRangeMs(_reportRange);
     const re = entries.filter(e => (e.timestamp || 0) >= cutoff);
     const ra = appts.filter(a => new Date(a.datetime || a.createdAt || 0).getTime() >= cutoff);
@@ -23749,7 +23749,7 @@ function openAssignCloser(apptId) {
   if (sub) sub.textContent = custName + ' \u2014 ' + (appt.timePreference || 'Any time');
   var list = document.getElementById('assign-closer-list');
   var team = [];
-  try { team = JSON.parse(localStorage.getItem('ce_team') || '[]'); } catch(_) {}
+  try { team = JSON.parse(localStorage.getItem('wc_team') || '[]'); } catch(_) {}
   var closers = team.filter(function(m) { return m.role === 'closer'; });
   if (!closers.length) {
     list.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.35);font-size:13px">No closers on team yet. Add closers in Admin \u2192 Sales Team.</div>';
@@ -25341,7 +25341,7 @@ function _otdPopulateCloser() {
   }
   sel.disabled = false;
   try {
-    var team = JSON.parse(localStorage.getItem('ce_team') || '[]');
+    var team = JSON.parse(localStorage.getItem('wc_team') || '[]');
     team.filter(function(m) { return (m.role || 'closer') === 'closer'; }).forEach(function(m) {
       var opt = document.createElement('option');
       opt.value = m.name; opt.textContent = m.name;
