@@ -24214,7 +24214,7 @@ async function _notifyManagersNewAssignment(appt) {
     var _emailSubject = '\uD83D\uDCC5 New Appointment Needs a Closer \u2014 ' + custName;
     // Collect all unique manager emails
     var _mgrEmails = new Set();
-    var _adminEmail = _safeAdminSettings().dispoEmailTo || 'appointments@tritonenergyllc.net';
+    var _adminEmail = _resolveNotifyEmail();
     _mgrEmails.add(_adminEmail);
     usersSnap.forEach(function(doc) {
       var email = doc.data().email;
@@ -24801,12 +24801,23 @@ function otdRequestClose() {
   }
 }
 
+// Resolve notification email: admin setting → org admin → hardcoded fallback
+function _resolveNotifyEmail() {
+  var s = _safeAdminSettings();
+  if (s.dispoEmailTo) return s.dispoEmailTo;
+  if (s.adminEmail)   return s.adminEmail;
+  // Try org settings from localStorage
+  try {
+    var orgSettings = JSON.parse(localStorage.getItem('ce_org_settings') || '{}');
+    if (orgSettings.adminEmail) return orgSettings.adminEmail;
+  } catch(_) {}
+  return 'appointments@tritonenergyllc.net';
+}
+
 function _sendOtdSessionEmail() {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
-  var _s = _safeAdminSettings();
-  var toEmail = _s.dispoEmailTo;
-  if (!toEmail) return;
+  var toEmail = _resolveNotifyEmail();
   var repName = localStorage.getItem('ce_user_name') || 'Rep';
   var doors = _otdSessionDoors || 0;
   var contacts = _otdSessionContact || 0;
@@ -25089,7 +25100,7 @@ function _sendApptDispoEmail(appt, result) {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
   var _s = {}; try { _s = _safeAdminSettings(); } catch(_) {}
-  var _toEmail   = _s.dispoEmailTo   || 'appointments@tritonenergyllc.net';
+  var _toEmail   = _s.dispoEmailTo || _resolveNotifyEmail();
   var _fromEmail = _s.dispoEmailFrom || '';
   var repName = localStorage.getItem('ce_user_name') || 'Rep';
   var custName = [appt.firstName, appt.lastName].filter(Boolean).join(' ') || '—';
@@ -25131,8 +25142,7 @@ function _sendApptDispoEmail(appt, result) {
 function _sendSoldEmail(appt, repName, custName) {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
-  var toEmail = _safeAdminSettings().dispoEmailTo;
-  if (!toEmail) return;
+  var toEmail = _resolveNotifyEmail();
   var addr = appt ? (appt.street || appt.address || '') : '';
   fbDb.collection('mail').add({
     to: toEmail,
@@ -25154,7 +25164,7 @@ function _sendDispoEmail(entry) {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
   var _s = {}; try { _s = _safeAdminSettings(); } catch(_) {}
-  var _toEmail   = _s.dispoEmailTo   || 'appointments@tritonenergyllc.net';
+  var _toEmail   = _s.dispoEmailTo || _resolveNotifyEmail();
   var _fromEmail = _s.dispoEmailFrom || '';
   var statusLabels = {
     'not-home':       'Not Home',
