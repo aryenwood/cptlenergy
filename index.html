@@ -29,8 +29,8 @@
   <meta name="description" content="The D2D Sales Platform" />
   <meta property="og:title" content="WC App — Field Sales Platform" />
   <meta property="og:description" content="The D2D sales platform built for pros. Log doors, book appointments, and close more deals." />
-  <meta property="og:image" content="https://cptlenergy.netlify.app/icon512.png" />
-  <meta property="og:url" content="https://cptlenergy.netlify.app" />
+  <meta property="og:image" content="icon512.png" />
+  <meta property="og:url" content="" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -9914,7 +9914,7 @@
         <div class="checklist-item">
           <label class="checklist-label">
             <input type="checkbox" class="checklist-cb" />
-            <span>Utility bill copy (≤2 months old) sent to <strong>projects@cptlenergy.com</strong></span>
+            <span>Utility bill copy (≤2 months old) sent to <strong>projects@yourcompany.com</strong></span>
           </label>
         </div>
         <div class="checklist-item">
@@ -9926,7 +9926,7 @@
         <div class="checklist-item">
           <label class="checklist-label">
             <input type="checkbox" class="checklist-cb" />
-            <span>If using own SOLO: adder screenshot + proposal link sent to <strong>contracts@cptlenergy.com</strong></span>
+            <span>If using own SOLO: adder screenshot + proposal link sent to <strong>contracts@yourcompany.com</strong></span>
           </label>
         </div>
         <div class="checklist-item">
@@ -9977,7 +9977,7 @@
         <div class="checklist-template">
           <div class="checklist-template-label">Survey request text — copy &amp; send to:</div>
           <a class="checklist-phone" href="tel:7025302054">(702) 530-2054</a>
-          <div class="checklist-template-body" id="survey-template-text">Hello, This is [Your Name] with Capital Energy. I need a site survey and welcome call done for [Customer Name]. I have completed Finance Documents and Capital Energy Contract.</div>
+          <div class="checklist-template-body" id="survey-template-text">Hello, This is [Your Name] with [Company Name]. I need a site survey and welcome call done for [Customer Name]. I have completed Finance Documents and [Company Name] Contract.</div>
           <button class="checklist-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('survey-template-text').innerText).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Text',1500)})">Copy Text</button>
         </div>
 
@@ -10820,7 +10820,7 @@
       <div class="ma-card-body">
         <div class="ma-field">
           <label class="ma-label">COMPANY NAME</label>
-          <input class="ma-input" type="text" id="ma-company-name-field" placeholder="Capital Energy" />
+          <input class="ma-input" type="text" id="ma-company-name-field" placeholder="Company Name" />
         </div>
         <div class="ma-field">
           <label class="ma-label">HEADER LOGO (image)</label>
@@ -11007,7 +11007,7 @@
     backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
     border-bottom:1px solid var(--g-border);">
     <div style="flex:1; min-width:0;">
-      <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:13px; font-weight:600; color:var(--text-2);" id="browser-title">CPTL Grid</div>
+      <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:13px; font-weight:600; color:var(--text-2);" id="browser-title">Grid</div>
       <div class="browser-url-bar" id="browser-url-bar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <span id="browser-url-text">—</span>
@@ -11068,7 +11068,7 @@
         <!-- Static view -->
         <div id="bcard-rep-name" class="bcard-static">Your Name</div>
         <div id="bcard-rep-title" class="bcard-static">Solar Energy Consultant</div>
-        <div id="bcard-company" class="bcard-static">Capital Energy</div>
+        <div id="bcard-company" class="bcard-static"></div>
         <!-- v76: tagline -->
         <div id="bcard-tagline" class="bcard-tagline bcard-static" style="display:none"></div>
         <!-- v76: views badge -->
@@ -11608,7 +11608,7 @@
   <div class="otd-consent-handle"></div>
   <span class="otd-consent-emoji"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span></span>
   <div class="otd-consent-title">Enable Session Recording</div>
-  <div class="otd-consent-body">Capital Energy records door visits to help with coaching and conversation tracking. Recordings are stored securely and only accessible to your manager.</div>
+  <div class="otd-consent-body" id="otd-consent-body-text">Your organization records door visits to help with coaching and conversation tracking. Recordings are stored securely and only accessible to your manager.</div>
   <div class="otd-consent-note">⚠️ In all-party consent states (CA, FL, IL, WA, etc.) you must disclose to the homeowner that the conversation may be recorded.</div>
   <button class="otd-consent-allow" onclick="otdConsentAllow()"><span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> Allow Recording</button>
   <button class="otd-consent-skip" onclick="otdConsentSkip()">Skip — No Recording</button>
@@ -12337,7 +12337,7 @@ function applyOrgSettings(data) {
   if (!s.quickLinks && (data.gosoloUrl || data.gridUrl)) {
     s.quickLinks = [];
     if (data.gosoloUrl) s.quickLinks.push({ title: 'GoSolo', url: data.gosoloUrl });
-    if (data.gridUrl)   s.quickLinks.push({ title: 'CPTL Grid', url: data.gridUrl });
+    if (data.gridUrl)   s.quickLinks.push({ title: 'Grid', url: data.gridUrl });
   }
   if (data.notificationEmail) s.notificationEmail = data.notificationEmail;
   if (data.dispoEmailTo)     s.dispoEmailTo     = data.dispoEmailTo;
@@ -13283,6 +13283,17 @@ const DataStore = (() => {
     },
   };
 })();
+
+// Safe localStorage write — quota guard for bare setItem calls outside DataStore
+function safeSetItem(key, value) {
+  try { localStorage.setItem(key, value); }
+  catch(e) {
+    if (e && (e.name === 'QuotaExceededError' || e.code === 22)) {
+      console.error('[Storage] Quota exceeded writing', key);
+      if (typeof showToast === 'function') showToast('Storage full — sync to cloud required', 'error');
+    }
+  }
+}
 
 // Unique device ID
 if (!localStorage.getItem('wc_device_id')) {
@@ -14686,7 +14697,7 @@ async function _saLoadOrgs() {
 
 async function _saDeleteOrg(orgId, orgName, btn) {
   if (!isSuperAdmin()) return;
-  if (!confirm(`DELETE ORG: "${orgName}"\nOrg ID: ${orgId}\n\nThis will delete the org document and all subcollections (team, invites, settings).\n\nThis cannot be undone. Continue?`)) return;
+  if (!await showConfirmSheet(`DELETE ORG: "${orgName}"\nOrg ID: ${orgId}\n\nThis will delete the org document and all subcollections (team, invites, settings).\n\nThis cannot be undone.`, { confirm: 'Delete', destructive: true })) return;
   btn.textContent = '…'; btn.disabled = true;
   try {
     // Delete subcollections: team, invites, settings, adderSheets
@@ -15700,7 +15711,7 @@ document.getElementById('dash-book-appt-btn').addEventListener('click', () => op
 // CSV Export
 document.getElementById('btn-export-csv').addEventListener('click', () => {
   const entries = loadEntries();
-  if (!entries.length) { alert('No entries to export.'); return; }
+  if (!entries.length) { showToast('No entries to export'); return; }
   const header = ['Date','Address','Status','Name','Phone','Email','Bill','Notes','Follow-up'];
   const rows = entries.map(e => [
     new Date(e.timestamp).toLocaleDateString(),
@@ -15717,7 +15728,7 @@ document.getElementById('btn-export-csv').addEventListener('click', () => {
   const blob = new Blob([csv], { type: 'text/csv' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = `capital-energy-log-${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = url; a.download = `wc-app-log-${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
 });
 
@@ -18236,11 +18247,11 @@ function _renderCustFiles(custId) {
 
   // Wire delete clicks
   listEl.querySelectorAll('.file-card-delete').forEach(btn => {
-    btn.addEventListener('click', e => {
+    btn.addEventListener('click', async e => {
       e.stopPropagation();
       const fileId = btn.dataset.deleteFile;
       const cId    = btn.dataset.custId;
-      if (!confirm('Delete this file?')) return;
+      if (!await showConfirmSheet('Delete this file? This cannot be undone.', { confirm: 'Delete', destructive: true })) return;
       const updated = _loadCustFiles(cId).filter(x => x.id !== fileId);
       _saveCustFiles(cId, updated);
       _renderCustFiles(cId);
@@ -18292,7 +18303,7 @@ var _vmStream     = null;
 
 function _startVoiceMemo(custId) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    alert('Voice recording is not supported on this browser/device.');
+    showToast('Voice recording not supported on this device');
     return;
   }
   navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
@@ -18300,7 +18311,7 @@ function _startVoiceMemo(custId) {
     var chunks = [];
     var recorder;
     try { recorder = new MediaRecorder(stream); }
-    catch(e2) { alert('MediaRecorder not supported.'); stream.getTracks().forEach(function(t){t.stop();}); return; }
+    catch(e2) { showToast('Recording not supported'); stream.getTracks().forEach(function(t){t.stop();}); return; }
     _vmRecorder = recorder;
 
     // Concurrent SpeechRecognition for transcript
@@ -18380,7 +18391,7 @@ function _startVoiceMemo(custId) {
     recorder.start(1000); // collect in 1s chunks
     _setupRecordTimer(custId, recorder);
   }).catch(function(err) {
-    alert('Microphone access denied or unavailable.');
+    showToast('Microphone access denied');
   });
 }
 
@@ -18508,7 +18519,7 @@ function _initCrmListeners() {
 }
 
 // ── List interaction (event delegation) ───────────────────────────────────
-document.getElementById('log-list').addEventListener('click', e => {
+document.getElementById('log-list').addEventListener('click', async e => {
   const entryEl = e.target.closest('.log-entry');
   if (!entryEl) return;
   const id = entryEl.dataset.id;
@@ -18538,7 +18549,7 @@ document.getElementById('log-list').addEventListener('click', e => {
         }, 200);
       }
     } else if (action === 'delete') {
-      if (!confirm('Delete this entry? This cannot be undone.')) return;
+      if (!await showConfirmSheet('Delete this entry? This cannot be undone.', { confirm: 'Delete', destructive: true })) return;
       const entries = loadEntries().filter(x => x.id !== id);
       saveEntries(entries);
       renderLogList();
@@ -20272,8 +20283,8 @@ function openMasterAdmin() {
   const aboutEl = document.getElementById('ma-about-text');
   if (aboutEl) {
     aboutEl.textContent =
-      `App version:   capital-energy-v100\n` +
-      `SW cache:      capital-energy-v100\n` +
+      `App version:   wc-app-v100\n` +
+      `SW cache:      wc-app-v100\n` +
       `Build date:    ${new Date().toLocaleDateString()}\n` +
       `User role:     master_admin\n` +
       `localStorage:  ${Object.keys(localStorage).filter(k => k.startsWith('wc_')).length} keys`;
@@ -20548,7 +20559,7 @@ document.getElementById('ma-export-btn').addEventListener('click', () => {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url;
-  a.download = `capital-energy-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `wc-app-backup-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -20560,7 +20571,7 @@ document.getElementById('ma-export-csv-btn').addEventListener('click', () => {
 
 // Clear all data
 document.getElementById('ma-clear-btn').addEventListener('click', async () => {
-  if (!confirm('⚠️ This will delete ALL local data. Any unsynced activity will be permanently lost. Are you sure?')) return;
+  if (!await showConfirmSheet('⚠️ This will delete ALL local data.\n\nAny unsynced activity will be permanently lost.', { confirm: 'Delete All', destructive: true })) return;
   if (navigator.onLine && typeof drainToFirestore === 'function') {
     try { await drainToFirestore(); } catch(_) {}
   }
@@ -20569,30 +20580,30 @@ document.getElementById('ma-clear-btn').addEventListener('click', async () => {
 });
 
 // Dev Tools — Troubleshooting Only
-document.getElementById('ma-dev-reset-onboarding').addEventListener('click', () => {
-  if (!confirm('Reset Onboarding?\n\nThis clears wc_onboarding_done and wc_user_role from localStorage only. No knock entries, appointments, or Firestore data will be touched. The onboarding flow will run again on next reload.')) return;
+document.getElementById('ma-dev-reset-onboarding').addEventListener('click', async () => {
+  if (!await showConfirmSheet('Reset Onboarding?\n\nThis clears onboarding and role from localStorage only. No knock entries, appointments, or Firestore data will be touched.', { confirm: 'Reset' })) return;
   localStorage.removeItem('wc_onboarding_done');
   localStorage.removeItem('wc_user_role');
   showToast('Onboarding reset — reloading…');
   setTimeout(() => location.reload(), 900);
 });
 
-document.getElementById('ma-dev-reset-role').addEventListener('click', () => {
-  if (!confirm('Reset Role Only?\n\nThis clears wc_user_role from localStorage. The role picker will show on next reload. Nothing else is touched.')) return;
+document.getElementById('ma-dev-reset-role').addEventListener('click', async () => {
+  if (!await showConfirmSheet('Reset Role Only?\n\nThis clears wc_user_role from localStorage. The role picker will show on next reload. Nothing else is touched.', { confirm: 'Reset' })) return;
   localStorage.removeItem('wc_user_role');
   showToast('Role cleared — reloading…');
   setTimeout(() => location.reload(), 900);
 });
 
-document.getElementById('ma-dev-reset-profile').addEventListener('click', () => {
-  if (!confirm('Reset User Profile?\n\nThis clears wc_user_phone, wc_user_region, and wc_user_headshot from localStorage. Firebase auth and Firestore are not touched.')) return;
+document.getElementById('ma-dev-reset-profile').addEventListener('click', async () => {
+  if (!await showConfirmSheet('Reset User Profile?\n\nThis clears phone, region, and headshot from localStorage. Firebase auth and Firestore are not touched.', { confirm: 'Reset' })) return;
   ['wc_user_phone', 'wc_user_region', 'wc_user_headshot'].forEach(k => localStorage.removeItem(k));
   showToast('User profile cleared — reloading…');
   setTimeout(() => location.reload(), 900);
 });
 
 document.getElementById('ma-dev-force-drain').addEventListener('click', async () => {
-  if (!confirm('Force Drain to Firestore?\n\nThis immediately calls drainToFirestore() and writes any queued data. Check the browser console for results.')) return;
+  if (!await showConfirmSheet('Force Drain to Firestore?\n\nThis immediately writes any queued data. Check the browser console for results.', { confirm: 'Drain Now' })) return;
   const btn = document.getElementById('ma-dev-force-drain');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Draining…'; }
   try {
@@ -20616,8 +20627,8 @@ document.getElementById('ma-change-pin-btn').addEventListener('click', () => {
 });
 
 // Remove PIN
-document.getElementById('ma-remove-pin-btn').addEventListener('click', () => {
-  if (!confirm('Remove Master Admin PIN? This will disable the secret console.')) return;
+document.getElementById('ma-remove-pin-btn').addEventListener('click', async () => {
+  if (!await showConfirmSheet('Remove Master Admin PIN?\n\nThis will disable the secret console.', { confirm: 'Remove', destructive: true })) return;
   localStorage.removeItem('wc_master_pin');
   const btn = document.getElementById('ma-remove-pin-btn');
   btn.textContent = '✓ PIN removed';
@@ -21222,7 +21233,7 @@ Made Contact:     ${String(contact).padStart(4)}  ${pct(contact)}
 Appointments Set: ${String(apptSet).padStart(4)}  ${pct(apptSet)}
 Deals Signed:     ${String(signed).padStart(4)}  ${pctA(signed)}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Generated by Capital Energy App`;
+Generated by ${_safeAdminSettings().companyName || 'WC App'}`;
 }
 
 function generateTopPerformers(range) {
@@ -21496,13 +21507,13 @@ document.querySelectorAll('.reports-range-tab').forEach(btn => {
 
 // ── Admin panel ────────────────────────────────────────────────────────────
 const ADMIN_DEFAULTS = {
-  companyName: 'Capital Energy',
+  companyName: '',
   tagline:     'Solar Sales Hub',
   repName:     '',
   repTitle:    'Solar Energy Consultant',
   repPhone:    '',
   repEmail:    '',
-  reviewUrl:   'https://www.google.com/maps/place/Capital+Energy/@33.393504,-111.9567802,643m/data=!3m1!1e3!4m8!3m7!1s0x2b49ed0d5d002c0d:0xb11ea05d428adefb!8m2!3d33.393504!4d-111.9542053!9m1!1b1!16s%2Fg%2F11t6ddgmkd?entry=ttu&g_ep=EgoyMDI2MDMwNC4xIKXMDSoASAFQAw%3D%3D#:~:text=Overview-,Reviews,-About',
+  reviewUrl:   '',
 };
 
 function loadAdminSettings() {
@@ -22097,7 +22108,7 @@ function _bcardCurrentData() {
   return {
     name:    s.repName     || 'Your Name',
     title:   s.repTitle    || 'Solar Energy Consultant',
-    company: s.companyName || 'Capital Energy',
+    company: s.companyName || localStorage.getItem('wc_org_name') || '',
     phone:   s.repPhone    || '',
     email:   s.repEmail    || '',
     tagline: s.repTagline  || '',   // v76
@@ -22386,6 +22397,69 @@ function showToast(msg, duration) {
   });
 }
 
+// ── Promise-based confirmation sheet — replaces all confirm() calls ───────
+function showConfirmSheet(message, options) {
+  options = options || {};
+  return new Promise(function(resolve) {
+    var confirmLabel = options.confirm || 'Confirm';
+    var destructive = options.destructive || false;
+    var existing = document.getElementById('wc-confirm-overlay');
+    if (existing) existing.remove();
+    var existingSheet = document.getElementById('wc-confirm-sheet');
+    if (existingSheet) existingSheet.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'wc-confirm-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity 0.2s';
+
+    var sheet = document.createElement('div');
+    sheet.id = 'wc-confirm-sheet';
+    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:var(--surface,#fff);border-radius:20px 20px 0 0;padding:24px 20px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);max-width:540px;margin:0 auto';
+
+    var handle = document.createElement('div');
+    handle.style.cssText = 'width:36px;height:4px;background:var(--text-3,#9ca3af);border-radius:2px;margin:0 auto 16px';
+
+    var msg = document.createElement('div');
+    msg.style.cssText = 'font-size:15px;font-weight:500;color:var(--text,#111);text-align:center;line-height:1.5;margin-bottom:20px;white-space:pre-line';
+    msg.textContent = message;
+
+    var btnWrap = document.createElement('div');
+    btnWrap.style.cssText = 'display:flex;gap:10px';
+
+    var cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'flex:1;padding:14px;border-radius:var(--r-md,12px);border:1px solid var(--border,rgba(0,0,0,0.08));background:transparent;color:var(--text,#111);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent';
+
+    var confirmBtn = document.createElement('button');
+    confirmBtn.textContent = confirmLabel;
+    confirmBtn.style.cssText = 'flex:1;padding:14px;border-radius:var(--r-md,12px);border:none;background:' + (destructive ? 'var(--danger,#ef4444)' : 'var(--amber,#148f98)') + ';color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent';
+
+    function dismiss(result) {
+      sheet.style.transform = 'translateY(100%)';
+      overlay.style.opacity = '0';
+      setTimeout(function() { overlay.remove(); sheet.remove(); }, 300);
+      resolve(result);
+    }
+
+    cancelBtn.onclick = function() { dismiss(false); };
+    confirmBtn.onclick = function() { dismiss(true); };
+    overlay.onclick = function() { dismiss(false); };
+
+    btnWrap.appendChild(cancelBtn);
+    btnWrap.appendChild(confirmBtn);
+    sheet.appendChild(handle);
+    sheet.appendChild(msg);
+    sheet.appendChild(btnWrap);
+    document.body.appendChild(overlay);
+    document.body.appendChild(sheet);
+
+    requestAnimationFrame(function() {
+      overlay.style.opacity = '1';
+      sheet.style.transform = 'translateY(0)';
+    });
+  });
+}
+
 // ── Checklist pane rendering ──────────────────────────────────────────────
 function renderChecklistPane() {
   const s = _safeAdminSettings();
@@ -22459,7 +22533,7 @@ document.getElementById('review-opt-sms').addEventListener('click', () => {
   const s    = _safeAdminSettings();
   const name = s.repName || 'your consultant';
   const body = encodeURIComponent(
-    `Hey! Thanks for going solar with ${s.companyName || 'Capital Energy'}. If ${name} took great care of you, a quick review would mean the world 🙏\n${s.reviewUrl}`
+    `Hey! Thanks for going solar with ${s.companyName || localStorage.getItem('wc_org_name') || ''}. If ${name} took great care of you, a quick review would mean the world 🙏\n${s.reviewUrl}`
   );
   window.location.href = `sms:?&body=${body}`;
 });
@@ -22469,7 +22543,7 @@ document.getElementById('review-opt-email').addEventListener('click', () => {
   closeReviewMenu();
   const s       = _safeAdminSettings();
   const name    = s.repName || 'your consultant';
-  const company = s.companyName || 'Capital Energy';
+  const company = s.companyName || localStorage.getItem('wc_org_name') || '';
   const subject = encodeURIComponent(`How was your experience with ${company}?`);
   const body    = encodeURIComponent(
     `Hi,\n\nThank you for choosing ${company}! We hope ${name} made the process smooth and easy.\n\nIf you had a great experience, we'd be so grateful if you could leave a quick review — it truly helps our team grow:\n\n${s.reviewUrl}\n\nThank you so much! 🙏\n\n— ${name}\n${company}`
@@ -22858,7 +22932,7 @@ function renderMapPins() {
       const color = DISPO_COLORS[e.status] || '#9ca3af';
       const label = DISPO_LABELS[e.status]  || e.status;
       const m = L.marker([e.lat, e.lng], { icon: pinIcon(color) })
-        .bindPopup(`<div style="font-family:Inter,sans-serif;min-width:170px;font-size:13px">
+        .bindPopup(`<div style="font-family:'DM Sans',system-ui,sans-serif;min-width:170px;font-size:13px">
           <div style="font-weight:700;margin-bottom:8px">${escHtml(e.address || '—')}</div>
           <span style="display:inline-block;padding:2px 9px;border-radius:50px;background:${color};color:#fff;font-size:11px;font-weight:700;margin-bottom:8px">${escHtml(label)}</span>
           ${e.name  ? `<div style="color:#555">${escHtml(e.name)}</div>` : ''}
@@ -22885,7 +22959,7 @@ function renderMapPins() {
       const name   = `${a.firstName || ''} ${a.lastName || ''}`.trim() || '—';
       const m = L.marker([a.lat, a.lng], { icon: pinIcon(color) })
         .addTo(mapInstance)
-        .bindPopup(`<div style="font-family:Inter,sans-serif;min-width:180px;font-size:13px">
+        .bindPopup(`<div style="font-family:'DM Sans',system-ui,sans-serif;min-width:180px;font-size:13px">
           <div style="font-weight:700;margin-bottom:8px">${escHtml(name)}</div>
           <span style="display:inline-block;padding:2px 9px;border-radius:50px;background:${color};color:#fff;font-size:11px;font-weight:700;margin-bottom:8px">${escHtml(result)}</span>
           ${a.street ? `<div style="color:#555">${escHtml(a.street)}, ${escHtml(a.city||'')}</div>` : ''}
@@ -23101,7 +23175,7 @@ document.getElementById('map-locate-btn').addEventListener('click', () => {
   if (!mapInstance || !navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(
     pos => mapInstance.setView([pos.coords.latitude, pos.coords.longitude], 16),
-    () => alert('Unable to get location. Please allow location access.'),
+    () => showToast('Unable to get location — check permissions'),
     { enableHighAccuracy: true }
   );
 });
@@ -23257,9 +23331,9 @@ function openResultSheet(apptId) {
       }
       // No Show — offer to reschedule or log a follow-up
       if (btn.dataset.result === 'No Show') {
-        setTimeout(() => {
+        setTimeout(async () => {
           const appt = loadAppointments().find(a => a.id === editingApptId);
-          if (appt && confirm('No Show logged.\n\nWould you like to reschedule this appointment?')) {
+          if (appt && await showConfirmSheet('No Show logged.\n\nWould you like to reschedule this appointment?', { confirm: 'Reschedule' })) {
             openRescheduleBooking(appt);
           }
         }, 300);
@@ -23278,28 +23352,13 @@ function openResultSheet(apptId) {
 // Close appt-result-sheet when tapping the map (via Leaflet click event, set up in initMap)
 
 // ── Installs map ───────────────────────────────────────────────────────────
-const INSTALLS_KML = 'https://www.google.com/maps/d/kml?mid=1t2dogE73A98LX6EMqNyzHg4KtlDKwOc&forcekml=1';
-const CORS_PROXY   = 'https://corsproxy.io/?';
+// TODO: KML live-fetch removed (was dead code using corsproxy.io).
+// Install data now comes from static installs.js.
+// Future: read KML URL from orgs/{orgId}/settings in Firestore.
 
 let installsPins      = [];  // install markers added to the main mapInstance
 let installsCluster   = null; // L.markerClusterGroup for installs
 let installsLoaded    = false;
-
-function parseKML(text) {
-  const doc = new DOMParser().parseFromString(text, 'text/xml');
-  return Array.from(doc.querySelectorAll('Placemark')).flatMap(pm => {
-    const name     = pm.querySelector('name')?.textContent?.trim()        || '';
-    const rawDesc  = pm.querySelector('description')?.textContent?.trim() || '';
-    // strip HTML tags from description
-    const desc     = rawDesc.replace(/<[^>]*>/g, '').trim();
-    const coordStr = pm.querySelector('Point coordinates')?.textContent?.trim();
-    if (!coordStr) return [];
-    const parts = coordStr.split(',').map(Number);
-    const lng = parts[0], lat = parts[1];
-    if (isNaN(lat) || isNaN(lng)) return [];
-    return [{ name, desc, lat, lng }];
-  });
-}
 
 function updateMapBadge() {
   // Merge doors/appts count (already in map-count-badge) with installs count
@@ -23353,7 +23412,7 @@ function loadInstallPins() {
   data.forEach(p => {
     if (!p.lat || !p.lng) return;
     const m = L.marker([p.lat, p.lng], { icon: pinIcon('#22c55e') })
-      .bindPopup(`<div style="font-family:Inter,sans-serif;min-width:160px;font-size:13px">
+      .bindPopup(`<div style="font-family:'DM Sans',system-ui,sans-serif;min-width:160px;font-size:13px">
         <div style="font-weight:700;margin-bottom:5px">${escHtml(p.address || 'Install')}</div>
         <div style="margin-top:6px;display:inline-block;padding:2px 9px;border-radius:50px;background:#22c55e;color:#fff;font-size:10px;font-weight:700">Installed ✓</div>
       </div>`);
@@ -23677,9 +23736,9 @@ function openDispoSheet() {
             }
             // No Show — offer to reschedule
             if (btn.dataset.result === 'No Show') {
-              setTimeout(() => {
+              setTimeout(async () => {
                 const appt = loadAppointments().find(a => a.id === dispoApptId);
-                if (appt && confirm('No Show logged.\n\nWould you like to reschedule this appointment?')) {
+                if (appt && await showConfirmSheet('No Show logged.\n\nWould you like to reschedule this appointment?', { confirm: 'Reschedule' })) {
                   openRescheduleBooking(appt);
                 }
               }, 300);
@@ -24531,7 +24590,7 @@ function generateInviteCode() {
   var user = fbAuth.currentUser;
   var uid  = user.uid;
   var s    = _safeAdminSettings();
-  var orgName   = s.companyName || 'Capital Energy';
+  var orgName   = s.companyName || localStorage.getItem('wc_org_name') || '';
   var repName   = localStorage.getItem('wc_user_name') || user.displayName || '';
   var code      = _genInviteCode();
   var now       = new Date();
@@ -24586,7 +24645,7 @@ function copyInviteCode() {
 function shareInviteViaMessage() {
   if (!_currentInviteCode) return;
   var s           = _safeAdminSettings();
-  var orgName     = s.companyName || 'Capital Energy';
+  var orgName     = s.companyName || localStorage.getItem('wc_org_name') || '';
   var managerName = localStorage.getItem('wc_user_name') || 'Your manager';
   var repName     = (_currentInviteRepName || '').trim() || 'there';
   var msg =
@@ -24594,7 +24653,7 @@ function shareInviteViaMessage() {
     managerName + ' has invited you to join ' + orgName + ' on WC App — the field sales platform built for D2D pros.\n\n' +
     'Your invite code:\n' + _currentInviteCode + '\n\n' +
     'Tap the link below to get started:\n' +
-    'https://cptlenergy.netlify.app\n\n' +
+    window.location.origin + '\n\n' +
     'Code expires in 7 days. See you on the doors! <span class="icon-svg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg></span>';
   window.open('sms:?body=' + encodeURIComponent(msg), '_self');
 }
@@ -24873,8 +24932,8 @@ function closeOTD() {
   }
 }
 
-function otdRequestClose() {
-  if (!confirm('End your OTD session? The session will be closed.')) return;
+async function otdRequestClose() {
+  if (!await showConfirmSheet('End your OTD session?\n\nThe session will be closed.', { confirm: 'End Session' })) return;
   // Send OTD session summary email
   _sendOtdSessionEmail();
   if (_otdSessActive && localStorage.getItem('wc_recording_consent') === 'allow') {
@@ -26137,8 +26196,8 @@ function renderWallOfWins() {
     if (dashInput) dashInput.style.display = (isManager || role === 'closer') ? '' : 'none';
     if (dashClear) {
       dashClear.style.display = isManager ? '' : 'none';
-      dashClear.onclick = () => {
-        if (confirm('Clear the Wall of Wins?')) { DataStore.saveWins([]); renderWallOfWins(); }
+      dashClear.onclick = async () => {
+        if (await showConfirmSheet('Clear the Wall of Wins?\n\nAll posted wins will be removed.', { confirm: 'Clear', destructive: true })) { DataStore.saveWins([]); renderWallOfWins(); }
       };
     }
   }
@@ -26150,8 +26209,8 @@ function renderWallOfWins() {
     _renderWowFeed(hubFeed, 50);
     if (hubClear) {
       hubClear.style.display = isManager ? '' : 'none';
-      hubClear.onclick = () => {
-        if (confirm('Clear the Wall of Wins?')) { DataStore.saveWins([]); renderWallOfWins(); }
+      hubClear.onclick = async () => {
+        if (await showConfirmSheet('Clear the Wall of Wins?\n\nAll posted wins will be removed.', { confirm: 'Clear', destructive: true })) { DataStore.saveWins([]); renderWallOfWins(); }
       };
     }
   }
@@ -26307,9 +26366,11 @@ function _shareRepProfile(repName) {
     const tierIdx = tierThresholds.filter(t => totalDoors >= t).length;
     const tier = tierNames[tierIdx] || 'Rookie';
     if (navigator.share) {
-      navigator.share({ title: repName + ' — Capital Energy Rep Card', text: 'Check out ' + repName + '\'s performance on Capital Energy! ' + totalDoors + ' doors knocked, rank: ' + tier });
+      var _org = _safeAdminSettings().companyName || 'WC App';
+      navigator.share({ title: repName + ' — ' + _org + ' Rep Card', text: 'Check out ' + repName + '\'s performance on ' + _org + '! ' + totalDoors + ' doors knocked, rank: ' + tier });
     } else {
-      navigator.clipboard?.writeText(repName + ' on Capital Energy: ' + totalDoors + ' doors, rank ' + tier);
+      var _org2 = _safeAdminSettings().companyName || 'WC App';
+      navigator.clipboard?.writeText(repName + ' on ' + _org2 + ': ' + totalDoors + ' doors, rank ' + tier);
       showToast('Profile link copied!');
     }
   } catch(_) {}
