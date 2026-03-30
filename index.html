@@ -19944,6 +19944,31 @@ document.getElementById('cal-filter-bar').addEventListener('click', e => {
 // ROLES — User role system, first-run setup, Master Admin
 // ══════════════════════════════════════════════════════════════════════════════
 
+// ── Key migration — ce_ → wc_ prefix (must run before any DataStore reads) ──
+function migrateCeKeys() {
+  var migrations = [
+    ['ce_log_entries',      'wc_log_entries'],
+    ['ce_appointments',     'wc_appointments'],
+    ['ce_team',             'wc_team'],
+    ['ce_install_dismissed','wc_install_dismissed'],
+    ['ce_user_name',        'wc_user_name'],
+    ['ce_org_id',           'wc_org_id'],
+    ['ce_user_role',        'wc_user_role'],
+    ['ce_dark_mode',        'wc_dark_mode'],
+    ['ce_active_tab',       'wc_active_tab'],
+    ['ce_onboarding_done',  'wc_onboarding_done']
+  ];
+  migrations.forEach(function(pair) {
+    var old = pair[0], nw = pair[1];
+    var data = localStorage.getItem(old);
+    if (data !== null && !localStorage.getItem(nw)) {
+      localStorage.setItem(nw, data);
+      localStorage.removeItem(old);
+    }
+  });
+}
+migrateCeKeys(); // runs immediately — before DataStore or any reads
+
 // ── Data migration (v1) — backfill repName on existing entries ─────────────
 function migrateDataV1() {
   if (localStorage.getItem('wc_data_migrated_v1')) return;
