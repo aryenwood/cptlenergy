@@ -8489,14 +8489,6 @@
         </div>
       </div>
 
-      <!-- v76: Rank badge row -->
-      <div id="dash-rank-row" style="display:none">
-        <span id="dash-rank-badge" class="rank-badge rank-badge--rookie">🌱 Rookie</span>
-        <div id="dash-rank-progress">
-          <div id="dash-rank-progress-bar" style="width:0%"></div>
-        </div>
-        <span id="dash-rank-score" style="font-size:11px;color:var(--text-3);white-space:nowrap">0 pts</span>
-      </div>
       <!-- Tier progress bar (populated by wc-app-patch-v1.js) -->
       <div id="dash-tier-progress" style="display:none;margin-top:6px"></div>
 
@@ -14872,43 +14864,126 @@ function _dismissSplash() {
     return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
   }
 
-  // Ambient embers — sparse, slow, full-screen depth
-  function _startAmbient(canvas, color) {
-    var ctx = canvas.getContext('2d');
+  // ── Orbital Ring Engine — AmazingUI-inspired portal effect ──
+  var _ringState = { radius: 0, targetRadius: 0, alpha: 0, rotation: 0, scatter: false };
+  var _ringParticles = [];
+
+  function _initCanvas(canvas) {
     var dpr = window.devicePixelRatio || 1;
     var W = canvas.offsetWidth, H = canvas.offsetHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
+    var ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
+    return { ctx: ctx, W: W, H: H, cx: W / 2, cy: H * 0.42 };
+  }
+
+  function _startAmbient(canvas, color) {
+    var c = _initCanvas(canvas);
     var rgb = _hexToRgb(color);
-    var embers = [];
-    for (var i = 0; i < 25; i++) {
-      embers.push({
-        x: Math.random() * W, y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: -0.1 - Math.random() * 0.2,
-        size: 0.5 + Math.random() * 1.2,
-        alpha: 0.05 + Math.random() * 0.15,
-        pulse: Math.random() * Math.PI * 2,
-        speed: 0.008 + Math.random() * 0.015
+    var N = 80; // ring particles
+    _ringParticles = [];
+    for (var i = 0; i < N; i++) {
+      var angle = (Math.PI * 2 / N) * i;
+      _ringParticles.push({
+        angle: angle, offset: (Math.random() - 0.5) * 4,
+        size: 0.6 + Math.random() * 1.8,
+        speed: 0.003 + Math.random() * 0.004,
+        bright: Math.random() > 0.75,
+        trail: Math.random() > 0.6
       });
     }
+    // Hot spot particle — brighter, leaves a comet trail
+    _ringParticles.push({
+      angle: 0, offset: 0, size: 3, speed: 0.012,
+      bright: true, trail: true, hot: true
+    });
+
+    _ringState = { radius: 0, targetRadius: 85, alpha: 0, rotation: 0, scatter: false, scatterTime: 0 };
+
     function draw() {
-      ctx.clearRect(0, 0, W, H);
-      for (var j = 0; j < embers.length; j++) {
-        var e = embers[j];
-        e.x += e.vx; e.y += e.vy;
-        e.pulse += e.speed;
-        var a = e.alpha * (0.5 + 0.5 * Math.sin(e.pulse));
-        if (e.y < -10) { e.y = H + 10; e.x = Math.random() * W; }
-        if (e.x < -10) e.x = W + 10; if (e.x > W + 10) e.x = -10;
-        ctx.save();
-        ctx.globalAlpha = a;
-        ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',1)';
-        ctx.shadowColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.4)';
-        ctx.shadowBlur = e.size * 8;
-        ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
+      c.ctx.clearRect(0, 0, c.W, c.H);
+      var s = _ringState;
+      // Ease radius and alpha
+      s.radius += (s.targetRadius - s.radius) * 0.04;
+      if (s.alpha < 1 && !s.scatter) s.alpha = Math.min(1, s.alpha + 0.015);
+      s.rotation += 0.002;
+
+      if (s.scatter) {
+        s.scatterTime++;
+        s.alpha = Math.max(0, s.alpha - 0.012);
       }
+
+      // Draw the ring glow (soft arc)
+      if (s.alpha > 0.01 && s.radius > 5) {
+        c.ctx.save();
+        c.ctx.globalAlpha = s.alpha * 0.12;
+        c.ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',1)';
+        c.ctx.lineWidth = 12;
+        c.ctx.shadowColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.5)';
+        c.ctx.shadowBlur = 30;
+        c.ctx.beginPath(); c.ctx.arc(c.cx, c.cy, s.radius, 0, Math.PI * 2); c.ctx.stroke();
+        c.ctx.restore();
+        // Inner bright ring
+        c.ctx.save();
+        c.ctx.globalAlpha = s.alpha * 0.25;
+        c.ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        c.ctx.lineWidth = 1.5;
+        c.ctx.shadowColor = 'rgba(255,255,255,0.3)';
+        c.ctx.shadowBlur = 8;
+        c.ctx.beginPath(); c.ctx.arc(c.cx, c.cy, s.radius, 0, Math.PI * 2); c.ctx.stroke();
+        c.ctx.restore();
+      }
+
+      // Draw particles orbiting the ring
+      for (var j = 0; j < _ringParticles.length; j++) {
+        var p = _ringParticles[j];
+        p.angle += p.speed;
+        var r = s.radius + p.offset;
+        var px, py;
+        if (s.scatter) {
+          // Scatter outward
+          r += s.scatterTime * (1.5 + p.size * 0.5);
+          px = c.cx + Math.cos(p.angle + s.rotation) * r;
+          py = c.cy + Math.sin(p.angle + s.rotation) * r;
+        } else {
+          px = c.cx + Math.cos(p.angle + s.rotation) * r;
+          py = c.cy + Math.sin(p.angle + s.rotation) * r;
+        }
+        var a = s.alpha * (p.hot ? 0.9 : (p.bright ? 0.6 : 0.35));
+        if (a < 0.01) continue;
+        c.ctx.save();
+        c.ctx.globalAlpha = a;
+        if (p.hot) {
+          // Hot spot — white core with warm amber outer glow
+          c.ctx.fillStyle = '#fff';
+          c.ctx.shadowColor = 'rgba(255,180,60,0.8)';
+          c.ctx.shadowBlur = p.size * 10;
+        } else if (p.bright) {
+          c.ctx.fillStyle = 'rgba(255,255,255,1)';
+          c.ctx.shadowColor = 'rgba(255,255,255,0.4)';
+          c.ctx.shadowBlur = p.size * 5;
+        } else {
+          c.ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',1)';
+          c.ctx.shadowColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.5)';
+          c.ctx.shadowBlur = p.size * 6;
+        }
+        c.ctx.beginPath(); c.ctx.arc(px, py, p.size, 0, Math.PI * 2); c.ctx.fill();
+
+        // Comet trail for hot spot
+        if (p.hot && s.alpha > 0.1 && !s.scatter) {
+          for (var t = 1; t <= 8; t++) {
+            var ta = p.angle + s.rotation - (p.speed * t * 3);
+            var tx = c.cx + Math.cos(ta) * r;
+            var ty = c.cy + Math.sin(ta) * r;
+            c.ctx.globalAlpha = a * (1 - t / 9) * 0.5;
+            c.ctx.fillStyle = 'rgba(255,' + Math.round(180 - t * 15) + ',' + Math.round(60 - t * 7) + ',1)';
+            c.ctx.shadowBlur = (p.size - t * 0.2) * 6;
+            c.ctx.beginPath(); c.ctx.arc(tx, ty, Math.max(0.5, p.size - t * 0.3), 0, Math.PI * 2); c.ctx.fill();
+          }
+        }
+        c.ctx.restore();
+      }
+
       _ambientRaf = requestAnimationFrame(draw);
     }
     draw();
@@ -14916,77 +14991,14 @@ function _dismissSplash() {
 
   function _stopAmbient() { if (_ambientRaf) cancelAnimationFrame(_ambientRaf); _ambientRaf = 0; }
 
-  // Full-screen smoke dissolve — embers + ash scatter across entire viewport
-  function _smokeDissolve(canvas, color, cx, cy) {
-    var ctx = canvas.getContext('2d');
-    var dpr = window.devicePixelRatio || 1;
-    var W = canvas.width / dpr, H = canvas.height / dpr;
-    var rgb = _hexToRgb(color);
-    var particles = [];
-    // Ring of embers from center — fills the whole screen
-    for (var i = 0; i < 60; i++) {
-      var angle = (Math.PI * 2 / 60) * i + (Math.random() - 0.5) * 0.4;
-      var speed = 2 + Math.random() * 5;
-      var dist = Math.max(W, H) * 0.6; // travel far enough to fill viewport
-      particles.push({
-        x: cx, y: cy,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - Math.random() * 1.5,
-        size: 1.5 + Math.random() * 3,
-        life: 50 + Math.random() * 40,
-        maxLife: 50 + Math.random() * 40,
-        bright: Math.random() > 0.65,
-        drift: (Math.random() - 0.5) * 0.08
-      });
-    }
-    // Smoke puffs — larger, softer, rise slowly
-    for (var k = 0; k < 15; k++) {
-      particles.push({
-        x: cx + (Math.random() - 0.5) * 60,
-        y: cy + (Math.random() - 0.5) * 40,
-        vx: (Math.random() - 0.5) * 1.5,
-        vy: -0.5 - Math.random() * 1.5,
-        size: 8 + Math.random() * 20,
-        life: 60 + Math.random() * 30,
-        maxLife: 60 + Math.random() * 30,
-        bright: false, drift: 0, smoke: true
-      });
-    }
-    function animate() {
-      // Don't clear — let ambient draw handle that. Just draw on top.
-      for (var j = particles.length - 1; j >= 0; j--) {
-        var p = particles[j];
-        p.x += p.vx; p.y += p.vy;
-        p.vx *= 0.98; p.vy *= 0.98;
-        p.vx += p.drift || 0;
-        p.vy -= 0.02; // slight updraft
-        p.life--;
-        if (p.life <= 0) { particles.splice(j, 1); continue; }
-        var progress = p.life / p.maxLife;
-        var a = progress * (p.smoke ? 0.06 : 0.7);
-        var r = p.smoke ? p.size * (1.5 - 0.5 * progress) : p.size * progress;
-        ctx.save();
-        ctx.globalAlpha = a;
-        if (p.smoke) {
-          ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',1)';
-          ctx.shadowColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.2)';
-          ctx.shadowBlur = r * 2;
-        } else if (p.bright) {
-          ctx.fillStyle = 'rgba(255,255,255,1)';
-          ctx.shadowColor = 'rgba(255,255,255,0.5)';
-          ctx.shadowBlur = r * 4;
-        } else {
-          ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',1)';
-          ctx.shadowColor = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.7)';
-          ctx.shadowBlur = r * 5;
-        }
-        ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(0.5, r), 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-      }
-      if (particles.length > 0) requestAnimationFrame(animate);
-    }
-    animate();
-  }
+  // Contract ring, then scatter
+  function _ringContract(targetR) { _ringState.targetRadius = targetR || 40; }
+  function _ringExpand(targetR) { _ringState.targetRadius = targetR || 120; }
+  function _ringScatter() { _ringState.scatter = true; }
+  function _ringFade() { _ringState.alpha = Math.max(_ringState.alpha, 0.01); /* let draw loop fade */ }
+
+  // Placeholder for compatibility — smoke dissolve now handled by ring scatter
+  function _smokeDissolve(canvas, color, cx, cy) { _ringContract(30); }
 
   function _revealOrg(orgName, orgLogoUrl, orgColor) {
     if (_splashDismissed) return;
@@ -15047,59 +15059,53 @@ function _dismissSplash() {
       }
     }, 1000);
 
-    // Phase 2 (1.5s): WC logo dissolves — full-screen smoke + flash
+    // Phase 2 (1.5s): Ring contracts — WC logo dissolves through the portal
     setTimeout(function() {
-      // Full-screen flash — brief colored pulse across entire viewport
+      // Ring contracts tight around center
+      _ringContract(30);
+      // Brief flash at center
       if (splashEl) {
         var flash = document.createElement('div');
-        flash.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(' + rgb.join(',') + ',0.3) 0%,rgba(255,255,255,0.08) 40%,transparent 70%);z-index:6;pointer-events:none;opacity:0;transition:opacity 0.15s ease-out;';
+        flash.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,0.12) 0%,rgba(' + rgb.join(',') + ',0.06) 30%,transparent 60%);z-index:6;pointer-events:none;opacity:0;transition:opacity 0.12s ease-out;';
         splashEl.appendChild(flash);
         requestAnimationFrame(function() {
           flash.style.opacity = '1';
           setTimeout(function() {
-            flash.style.transition = 'opacity 0.8s ease-out';
+            flash.style.transition = 'opacity 0.6s ease-out';
             flash.style.opacity = '0';
-            setTimeout(function() { flash.remove(); }, 900);
-          }, 150);
+            setTimeout(function() { flash.remove(); }, 700);
+          }, 120);
         });
       }
-      // Smoke dissolve — embers + ash across entire viewport
-      if (canvas) {
-        var rect = canvas.getBoundingClientRect();
-        _smokeDissolve(canvas, color, rect.width / 2, rect.height * 0.42);
-      }
-      // WC logo burns out
+      // WC logo dissolves — brightness flare + scale up + blur
       if (wcLogo) {
-        wcLogo.style.transition = 'opacity 0.7s ease-in, transform 0.7s ease-in, filter 0.6s ease-in';
+        wcLogo.style.transition = 'opacity 0.6s ease-in, transform 0.6s ease-in, filter 0.5s ease-in';
         wcLogo.style.opacity = '0';
-        wcLogo.style.transform = 'scale(1.2)';
-        wcLogo.style.filter = 'brightness(4) blur(8px)';
+        wcLogo.style.transform = 'scale(1.15)';
+        wcLogo.style.filter = 'brightness(3) blur(6px)';
       }
-      // Glow contracts to nothing
+      // Hide CSS glow — ring handles all glow now
       if (glow) {
-        glow.style.transition = 'opacity 0.5s, transform 0.5s';
+        glow.style.transition = 'opacity 0.4s';
         glow.style.opacity = '0';
-        glow.style.transform = 'translate(-50%,-50%) scale(0.3)';
       }
     }, 1500);
 
-    // Phase 3 (2.2s): Org logo materializes + glow returns in org color
+    // Phase 3 (2.2s): Ring expands — org logo materializes inside the portal
     setTimeout(function() {
+      // Ring expands outward
+      _ringExpand(110);
+      // Org logo crystallizes
       if (orgLogo) {
         orgLogo.style.transition = 'opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.34,1.56,0.64,1), filter 0.8s ease-out';
         orgLogo.style.opacity = '1';
         orgLogo.style.transform = 'scale(1)';
         orgLogo.style.filter = 'blur(0)';
       }
-      if (glow) {
-        glow.style.background = 'radial-gradient(circle, rgba(' + rgb.join(',') + ',0.25) 0%, rgba(' + rgb.join(',') + ',0.06) 45%, transparent 70%)';
-        glow.style.transition = 'opacity 0.7s ease-out, transform 0.7s ease-out';
-        glow.style.opacity = '0.65';
-        glow.style.transform = 'translate(-50%,-50%) scale(1.15)';
-      }
+      // Background tints with org color
       if (splashEl) {
         splashEl.style.transition = 'background 1.2s ease-out';
-        splashEl.style.background = 'radial-gradient(ellipse at 50% 42%, rgba(' + rgb.join(',') + ',0.07) 0%, #020a0e 65%)';
+        splashEl.style.background = 'radial-gradient(ellipse at 50% 42%, rgba(' + rgb.join(',') + ',0.06) 0%, #020a0e 60%)';
       }
     }, 2200);
 
@@ -15129,8 +15135,10 @@ function _dismissSplash() {
       }, 500);
     }, 3200);
 
-    // Phase 5 (4.8s): Dismiss
-    setTimeout(function() { _stopAmbient(); window.wcSplash.dismiss(); }, 4800);
+    // Phase 5 (4s): Ring scatters — particles fly outward
+    setTimeout(function() { _ringScatter(); }, 4000);
+    // Phase 6 (5s): Dismiss
+    setTimeout(function() { _stopAmbient(); window.wcSplash.dismiss(); }, 5000);
   }
 
   window.wcSplash = {
@@ -24757,16 +24765,21 @@ async function _notifyManagersNewAssignment(appt) {
     // Collect all unique manager emails
     var _mgrEmails = new Set();
     var _adminEmail = await _resolveNotifyEmailAsync();
-    _mgrEmails.add(_adminEmail);
+    console.log('[Mail] _resolveNotifyEmailAsync returned:', JSON.stringify(_adminEmail));
+    if (_adminEmail) _mgrEmails.add(_adminEmail);
     usersSnap.forEach(function(doc) {
       var email = doc.data().email;
       if (email) _mgrEmails.add(email);
     });
+    console.log('[Mail] Manager emails to notify:', JSON.stringify([..._mgrEmails]));
+    if (_mgrEmails.size === 0) { console.warn('[Mail] No emails resolved — skipping mail write'); }
     _mgrEmails.forEach(function(email) {
-      fbDb.collection('mail').add({
-        to: email,
-        message: { subject: _emailSubject, html: _emailHtml }
-      }).catch(function(e) { console.warn('[Mail] Pending assign email to ' + email + ' failed:', e.message); });
+      if (!email) return;
+      var payload = { to: email, message: { subject: _emailSubject, html: _emailHtml } };
+      console.log('[Mail] Writing to mail collection:', JSON.stringify({ to: email, subject: _emailSubject.slice(0, 60) }));
+      fbDb.collection('mail').add(payload)
+        .then(function(ref) { console.log('[Mail] Document written:', ref.id); })
+        .catch(function(e) { console.warn('[Mail] Pending assign email to ' + email + ' failed:', e.message); });
     });
   } catch (err) {
     console.warn('[FCM] Manager notify failed:', err);
@@ -25380,19 +25393,24 @@ async function _resolveNotifyEmailAsync() {
 }
 
 async function _sendOtdSessionEmail() {
-  if (typeof fbDb === 'undefined') return;
-  if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
+  console.log('[Mail] _sendOtdSessionEmail called. hostname:', window.location.hostname);
+  if (typeof fbDb === 'undefined') { console.warn('[Mail] OTD email bail: fbDb undefined'); return; }
+  if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) { console.warn('[Mail] OTD email bail: dev hostname'); return; }
   var toEmail = await _resolveNotifyEmailAsync();
+  console.log('[Mail] OTD session email to:', JSON.stringify(toEmail));
+  if (!toEmail) { console.warn('[Mail] OTD email bail: no toEmail resolved'); return; }
   var repName = localStorage.getItem('wc_user_name') || 'Rep';
   var doors = _otdSessionDoors || 0;
   var contacts = _otdSessionContact || 0;
   var durSecs = _otdSessSecs || 0;
   var durMin = Math.floor(durSecs / 60);
   var durStr = durMin > 0 ? durMin + ' min' : durSecs + ' sec';
+  var _subject = '\uD83D\uDCCA OTD Session Complete \u2014 ' + repName;
+  console.log('[Mail] Writing OTD email to mail collection:', JSON.stringify({ to: toEmail, subject: _subject }));
   fbDb.collection('mail').add({
     to: toEmail,
     message: {
-      subject: '\uD83D\uDCCA OTD Session Complete \u2014 ' + repName,
+      subject: _subject,
       html: '<div style="font-family:sans-serif;max-width:520px;margin:0 auto">' +
         '<div style="background:#148f98;padding:16px 20px;border-radius:10px 10px 0 0"><h2 style="color:#fff;margin:0;font-size:16px">OTD Session Summary</h2></div>' +
         '<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:20px;font-size:14px">' +
@@ -25403,7 +25421,8 @@ async function _sendOtdSessionEmail() {
         '<strong>Ended:</strong> ' + new Date().toLocaleString() + '</p></div>' +
         '<p style="color:#bbb;font-size:11px;text-align:center;margin-top:12px">Sent automatically by WC App</p></div>'
     }
-  }).catch(function(e) { console.warn('[Mail] OTD session email failed:', e.message); });
+  }).then(function(ref) { console.log('[Mail] OTD email doc written:', ref.id); })
+    .catch(function(e) { console.warn('[Mail] OTD session email failed:', e.message); });
 }
 
 /* ─── UI reset for next door ─── */
@@ -25705,14 +25724,19 @@ async function _sendApptDispoEmail(appt, result) {
 }
 
 async function _sendSoldEmail(appt, repName, custName) {
-  if (typeof fbDb === 'undefined') return;
-  if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
+  console.log('[Mail] _sendSoldEmail called. hostname:', window.location.hostname);
+  if (typeof fbDb === 'undefined') { console.warn('[Mail] Sold email bail: fbDb undefined'); return; }
+  if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) { console.warn('[Mail] Sold email bail: dev hostname'); return; }
   var toEmail = await _resolveNotifyEmailAsync();
+  console.log('[Mail] Sold email to:', JSON.stringify(toEmail));
+  if (!toEmail) { console.warn('[Mail] Sold email bail: no toEmail resolved'); return; }
   var addr = appt ? (appt.street || appt.address || '') : '';
+  var _subject = '\uD83C\uDFC6 SOLD \u2014 ' + (addr || custName || 'New Deal');
+  console.log('[Mail] Writing Sold email to mail collection:', JSON.stringify({ to: toEmail, subject: _subject }));
   fbDb.collection('mail').add({
     to: toEmail,
     message: {
-      subject: '\uD83C\uDFC6 SOLD \u2014 ' + (addr || custName || 'New Deal'),
+      subject: _subject,
       html: '<div style="font-family:sans-serif;max-width:520px;margin:0 auto">' +
         '<div style="background:#22c55e;padding:16px 20px;border-radius:10px 10px 0 0"><h2 style="color:#fff;margin:0;font-size:16px">\uD83C\uDFC6 DEAL SIGNED!</h2></div>' +
         '<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-top:none;border-radius:0 0 10px 10px;padding:20px;font-size:14px">' +
@@ -25722,7 +25746,8 @@ async function _sendSoldEmail(appt, repName, custName) {
         '<strong>Time:</strong> ' + new Date().toLocaleString() + '</p></div>' +
         '<p style="color:#bbb;font-size:11px;text-align:center;margin-top:12px">Sent automatically by WC App</p></div>'
     }
-  }).catch(function(e) { console.warn('[Mail] Sold email failed:', e.message); });
+  }).then(function(ref) { console.log('[Mail] Sold email doc written:', ref.id); })
+    .catch(function(e) { console.warn('[Mail] Sold email failed:', e.message); });
 }
 
 async function _sendDispoEmail(entry) {
