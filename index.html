@@ -19732,7 +19732,7 @@ bookingForm.addEventListener('submit', e => {
 
   // Best available extras
   if (isBestAvailable) {
-    appt.timePreference = document.querySelector('input[name="b-time-pref"]:checked').value;
+    appt.timePreference = (document.querySelector('input[name="b-time-pref"]:checked') || {}).value || '';
     appt.managementNotes = (document.getElementById('b-mgmt-notes') || {}).value || '';
   }
 
