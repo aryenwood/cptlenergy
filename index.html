@@ -12104,6 +12104,7 @@ function _clearFirebaseIdentity() {
 //   team         → organizations/{uid}/team/{sanitizedName}
 //   wins         → wins/{win.id}
 async function drainToFirestore() {
+  if (_suppressSync) { console.log('[Firestore] Drain skipped — onSnapshot write in progress'); return; }
   const user = fbAuth.currentUser;
   if (!user) { console.log('[Firestore] Drain skipped — not signed in'); return; }
   if (!navigator.onLine) { console.log('[Firestore] Drain skipped — offline'); return; }
@@ -12568,7 +12569,7 @@ function applyOrgBranding(orgId, org) {
       if (typeof _initFCM === 'function') _initFCM();
 
       // 3c. Start real-time Firestore sync for org data
-      if (typeof _initFirestoreSync === 'function') setTimeout(_initFirestoreSync, 2000);
+      if (typeof _initFirestoreSync === 'function') _initFirestoreSync(); // no delay — seed data ASAP
 
       // 4. Drain any queued entities to Firestore (online only)
       if (navigator.onLine) drainToFirestore();
@@ -13204,6 +13205,7 @@ const SMK = SvelteMotionKit;
 // DataStore — backend-ready abstraction (v71)
 // Swap internals for fetch() calls when real backend is ready.
 // ══════════════════════════════════════════════════════════════════════════
+var _suppressSync = false; // true during onSnapshot writes to prevent sync loop
 const DataStore = (() => {
   const KEYS = {
     entries:      'wc_log_entries',
@@ -13238,7 +13240,7 @@ const DataStore = (() => {
         if (typeof showToast === 'function') showToast('Storage is full — some data may not be saved. Clear old entries in the CRM.');
       }
     }
-    _appendSync(key.replace('wc_',''));
+    if (!_suppressSync) _appendSync(key.replace('wc_',''));
   }
   function _appendSync(entity) {
     // v78: sync queue is kept for future backend use but no longer drives any UI badge
@@ -13283,6 +13285,26 @@ const DataStore = (() => {
     },
   };
 })();
+
+// Re-render whichever tab is currently active (called after onSnapshot updates data)
+function _refreshActiveTab() {
+  var tab = document.querySelector('#bottom-nav .nav-item.active');
+  if (!tab) return;
+  var tabId = tab.dataset.tab;
+  try {
+    if (tabId === 'dashboard') renderDashboard();
+    else if (tabId === 'log') {
+      if (typeof currentCrmPane !== 'undefined') {
+        if (currentCrmPane === 'activity') renderLogList();
+        else if (currentCrmPane === 'appointments') renderApptCrmList();
+        else if (currentCrmPane === 'customers') renderCustomerList();
+        else if (currentCrmPane === 'followup') renderFollowUpQueue();
+      }
+    }
+    else if (tabId === 'calendar') renderCalendar();
+    else if (tabId === 'leaderboard') renderLeaderboard();
+  } catch(e) { console.warn('[Sync] Refresh error:', e.message); }
+}
 
 // Safe localStorage write — quota guard for bare setItem calls outside DataStore
 function safeSetItem(key, value) {
@@ -23929,6 +23951,25 @@ function _initFirestoreSync() {
 
   var orgRef = fbDb.collection('organizations').doc(orgId);
 
+  // ── Seed from Firestore if localStorage is empty (new device / cleared data) ──
+  function _seedIfEmpty(collectionName, loadFn, saveFn, orderField, label) {
+    if (loadFn().length > 0) return; // already have local data
+    orgRef.collection(collectionName).orderBy(orderField || 'timestamp', 'desc').limit(500).get()
+      .then(function(snap) {
+        if (snap.empty) return;
+        var docs = [];
+        snap.forEach(function(d) { docs.push(Object.assign({ _docId: d.id }, d.data())); });
+        _suppressSync = true; saveFn(docs); _suppressSync = false;
+        _refreshActiveTab();
+        console.log('[Seed] ' + label + ': ' + docs.length + ' docs from Firestore');
+      })
+      .catch(function(e) { console.warn('[Seed] ' + label + ' failed:', e.message); });
+  }
+  _seedIfEmpty('entries', DataStore.loadEntries, DataStore.saveEntries, 'timestamp', 'Entries');
+  _seedIfEmpty('appointments', DataStore.loadAppointments, DataStore.saveAppointments, 'createdAt', 'Appointments');
+  _seedIfEmpty('team', DataStore.loadTeam, DataStore.saveTeam, 'syncedAt', 'Team');
+  _seedIfEmpty('wins', DataStore.loadWins, DataStore.saveWins, 'timestamp', 'Wins');
+
   // 1. Entries (log_entries) — org-scoped
   _firestoreSyncUnsubs.push(
     orgRef.collection('entries').onSnapshot(function(snap) {
@@ -23941,7 +23982,8 @@ function _initFirestoreSync() {
       var localOnly = local.filter(function(e) { return !remoteIds.has(e.id); });
       var merged = remote.concat(localOnly);
       merged.sort(function(a, b) { return (b.timestamp || 0) - (a.timestamp || 0); });
-      localStorage.setItem('wc_log_entries', JSON.stringify(merged));
+      _suppressSync = true; DataStore.saveEntries(merged); _suppressSync = false;
+      _refreshActiveTab();
       console.log('[Sync] Entries: ' + remote.length + ' remote + ' + localOnly.length + ' local-only');
     }, function(err) { console.warn('[Sync] Entries listener error:', err.code); })
   );
@@ -23957,7 +23999,8 @@ function _initFirestoreSync() {
       var localOnly = local.filter(function(a) { return !remoteIds.has(a.id); });
       var merged = remote.concat(localOnly);
       merged.sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
-      localStorage.setItem('wc_appointments', JSON.stringify(merged));
+      _suppressSync = true; DataStore.saveAppointments(merged); _suppressSync = false;
+      _refreshActiveTab();
       console.log('[Sync] Appointments: ' + remote.length + ' remote + ' + localOnly.length + ' local-only');
     }, function(err) { console.warn('[Sync] Appointments listener error:', err.code); })
   );
@@ -23967,7 +24010,8 @@ function _initFirestoreSync() {
     orgRef.collection('team').onSnapshot(function(snap) {
       var remote = [];
       snap.forEach(function(doc) { remote.push(Object.assign({ _docId: doc.id }, doc.data())); });
-      localStorage.setItem('wc_team', JSON.stringify(remote));
+      _suppressSync = true; DataStore.saveTeam(remote); _suppressSync = false;
+      _refreshActiveTab();
       console.log('[Sync] Team: ' + remote.length + ' members');
     }, function(err) { console.warn('[Sync] Team listener error:', err.code); })
   );
@@ -23981,7 +24025,8 @@ function _initFirestoreSync() {
       var remoteIds = new Set(remote.map(function(r) { return r.id || r._docId; }));
       var localOnly = local.filter(function(w) { return !remoteIds.has(w.id); });
       var merged = remote.concat(localOnly);
-      localStorage.setItem('wc_wins', JSON.stringify(merged));
+      _suppressSync = true; DataStore.saveWins(merged); _suppressSync = false;
+      _refreshActiveTab();
       console.log('[Sync] Wins: ' + remote.length + ' remote + ' + localOnly.length + ' local-only');
     }, function(err) { console.warn('[Sync] Wins listener error:', err.code); })
   );
