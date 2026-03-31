@@ -12797,9 +12797,16 @@ function applyOrgBranding(orgId, org) {
     fbAuth.signInWithPopup(provider).then(function(result) {
       console.log('[Firebase] Popup sign-in complete:', result.user.email);
     }).catch(function(err) {
-      console.warn('[Firebase] Popup sign-in error:', err.code, err.message);
-      showError(err.message);
-      if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+      if (err.code === 'auth/popup-blocked') {
+        // Fallback: if popup is blocked (iOS in-app browsers), try redirect
+        fbAuth.signInWithRedirect(provider);
+      } else if (err.code !== 'auth/popup-closed-by-user') {
+        console.warn('[Firebase] Popup sign-in error:', err.code, err.message);
+        showToast('Sign in failed. Please try again.', 'error');
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+      } else {
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+      }
     });
   });
 
