@@ -19610,6 +19610,19 @@ bookingForm.addEventListener('submit', e => {
   closeBookingSheet();
 
   if (isBestAvailable) {
+    // Immediately write to Firestore (don't wait for drain queue)
+    var _baOrgId = localStorage.getItem('wc_org_id');
+    if (_baOrgId && typeof fbDb !== 'undefined' && navigator.onLine) {
+      var _baDoc = Object.assign({}, appt);
+      delete _baDoc.photo; delete _baDoc.ubPhoto;
+      _baDoc.orgId = _baOrgId;
+      _baDoc.repUid = fbAuth.currentUser ? fbAuth.currentUser.uid : '';
+      _baDoc.syncedAt = Date.now();
+      fbDb.collection('organizations').doc(_baOrgId).collection('appointments').doc(appt.id)
+        .set(_baDoc, { merge: true })
+        .then(function() { console.log('[Firestore] pending_assignment written immediately:', appt.id); })
+        .catch(function(e) { console.warn('[Firestore] Immediate write failed:', e.message); });
+    }
     // Notify all managers in the org
     _notifyManagersNewAssignment(appt);
     showToast('✅ Appointment submitted — management will assign a closer');
@@ -24246,7 +24259,7 @@ function _updatePendingCard() {
   var title = document.getElementById('mgr-cc-title');
   if (!card) return;
   var role = getActiveRole();
-  if (role !== 'manager' && role !== 'master_admin') { card.classList.remove('visible'); return; }
+  if (role !== 'manager' && role !== 'master_admin' && role !== 'super_admin') { card.classList.remove('visible'); return; }
 
   // Merge: Firestore live data + local pending_assignment appointments
   var localPending = loadAppointments().filter(function(a) { return a.result === 'pending_assignment'; });
@@ -24596,7 +24609,7 @@ async function _notifyManagersNewAssignment(appt) {
     var _emailSubject = '\uD83D\uDCC5 New Appointment Needs a Closer \u2014 ' + custName;
     // Collect all unique manager emails
     var _mgrEmails = new Set();
-    var _adminEmail = _resolveNotifyEmail();
+    var _adminEmail = await _resolveNotifyEmailAsync();
     _mgrEmails.add(_adminEmail);
     usersSnap.forEach(function(doc) {
       var email = doc.data().email;
@@ -25193,11 +25206,36 @@ function _resolveNotifyEmail() {
   // 3. No email configured — return empty (caller should handle)
   return '';
 }
+// Async variant: falls back to Firestore org doc if localStorage is empty
+async function _resolveNotifyEmailAsync() {
+  var email = _resolveNotifyEmail();
+  if (email) return email;
+  // Fetch from org doc as safety net
+  var orgId = localStorage.getItem('wc_org_id');
+  if (!orgId || typeof fbDb === 'undefined') return '';
+  try {
+    var doc = await fbDb.collection('organizations').doc(orgId).get();
+    if (doc.exists) {
+      var d = doc.data();
+      var fetched = d.dispoEmailTo || d.notificationEmail || '';
+      if (fetched) {
+        // Persist to localStorage so future calls don't need Firestore
+        var s = _safeAdminSettings();
+        if (d.dispoEmailTo) s.dispoEmailTo = d.dispoEmailTo;
+        if (d.notificationEmail) s.notificationEmail = d.notificationEmail;
+        try { localStorage.setItem('wc_admin', JSON.stringify(s)); } catch(_) {}
+        console.log('[Email] Fetched notify email from org doc:', fetched);
+      }
+      return fetched;
+    }
+  } catch(e) { console.warn('[Email] Org doc fetch failed:', e.message); }
+  return '';
+}
 
-function _sendOtdSessionEmail() {
+async function _sendOtdSessionEmail() {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
-  var toEmail = _resolveNotifyEmail();
+  var toEmail = await _resolveNotifyEmailAsync();
   var repName = localStorage.getItem('wc_user_name') || 'Rep';
   var doors = _otdSessionDoors || 0;
   var contacts = _otdSessionContact || 0;
@@ -25476,11 +25514,11 @@ function _otdAttachVoice(entry) {
 
 /* ─── Save to DataStore + counter update ─── */
 /* ─── Email dispo results to manager ─── */
-function _sendApptDispoEmail(appt, result) {
+async function _sendApptDispoEmail(appt, result) {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
   var _s = {}; try { _s = _safeAdminSettings(); } catch(_) {}
-  var _toEmail   = _s.dispoEmailTo || _resolveNotifyEmail();
+  var _toEmail   = _s.dispoEmailTo || (await _resolveNotifyEmailAsync());
   var _fromEmail = _s.dispoEmailFrom || '';
   var repName = localStorage.getItem('wc_user_name') || 'Rep';
   var custName = [appt.firstName, appt.lastName].filter(Boolean).join(' ') || '—';
@@ -25519,10 +25557,10 @@ function _sendApptDispoEmail(appt, result) {
   fbDb.collection('mail').add(_apptMailDoc).catch(function(e) { console.warn('[ApptDispoEmail] Failed to queue:', e.message); });
 }
 
-function _sendSoldEmail(appt, repName, custName) {
+async function _sendSoldEmail(appt, repName, custName) {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
-  var toEmail = _resolveNotifyEmail();
+  var toEmail = await _resolveNotifyEmailAsync();
   var addr = appt ? (appt.street || appt.address || '') : '';
   fbDb.collection('mail').add({
     to: toEmail,
@@ -25540,11 +25578,11 @@ function _sendSoldEmail(appt, repName, custName) {
   }).catch(function(e) { console.warn('[Mail] Sold email failed:', e.message); });
 }
 
-function _sendDispoEmail(entry) {
+async function _sendDispoEmail(entry) {
   if (typeof fbDb === 'undefined') return;
   if (['localhost','127.0.0.1','wc-app-alpha.firebaseapp.com','wc-app-alpha.web.app'].indexOf(window.location.hostname) !== -1) return;
   var _s = {}; try { _s = _safeAdminSettings(); } catch(_) {}
-  var _toEmail   = _s.dispoEmailTo || _resolveNotifyEmail();
+  var _toEmail   = _s.dispoEmailTo || (await _resolveNotifyEmailAsync());
   var _fromEmail = _s.dispoEmailFrom || '';
   var statusLabels = {
     'not-home':       'Not Home',
