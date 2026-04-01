@@ -14761,7 +14761,10 @@ var _appInitDone = false;
 var _splashDismissed = false;
 var _splashFallbackTimer = null;
 var _onSplashDismiss = null;
+var _pulseRunning = false; // prevent early dismiss while pulse is active
 function _dismissSplash() {
+  // If the pulse sequence is running, defer — revealOrg will call dismiss when done
+  if (_pulseRunning) return;
   if (_splashDismissed) return;
   _splashDismissed = true;
   if (_splashFallbackTimer) { clearTimeout(_splashFallbackTimer); _splashFallbackTimer = null; }
@@ -14781,11 +14784,15 @@ function _dismissSplash() {
 (function() {
   function _revealOrg(orgName, orgLogoUrl, orgColor) {
     if (_splashDismissed) return;
+    _pulseRunning = true; // lock — we own the dismiss now
     var wcLogo  = document.getElementById('splash-logo');
     var orgLogo = document.getElementById('splash-org-logo');
     var nameEl  = document.getElementById('splash-org-name');
     var glow    = document.getElementById('splash-glow');
     var pulse   = document.getElementById('splash-pulse');
+
+    // Preload org logo immediately so it's ready for crossfade
+    if (orgLogoUrl && orgLogo) orgLogo.src = orgLogoUrl;
 
     // ── Phase 0 (0-300ms): Pure black. Nothing. Deliberate pause. ──
 
@@ -14802,48 +14809,50 @@ function _dismissSplash() {
           pulse.style.opacity = '0';
         }, 250);
       }
-      // WC logo revealed by the pulse — already there, light just found it
+      // WC logo revealed — already there, light just found it
       if (wcLogo) {
         wcLogo.style.transition = 'opacity 0.5s ease-out';
         wcLogo.style.opacity = '1';
       }
-      // Subtle glow appears behind logo
+      // Subtle glow behind logo
       if (glow) glow.style.opacity = '1';
     }, 300);
 
-    // ── Phase 2 (1.3s): WC logo holds. Confidence. ──
-    //    (nothing happens — the stillness IS the design)
+    // ── Phase 2: WC logo holds. Confidence. (nothing happens) ──
 
-    // ── Phase 3 (1.8s): Crossfade — WC scales down, org scales up ──
-    setTimeout(function() {
-      // WC fades + shrinks slightly
-      if (wcLogo) {
-        wcLogo.style.transition = 'opacity 0.6s ease-in, transform 0.6s ease-in';
-        wcLogo.style.opacity = '0';
-        wcLogo.style.transform = 'scale(0.92)';
-      }
-      // Org logo fades in + grows to full
-      if (orgLogo) {
-        if (orgLogoUrl) orgLogo.src = orgLogoUrl;
-        orgLogo.style.transition = 'opacity 0.6s ease-out 0.15s, transform 0.6s ease-out 0.15s';
-        orgLogo.style.opacity = '1';
-        orgLogo.style.transform = 'scale(1)';
-      }
-    }, orgLogoUrl ? 1800 : 9999);
+    // ── Phase 3 (1.6s): Crossfade — WC out, org in ──
+    var hasOrg = !!orgLogoUrl;
+    if (hasOrg) {
+      setTimeout(function() {
+        if (wcLogo) {
+          wcLogo.style.transition = 'opacity 0.6s ease-in, transform 0.6s ease-in';
+          wcLogo.style.opacity = '0';
+          wcLogo.style.transform = 'scale(0.92)';
+        }
+        if (orgLogo) {
+          orgLogo.style.transition = 'opacity 0.6s ease-out 0.15s, transform 0.6s ease-out 0.15s';
+          orgLogo.style.opacity = '1';
+          orgLogo.style.transform = 'scale(1)';
+        }
+      }, 1600);
+    }
 
-    // ── Phase 4 (2.5s): Org name fades up ──
-    setTimeout(function() {
-      if (nameEl && orgName) {
-        nameEl.textContent = orgName;
-        nameEl.style.opacity = '1';
-        nameEl.style.transform = 'translateY(0)';
-      }
-    }, orgLogoUrl ? 2500 : 9999);
+    // ── Phase 4: Org name fades up ──
+    if (hasOrg) {
+      setTimeout(function() {
+        if (nameEl && orgName) {
+          nameEl.textContent = orgName;
+          nameEl.style.opacity = '1';
+          nameEl.style.transform = 'translateY(0)';
+        }
+      }, 2300);
+    }
 
-    // ── Phase 5 (3.2s): Dismiss — fade to app ──
+    // ── Phase 5: Dismiss ──
     setTimeout(function() {
-      window.wcSplash.dismiss();
-    }, orgLogoUrl ? 3200 : 2200);
+      _pulseRunning = false; // unlock
+      _dismissSplash();
+    }, hasOrg ? 3000 : 2000);
   }
 
   window.wcSplash = {
@@ -14881,8 +14890,7 @@ function _initApp() {
   if (_cachedLogo) {
     const _hbl = document.getElementById('header-brand-img');
     if (_hbl) _hbl.src = _cachedLogo;
-    const _splashLogoEl = document.getElementById('splash-logo');
-    if (_splashLogoEl) _splashLogoEl.src = _cachedLogo;
+    // Do NOT overwrite #splash-logo — it must stay as W.png for the WC→org crossfade
     document.querySelectorAll('.login-logo img').forEach(function(img) { img.src = _cachedLogo; });
   }
   // Only apply cached icon if user belongs to an org (not SA viewing via ?org= param)
