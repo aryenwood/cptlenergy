@@ -14794,65 +14794,80 @@ function _dismissSplash() {
     // Preload org logo immediately so it's ready for crossfade
     if (orgLogoUrl && orgLogo) orgLogo.src = orgLogoUrl;
 
-    // ── Phase 0 (0-300ms): Pure black. Nothing. Deliberate pause. ──
-
-    // ── Phase 1 (300ms): Sonar pulse — single ring of teal light ──
+    // ── Phase 1 (200ms): WC logo fades in gently on black ──
     setTimeout(function() {
-      if (pulse) {
-        pulse.style.transition = 'width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease-out';
-        pulse.style.width = '280px';
-        pulse.style.height = '280px';
-        pulse.style.opacity = '1';
-        // Fade the ring as it expands
-        setTimeout(function() {
-          pulse.style.transition = 'opacity 0.3s ease-out';
-          pulse.style.opacity = '0';
-        }, 250);
-      }
-      // WC logo revealed — already there, light just found it
       if (wcLogo) {
-        wcLogo.style.transition = 'opacity 0.5s ease-out';
+        wcLogo.style.transition = 'opacity 0.8s ease-out';
         wcLogo.style.opacity = '1';
       }
-      // Subtle glow behind logo
-      if (glow) glow.style.opacity = '1';
-    }, 300);
+      // Soft glow behind logo
+      if (glow) {
+        glow.style.transition = 'opacity 1s ease-out';
+        glow.style.opacity = '1';
+      }
+      // Sonar pulse — one ring expands and fades, AFTER logo is visible
+      setTimeout(function() {
+        if (pulse) {
+          pulse.style.transition = 'width 0.5s cubic-bezier(0.16,1,0.3,1), height 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease-out';
+          pulse.style.width = '260px';
+          pulse.style.height = '260px';
+          pulse.style.opacity = '1';
+          setTimeout(function() {
+            pulse.style.transition = 'opacity 0.4s ease-out';
+            pulse.style.opacity = '0';
+          }, 350);
+        }
+      }, 400);
+    }, 200);
 
-    // ── Phase 2: WC logo holds. Confidence. (nothing happens) ──
+    // ── Phase 2 (200-1800ms): WC logo holds. Stillness. ──
 
-    // ── Phase 3 (1.6s): Crossfade — WC out, org in ──
+    // ── Phase 3 (1800ms): Crossfade — WC out, org in ──
     var hasOrg = !!orgLogoUrl;
     if (hasOrg) {
       setTimeout(function() {
         if (wcLogo) {
-          wcLogo.style.transition = 'opacity 0.6s ease-in, transform 0.6s ease-in';
+          wcLogo.style.transition = 'opacity 0.5s ease-in, transform 0.5s ease-in';
           wcLogo.style.opacity = '0';
-          wcLogo.style.transform = 'scale(0.92)';
+          wcLogo.style.transform = 'scale(0.95)';
         }
-        if (orgLogo) {
-          orgLogo.style.transition = 'opacity 0.6s ease-out 0.15s, transform 0.6s ease-out 0.15s';
-          orgLogo.style.opacity = '1';
-          orgLogo.style.transform = 'scale(1)';
-        }
-      }, 1600);
-    }
+        setTimeout(function() {
+          if (orgLogo) {
+            orgLogo.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            orgLogo.style.opacity = '1';
+            orgLogo.style.transform = 'scale(1)';
+          }
+        }, 200);
+      }, 1800);
 
-    // ── Phase 4: Org name fades up ──
-    if (hasOrg) {
+      // ── Phase 4 (2.6s): Org name ──
       setTimeout(function() {
         if (nameEl && orgName) {
           nameEl.textContent = orgName;
           nameEl.style.opacity = '1';
           nameEl.style.transform = 'translateY(0)';
         }
-      }, 2300);
-    }
+      }, 2600);
 
-    // ── Phase 5: Dismiss ──
-    setTimeout(function() {
-      _pulseRunning = false; // unlock
-      _dismissSplash();
-    }, hasOrg ? 3000 : 2000);
+      // ── Phase 5 (3.4s): Dismiss ──
+      setTimeout(function() {
+        _pulseRunning = false;
+        _dismissSplash();
+      }, 3400);
+    } else {
+      // No org logo — just show WC, then dismiss
+      setTimeout(function() {
+        if (nameEl && orgName) {
+          nameEl.textContent = orgName;
+          nameEl.style.opacity = '1';
+          nameEl.style.transform = 'translateY(0)';
+        }
+      }, 1400);
+      setTimeout(function() {
+        _pulseRunning = false;
+        _dismissSplash();
+      }, 2200);
+    }
   }
 
   window.wcSplash = {
