@@ -80,6 +80,7 @@
     :root {
       /* Brand — WC App palette, matched to logo teal */
       --teal:         #148f98;   /* Primary teal — buttons, active states, icons */
+      --on-primary:   #fff;      /* Text color on primary background — auto-set by applyThemePrimary */
       --teal-bright:  #1ec8d5;   /* Highlights, hover states, glow effects */
       --teal-dim:     #0d7882;   /* Pressed states, disabled primary */
       --teal-glow:    rgba(20,143,152,0.12);  /* Subtle teal fill backgrounds */
@@ -485,7 +486,7 @@
       border: 1px solid rgba(20,143,152,0.10);
     }
     html.dark-mode .map-toggle-btn { color: var(--text-2); }
-    html.dark-mode .map-toggle-btn.active { background: var(--teal); color: #fff; }
+    html.dark-mode .map-toggle-btn.active { background: var(--teal); color: var(--on-primary, #fff); }
     html.dark-mode .map-toggle-btn[data-layer="doors"].active        { background: #597dff; }
     html.dark-mode .map-toggle-btn[data-layer="appointments"].active  { background: var(--teal); }
     html.dark-mode .map-toggle-btn[data-layer="installs"].active      { background: #22c55e; }
@@ -496,7 +497,7 @@
       border-color: rgba(20,143,152,0.14);
       color: var(--text-2);
     }
-    html.dark-mode .map-pill.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+    html.dark-mode .map-pill.active { background: var(--teal); border-color: var(--teal); color: var(--on-primary, #fff); }
 
     html.dark-mode #map-legend {
       background: rgba(10,17,24,0.96);
@@ -1018,7 +1019,7 @@
     }
     .pdf-retry-btn {
       padding: 10px 24px; border-radius: 50px; border: none;
-      background: var(--teal); color: #fff; font-size: 13px; font-weight: 700;
+      background: var(--teal); color: var(--on-primary, #fff); font-size: 13px; font-weight: 700;
       cursor: pointer; font-family: inherit;
     }
 
@@ -1576,7 +1577,7 @@
       cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em;
     }
     .dash-date-pill.active {
-      background: var(--teal); color: #fff; border-color: var(--teal);
+      background: var(--teal); color: var(--on-primary, #fff); border-color: var(--teal);
       box-shadow: 0 0 14px rgba(20,143,152,0.30);
     }
 
@@ -2149,7 +2150,7 @@
       transition: all 0.18s; white-space: nowrap;
     }
     .map-toggle-btn.active {
-      background: var(--teal); color: #fff;
+      background: var(--teal); color: var(--on-primary, #fff);
     }
     /* Independent layer — each has its own accent color when active */
     .map-toggle-btn[data-layer="doors"].active        { background: #597dff; }
@@ -2176,7 +2177,7 @@
       cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
       transition: all .15s; white-space: nowrap;
     }
-    #map-filter-btn.has-filter { background: var(--teal); color: #fff; border-color: transparent; }
+    #map-filter-btn.has-filter { background: var(--teal); color: var(--on-primary, #fff); border-color: transparent; }
     html.dark-mode #map-filter-btn { background: rgba(30,41,59,0.92); color: var(--text); border-color: var(--g-border); }
     #map-filter-dropdown {
       display: none; position: absolute; top: calc(100% + 6px); right: 0;
@@ -2196,7 +2197,7 @@
     }
     .map-filter-opt:hover { background: rgba(0,0,0,0.05); }
     html.dark-mode .map-filter-opt:hover { background: rgba(255,255,255,0.07); }
-    .map-filter-opt.active { background: var(--teal); color: #fff; }
+    .map-filter-opt.active { background: var(--teal); color: var(--on-primary, #fff); }
     .map-filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
     /* Legend */
@@ -2227,7 +2228,7 @@
     }
     .map-fab:active { transform: scale(0.93); }
     #map-drop-btn {
-      padding: 12px 20px; background: var(--teal); color: #fff;
+      padding: 12px 20px; background: var(--teal); color: var(--on-primary, #fff);
       border-radius: 50px; font-size: 14px; font-weight: 700;
     }
     #map-locate-btn {
@@ -2288,7 +2289,7 @@
       justify-content: center;
     }
     #map-satellite-btn svg { width: 20px; height: 20px; }
-    #map-satellite-btn.satellite-active { background: var(--teal, var(--teal)); color: #fff; }
+    #map-satellite-btn.satellite-active { background: var(--teal, var(--teal)); color: var(--on-primary, #fff); }
     #map-satellite-btn.satellite-active svg path,
     #map-satellite-btn.satellite-active svg circle { stroke: #fff; }
 
@@ -2348,7 +2349,7 @@
     }
     #ql-save-btn {
       flex: 2; padding: 13px; border-radius: 16px; border: none;
-      background: var(--teal); color: #fff;
+      background: var(--teal); color: var(--on-primary, #fff);
       font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer;
     }
 
@@ -2470,7 +2471,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     .training-toggle.active {
-      background: var(--teal); color: #fff;
+      background: var(--teal); color: var(--on-primary, #fff);
       border-color: var(--teal);
     }
 
@@ -2484,7 +2485,7 @@
       cursor: pointer; transition: all 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-    .utility-tab.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .utility-tab.active { background: var(--teal); color: var(--on-primary, #fff); border-color: var(--teal); }
     .utility-cheat-section { margin-bottom: 20px; }
     .utility-cheat-title { font-size: 13px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
     .utility-cheat-table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
@@ -2755,7 +2756,7 @@
       white-space: nowrap; transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .res-subtab--active {
-      background: var(--teal); color: #fff; border-color: var(--teal);
+      background: var(--teal); color: var(--on-primary, #fff); border-color: var(--teal);
     }
     .res-pane--hidden { display: none; }
 
@@ -2771,7 +2772,7 @@
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .adder-tab--active {
-      background: var(--teal); color: #fff; border-color: var(--teal);
+      background: var(--teal); color: var(--on-primary, #fff); border-color: var(--teal);
     }
     .adder-search-wrap {
       position: relative; margin-bottom: 12px;
@@ -2855,7 +2856,7 @@
     }
     .checklist-copy-btn {
       margin-top: 12px; padding: 7px 16px; border-radius: 50px;
-      background: var(--teal); color: #fff; font-size: 12px;
+      background: var(--teal); color: var(--on-primary, #fff); font-size: 12px;
       font-weight: 700; cursor: pointer; border: none;
     }
     .checklist-auth-areas {
@@ -3019,7 +3020,7 @@
     .team-add-row .admin-input { flex: 1; min-width: 0; }
     .team-add-btn {
       padding: 8px 16px; border-radius: var(--r-sm);
-      background: var(--teal); color: #fff;
+      background: var(--teal); color: var(--on-primary, #fff);
       font-size: 14px; font-weight: 600; white-space: nowrap;
       border: none; cursor: pointer; flex-shrink: 0;
       transition: background 0.2s;
@@ -3532,7 +3533,7 @@
     .cust-files-upload-btn {
       display: flex; align-items: center; gap: 8px;
       padding: 7px 13px; border-radius: 12px;
-      background: var(--teal); color: #fff;
+      background: var(--teal); color: var(--on-primary, #fff);
       font-size: 12px; font-weight: 700; border: none; cursor: pointer;
       transition: opacity 0.15s, transform 0.12s;
     }
@@ -4397,7 +4398,7 @@
     #pin-drop-confirm {
       width: 100%; padding: 11px;
       border-radius: var(--r-sm); border: none;
-      background: var(--teal); color: #fff;
+      background: var(--teal); color: var(--on-primary, #fff);
       font-size: 13px; font-weight: 700; font-family: inherit;
       cursor: pointer;
       transition: transform 0.12s var(--spring);
@@ -4703,7 +4704,7 @@
   }
   .bcard-action-btn:active { transform: scale(0.96); opacity: 0.85; }
   .bcard-action-btn--primary {
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
   }
   .bcard-action-btn--secondary {
     background: var(--g2); color: var(--text);
@@ -4951,7 +4952,7 @@
   #role-setup-go {
     width: 100%; max-width: 360px;
     height: 52px; border-radius: 16px; border: none;
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     font-size: 18px; font-weight: 700; font-family: inherit;
     cursor: pointer; -webkit-tap-highlight-color: transparent;
     transition: opacity 0.15s, transform 0.12s;
@@ -5384,7 +5385,7 @@
     transition: all 0.18s; white-space: nowrap;
   }
   .lb-range-tab.active {
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
   }
 
   .lb-boards {
@@ -5466,7 +5467,7 @@
     margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
   }
   .lb-ach-count {
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     font-size: 10px; padding: 2px 7px; border-radius: 24px; font-weight: 700;
   }
   .lb-ach-grid {
@@ -5621,7 +5622,7 @@
     cursor: pointer; -webkit-tap-highlight-color: transparent;
     transition: all 0.15s;
   }
-  .reports-range-tab.active { background: var(--teal); color: #fff; }
+  .reports-range-tab.active { background: var(--teal); color: var(--on-primary, #fff); }
 
   #reports-body {
     flex: 1; overflow-y: auto; padding: 0 16px 40px;
@@ -6713,7 +6714,7 @@
   .invite-label { display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
   .invite-generate-btn {
     width: 100%; padding: 15px; border-radius: 16px; border: none; cursor: pointer;
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     font-family: var(--font-display); font-size: 15px; font-weight: 700;
     margin-top: 6px; transition: transform .13s var(--spring);
   }
@@ -6751,7 +6752,7 @@
   .invite-copy-btn:active { transform: scale(0.97); }
   .invite-sms-btn {
     width: 100%; padding: 15px; border-radius: 16px; border: none; cursor: pointer;
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     font-family: var(--font-display); font-size: 15px; font-weight: 700;
     margin-top: 8px; transition: transform .13s var(--spring);
   }
@@ -6791,7 +6792,7 @@
   .onboard-dot.active { background: var(--teal); }
   #onboard-btn-row { display: flex; gap: 12px; position: relative; z-index: 2; }
   #onboard-skip { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--g-border); background: var(--g1); color: var(--text-2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  #onboard-next { flex: 2; padding: 12px; border-radius: 12px; border: none; background: var(--teal); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  #onboard-next { flex: 2; padding: 12px; border-radius: 12px; border: none; background: var(--teal); color: var(--on-primary, #fff); font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   #onboard-skip:active { opacity: 0.7; }
   #onboard-next:active { opacity: 0.85; transform: scale(0.97); }
   .onboard-input {
@@ -6828,7 +6829,7 @@
   .btn-snap-bill {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 8px 16px; border-radius: 12px; border: none;
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     font-size: 14px; font-weight: 700; font-family: inherit;
     cursor: pointer; margin-bottom: 12px; width: 100%;
     -webkit-tap-highlight-color: transparent;
@@ -6850,7 +6851,7 @@
     padding: 12px; border-radius: 12px; border: none;
     font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
   }
-  #map-route-open-maps { background: var(--teal); color: #fff; }
+  #map-route-open-maps { background: var(--teal); color: var(--on-primary, #fff); }
   #map-route-clear { background: var(--g1); color: var(--text-2); border: 1px solid var(--g-border); }
   .map-toggle-btn#map-route-btn.active { background: #22c55e; color: #fff; border-color: #22c55e; }
 
@@ -6892,7 +6893,7 @@
   .lb-momentum-header { font-size:16px; font-weight:700; margin:18px 0 10px; color:var(--text); }
   .mom-filter-tabs { display:flex; gap:8px; justify-content:center; background:var(--g2); border-radius:12px; padding:3px; margin-bottom:14px; border:1px solid var(--g-border); }
   .mom-filter-tab { flex:1; height:30px; border:none; border-radius:7px; background:transparent; color:var(--text-3); font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; transition:all .18s; }
-  .mom-filter-tab.mom-filter-active { background:var(--teal); color:#fff; }
+  .mom-filter-tab.mom-filter-active { background:var(--teal); color:var(--on-primary, #fff); }
   /* ===== v72 Dictate Button ===== */
   .btn-dictate { display:inline-flex; align-items:center; gap:8px; padding:7px 14px; background:var(--g1); border:1.5px solid var(--g-border); border-radius:24px; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; margin-top:6px; transition:all .2s; }
   .btn-dictate--active { background:#fef3c7; border-color:#f59e0b; color:#b45309; animation:pulse-dictate 1.2s ease infinite; }
@@ -7312,7 +7313,7 @@
   .otd-dispo-trigger {
     position: absolute; bottom: 0; left: 16px; right: 16px;
     padding: 17px; border-radius: 20px; border: none; cursor: pointer;
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     font-family: var(--font-display); font-size: 17px; font-weight: 800;
     letter-spacing: 0.03em; text-transform: uppercase;
     box-shadow: 0 4px 24px rgba(20,143,152,0.4);
@@ -7532,7 +7533,7 @@
   }
   .otd-ss-btn:active { transform: scale(0.95); }
   .otd-ss-btn--save {
-    background: var(--teal); color: #fff;
+    background: var(--teal); color: var(--on-primary, #fff);
     box-shadow: 0 3px 12px rgba(20,143,152,0.35);
   }
   .otd-ss-btn--skip {
@@ -7783,7 +7784,7 @@
   .wow-input::placeholder { color: var(--text-3); }
   .wow-post-btn {
     height: 44px; padding: 0 18px; border-radius: 12px; border: none;
-    background: var(--teal); color: #fff; font-size: 14px; font-weight: 700;
+    background: var(--teal); color: var(--on-primary, #fff); font-size: 14px; font-weight: 700;
     cursor: pointer; font-family: inherit; white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
   }
@@ -8174,7 +8175,7 @@
     font-size: var(--fs-md); font-weight: 600; transition: opacity 0.15s, transform 0.1s;
   }
   .login-btn:active { transform: scale(0.98); }
-  .login-btn--primary { background: var(--teal); color: #fff; }
+  .login-btn--primary { background: var(--teal); color: var(--on-primary, #fff); }
   .login-btn--primary:hover { opacity: 0.88; }
   .login-btn--google {
     background: #fff; color: #3c4043;
@@ -11147,7 +11148,7 @@
   <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.10em;margin-bottom:8px">Setter → Closer Handoff</div>
   <div id="handoff-customer-name" style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px"></div>
   <div id="handoff-details" style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:16px"></div>
-  <button id="handoff-sms-btn" style="width:100%;padding:14px;border-radius:16px;border:none;background:var(--teal);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">📱 Send SMS Handoff</button>
+  <button id="handoff-sms-btn" style="width:100%;padding:14px;border-radius:16px;border:none;background:var(--teal);color:var(--on-primary, #fff);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">📱 Send SMS Handoff</button>
   <button onclick="closeHandoffCard()" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--g-border);background:var(--g1);color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Dismiss</button>
 </div>
 
@@ -16738,7 +16739,7 @@ function showUndoToast(msg, undoFn, duration) {
   textSpan.textContent = msg;
   var undoBtn = document.createElement('button');
   undoBtn.textContent = 'Undo';
-  undoBtn.style.cssText = 'background:var(--teal);color:#fff;border:none;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit';
+  undoBtn.style.cssText = 'background:var(--teal);color:var(--on-primary, #fff);border:none;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit';
   undoBtn.onclick = function() {
     clearTimeout(toast._timer);
     toast.remove();
@@ -20466,6 +20467,10 @@ function applyThemePrimary(hex) {
   // Compute glow variant (hex at 12% opacity)
   document.documentElement.style.setProperty('--teal-glow', hex + '1f');
   document.documentElement.style.setProperty('--teal-dim', hex);
+  // Contrast-aware text color: dark text on light primaries, white on dark
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  var luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
+  document.documentElement.style.setProperty('--on-primary', luminance > 0.55 ? '#111' : '#fff');
 }
 
 function applyGlassColor(hex) {
@@ -23083,7 +23088,7 @@ function renderMapPins() {
           ${a.street ? `<div style="color:#555">${escHtml(a.street)}, ${escHtml(a.city||'')}</div>` : ''}
           ${a.datetime ? `<div style="color:#888;font-size:11px;margin-top:4px">${new Date(a.datetime).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div>` : ''}
           <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-            <button onclick="openResultSheet('${a.id}')" style="padding:5px 12px;background:var(--teal);color:#fff;border:none;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer">Update Result</button>
+            <button onclick="openResultSheet('${a.id}')" style="padding:5px 12px;background:var(--teal);color:var(--on-primary, #fff);border:none;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer">Update Result</button>
             <button onclick="openCustomerByApptId('${a.id}')" style="padding:5px 12px;background:rgba(255,255,255,0.12);color:var(--text);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:12px;font-weight:600;cursor:pointer">View Record</button>
           </div>
         </div>`);
