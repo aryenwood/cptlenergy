@@ -4485,9 +4485,20 @@
       overflow: hidden;
     }
     #splash.splash--hidden { opacity: 0; pointer-events: none; }
-    /* Boot ring — line morphs to circle, color set by JS from org brand */
+    /* Logo wrap — everything anchors to this */
+    #splash-logo-wrap {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    /* Logo stack — the ring and ambient are positioned relative to this */
+    #splash-logo-stack {
+      position: relative; width: 100px; height: 100px;
+      overflow: visible;
+    }
+    /* Boot ring — centered on logo-stack */
     #splash-ring {
-      position: absolute; top: 50%; left: 50%;
+      position: absolute;
+      top: 50%; left: 50%;
       width: 160px; height: 160px;
       transform: translate(-50%, -50%) scaleY(0.01);
       border: 2px solid var(--splash-color, rgba(20,143,152,0.7));
@@ -4495,27 +4506,20 @@
       box-shadow: 0 0 30px var(--splash-glow, rgba(20,143,152,0.3)),
                   0 0 60px var(--splash-glow-dim, rgba(20,143,152,0.1)),
                   inset 0 0 20px var(--splash-glow-dim, rgba(20,143,152,0.08));
-      pointer-events: none; z-index: 1;
+      pointer-events: none; z-index: -1;
       opacity: 0;
     }
-    /* Ambient radial glow behind logo — breathes life into the black */
+    /* Ambient radial glow — centered on logo-stack */
     #splash-ambient {
-      position: absolute; top: 50%; left: 50%;
+      position: absolute;
+      top: 50%; left: 50%;
       width: 300px; height: 300px;
       transform: translate(-50%, -50%);
       border-radius: 50%; pointer-events: none;
       background: radial-gradient(circle,
-        var(--splash-glow-dim, rgba(20,143,152,0.08)) 0%,
+        var(--splash-glow-dim, rgba(20,143,152,0.1)) 0%,
         transparent 70%);
-      opacity: 0; z-index: 0;
-    }
-    #splash-logo-wrap {
-      position: relative; z-index: 2;
-      display: flex; flex-direction: column; align-items: center;
-    }
-    #splash-logo-stack {
-      position: relative; width: 100px; height: 100px;
-      overflow: hidden;
+      opacity: 0; z-index: -2;
     }
     #splash-logo, #splash-org-logo {
       position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
@@ -8230,10 +8234,10 @@
 
 <!-- ── Splash screen — System Boot ── -->
 <div id="splash">
-  <div id="splash-ambient"></div>
-  <div id="splash-ring"></div>
   <div id="splash-logo-wrap">
     <div id="splash-logo-stack">
+      <div id="splash-ambient"></div>
+      <div id="splash-ring"></div>
       <img id="splash-logo" src="W.png" alt="WC App" />
       <img id="splash-org-logo" src="" alt="" />
       <div id="splash-laser"></div>
@@ -14871,18 +14875,18 @@ function _dismissSplash() {
       ambient.style.opacity = '1';
     }
 
-    // ── Beat 2 (200ms): Line morphs into ring ──
+    // ── Beat 2 (300ms): Line morphs into ring ──
     setTimeout(function() {
       if (ring) {
         ring.style.transition = 'transform 0.6s cubic-bezier(0.16,1,0.3,1)';
         ring.style.transform = 'translate(-50%, -50%) scaleY(1)';
       }
-    }, 200);
+    }, 300);
 
-    // ── Beat 3 (650ms): WC logo fades in, ring pulses ──
+    // ── Beat 3 (900ms): WC logo fades in, ring pulses ──
     setTimeout(function() {
       if (wcLogo) {
-        wcLogo.style.transition = 'opacity 0.4s ease-out';
+        wcLogo.style.transition = 'opacity 0.6s ease-out';
         wcLogo.style.opacity = '1';
       }
       if (ring) {
@@ -14894,15 +14898,23 @@ function _dismissSplash() {
           ring.style.transform = 'translate(-50%, -50%) scale(1)';
           ring.style.boxShadow = '0 0 30px var(--splash-glow, rgba(20,143,152,0.3)), 0 0 60px var(--splash-glow-dim, rgba(20,143,152,0.1)), inset 0 0 20px var(--splash-glow-dim, rgba(20,143,152,0.08))';
         }, 250);
+        // Ring breathes subtly while holding
+        var _breathe = 0;
+        var _breatheId = setInterval(function() {
+          _breathe++;
+          if (!ring || _breathe > 12) { clearInterval(_breatheId); return; }
+          var s = 1 + Math.sin(_breathe * 0.5) * 0.015;
+          ring.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+        }, 120);
       }
-    }, 650);
+    }, 900);
 
-    // ── Beat 4 (1300ms): LASER SWEEP ──
+    // ── Beat 4 (1900ms): LASER SWEEP ──
     if (hasOrg) {
       setTimeout(function() {
         if (!laser || !orgLogo || !wcLogo || !stack) { _dismissSplash(); return; }
         var H = stack.offsetHeight || 100;
-        var duration = 600;
+        var duration = 800;
         var start = null;
         orgLogo.style.opacity = '1';
         laser.style.opacity = '1';
@@ -14918,21 +14930,30 @@ function _dismissSplash() {
             laser.style.transition = 'opacity 0.25s ease-out';
             laser.style.opacity = '0';
             wcLogo.style.opacity = '0';
+            // Brief screen flash — transformation complete
+            if (splashEl) {
+              splashEl.style.transition = 'background 0.12s ease-out';
+              splashEl.style.background = 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0%, #000 60%)';
+              setTimeout(function() {
+                splashEl.style.transition = 'background 0.5s ease-out';
+                splashEl.style.background = '#000';
+              }, 120);
+            }
           }
         }
         requestAnimationFrame(sweep);
-      }, 1300);
+      }, 1900);
 
-      // ── Beat 5 (2s): Ring expands and vanishes ──
+      // ── Beat 5 (2.8s): Ring expands and vanishes ──
       setTimeout(function() {
         if (ring) {
           ring.style.transition = 'transform 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease-out';
           ring.style.transform = 'translate(-50%, -50%) scale(2.8)';
           ring.style.opacity = '0';
         }
-      }, 2000);
+      }, 2800);
 
-      // ── Beat 6 (2.3s): Org name typewriter ──
+      // ── Beat 6 (3.1s): Org name typewriter ──
       setTimeout(function() {
         if (nameEl && orgName) {
           nameEl.style.opacity = '1';
@@ -14941,10 +14962,10 @@ function _dismissSplash() {
           function t() { nameEl.textContent = text.substring(0, ++i); if (i < text.length) setTimeout(t, 30); }
           t();
         }
-      }, 2300);
+      }, 3100);
 
-      // ── Beat 7 (3.2s): Dismiss ──
-      setTimeout(_dismissSplash, 3200);
+      // ── Beat 7 (4.2s): Dismiss ──
+      setTimeout(_dismissSplash, 4200);
 
     } else {
       // No org logo — show name, dismiss
@@ -14956,11 +14977,11 @@ function _dismissSplash() {
           function t() { nameEl.textContent = text.substring(0, ++i); if (i < text.length) setTimeout(t, 30); }
           t();
         }
-      }, 1300);
+      }, 1800);
       setTimeout(function() {
         if (ring) { ring.style.transition = 'opacity 0.5s'; ring.style.opacity = '0'; }
-      }, 1500);
-      setTimeout(_dismissSplash, 2200);
+      }, 2000);
+      setTimeout(_dismissSplash, 2800);
     }
   }
 
@@ -15038,7 +15059,7 @@ function _initApp() {
   // 3.5s if no org (fast dismiss for master domain / first-run).
   const splash = document.getElementById('splash');
   if (splash) {
-    _splashFallbackTimer = setTimeout(_dismissSplash, 2500);
+    _splashFallbackTimer = setTimeout(_dismissSplash, 4500);
   }
 
   // Init CRM event listeners (must run after DOM is ready)
