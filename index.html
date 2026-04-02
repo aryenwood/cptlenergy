@@ -4496,7 +4496,7 @@
       position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
       transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
-    #splash-logo { opacity: 0; }
+    #splash-logo { opacity: 1; }
     #splash-org-logo { opacity: 0; transform: scale(0.96); }
     #splash-org-name {
       font-family: var(--font-display); font-size: 14px; font-weight: 700;
@@ -12673,8 +12673,6 @@ function applyOrgBranding(orgId, org) {
       var _orgIdForBrand = localStorage.getItem('wc_org_id');
       console.log('[Branding] user.uid:', user.uid, '| wc_org_id:', _orgIdForBrand);
       if (_orgIdForBrand) {
-        // Lock splash — prevent early dismiss while we load org branding for revealOrg
-        _pulseRunning = true;
         if (navigator.onLine) {
           console.log('[Branding] Loading org ' + _orgIdForBrand + '...');
           fbDb.collection('organizations').doc(_orgIdForBrand).get()
@@ -12708,18 +12706,18 @@ function applyOrgBranding(orgId, org) {
                 }
               } else {
                 console.warn('[Branding] No doc at organizations/' + _orgIdForBrand + ' — check Firestore');
-                _pulseRunning = false; _dismissSplash();
+                _dismissSplash();
               }
               // revealOrg handles its own dismiss — only dismiss here if revealOrg was NOT called
             })
             .catch(function(e) {
               console.warn('[Branding] Load failed:', e.code, e.message);
-              _pulseRunning = false; _dismissSplash();
+              _dismissSplash();
             });
         } else {
           // Offline — use cached branding already in localStorage
           console.log('[Branding] Offline — using cached branding for org', _orgIdForBrand);
-          _pulseRunning = false; _dismissSplash();
+          _dismissSplash();
         }
       } else if (!_orgIdForBrand) {
         if (_urlOrgId && navigator.onLine) {
