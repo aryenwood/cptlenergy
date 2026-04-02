@@ -128,7 +128,7 @@ exports.wcOrgCreated = onDocumentCreated('organizations/{orgId}', async (event) 
   try {
     // Use Google Identity Toolkit REST API to add authorized domain
     const { GoogleAuth } = require('google-auth-library');
-    const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/firebase'] });
+    const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/firebase'] });
     const client = await auth.getClient();
     const projectId = 'wc-app-alpha';
 
