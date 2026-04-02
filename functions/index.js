@@ -10,6 +10,7 @@ const { getAuth } = require('firebase-admin/auth');
 const Anthropic = require('@anthropic-ai/sdk');
 
 const anthropicKey = defineSecret('ANTHROPIC_API_KEY');
+const netlifyToken = defineSecret('NETLIFY_TOKEN');
 
 const app = initializeApp({
   credential: applicationDefault(),
@@ -118,33 +119,93 @@ exports.wcInviteRedeemed = onDocumentUpdated('invites/{code}', async (event) => 
   return null;
 });
 
-// ── Org Created: Full domain provisioning ────────────────────────────────────
+// ── Org Created: Full zero-touch provisioning ────────────────────────────────
 // When a new org is created with a customDomain, automatically:
-//   1. Add to Firebase Auth authorized domains (Identity Toolkit API)
-//   2. Add to API key website restrictions (API Keys API)
-//   3. Add to OAuth client origins + redirects (Google Auth Platform API)
+//   0. Create Netlify site + deploy from GitHub repo
+//   1. Add to Firebase Auth authorized domains
+//   2. Add to API key website restrictions
+//   3. Add to OAuth client origins + redirect URIs
 const PROJECT_NUMBER = '932560435629';
 const OAUTH_CLIENT_ID = '932560435629-p4r35knsn4cul61sk94qqjn7qau34al3.apps.googleusercontent.com';
+const GITHUB_REPO = 'aryenwood/The-WC-App';
+const NETLIFY_TEAM_SLUG = 'aryen';
 
-exports.wcOrgCreated = onDocumentCreated('organizations/{orgId}', async (event) => {
+// Helper: Netlify API request
+async function netlifyApi(method, path, body) {
+  const https = require('https');
+  const token = netlifyToken.value();
+  const data = body ? JSON.stringify(body) : null;
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'api.netlify.com', path: '/api/v1' + path, method,
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        ...(data ? { 'Content-Length': Buffer.byteLength(data) } : {})
+      }
+    }, res => {
+      let body = '';
+      res.on('data', c => body += c);
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) resolve(JSON.parse(body || '{}'));
+        else reject(new Error(`Netlify ${res.statusCode}: ${body.slice(0, 300)}`));
+      });
+    });
+    req.on('error', reject);
+    if (data) req.write(data);
+    req.end();
+  });
+}
+
+exports.wcOrgCreated = onDocumentCreated({
+  document: 'organizations/{orgId}',
+  secrets: [netlifyToken]
+}, async (event) => {
   const data = event.data.data();
   const domain = data.customDomain;
   if (!domain) return null;
 
+  const siteName = domain.replace('.netlify.app', '');
   const { GoogleAuth } = require('google-auth-library');
   const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/firebase'] });
-  const client = await auth.getClient();
+  const gcpClient = await auth.getClient();
   const projectId = 'wc-app-alpha';
   const origin = 'https://' + domain;
+  const results = {};
+
+  // ── Step 0: Create Netlify site linked to GitHub repo ──
+  try {
+    const site = await netlifyApi('POST', '/' + NETLIFY_TEAM_SLUG + '/sites', {
+      name: siteName,
+      repo: {
+        provider: 'github',
+        repo: GITHUB_REPO,
+        private: false,
+        branch: 'main',
+        cmd: '',
+        dir: ''
+      }
+    });
+    results.netlify = site.id;
+    console.log('[OrgCreated] Step 0 DONE — Netlify site:', siteName, '| id:', site.id);
+    // Save site ID to org doc
+    await getFirestore().collection('organizations').doc(event.params.orgId).update({ netlifySiteId: site.id });
+  } catch (e) {
+    if (e.message && e.message.includes('422')) {
+      console.log('[OrgCreated] Step 0 SKIP — site already exists:', siteName);
+    } else {
+      console.error('[OrgCreated] Step 0 FAIL:', e.message);
+    }
+  }
 
   // ── Step 1: Firebase Auth authorized domains ──
   try {
     const configUrl = `https://identitytoolkit.googleapis.com/admin/v2/projects/${projectId}/config`;
-    const configRes = await client.request({ url: configUrl });
+    const configRes = await gcpClient.request({ url: configUrl });
     const currentDomains = configRes.data.authorizedDomains || [];
     if (!currentDomains.includes(domain)) {
       currentDomains.push(domain);
-      await client.request({ url: configUrl + '?updateMask=authorizedDomains', method: 'PATCH', data: { authorizedDomains: currentDomains } });
+      await gcpClient.request({ url: configUrl + '?updateMask=authorizedDomains', method: 'PATCH', data: { authorizedDomains: currentDomains } });
       console.log('[OrgCreated] Step 1 DONE — Auth domain:', domain);
     } else {
       console.log('[OrgCreated] Step 1 SKIP — already authorized:', domain);
@@ -153,11 +214,9 @@ exports.wcOrgCreated = onDocumentCreated('organizations/{orgId}', async (event) 
 
   // ── Step 2: API key website restrictions ──
   try {
-    // List all keys, find the Browser key
     const listUrl = `https://apikeys.googleapis.com/v2/projects/${projectId}/locations/global/keys`;
-    const listRes = await client.request({ url: listUrl });
+    const listRes = await gcpClient.request({ url: listUrl });
     const keys = listRes.data.keys || [];
-    // Find key with browser restrictions (the web API key)
     const webKey = keys.find(k => k.restrictions && k.restrictions.browserKeyRestrictions);
     if (webKey) {
       const referrers = webKey.restrictions.browserKeyRestrictions.allowedReferrers || [];
@@ -165,26 +224,22 @@ exports.wcOrgCreated = onDocumentCreated('organizations/{orgId}', async (event) 
       if (!referrers.includes(pattern)) {
         referrers.push(pattern);
         webKey.restrictions.browserKeyRestrictions.allowedReferrers = referrers;
-        await client.request({
+        await gcpClient.request({
           url: `https://apikeys.googleapis.com/v2/${webKey.name}?updateMask=restrictions.browserKeyRestrictions`,
-          method: 'PATCH',
-          data: { restrictions: webKey.restrictions }
+          method: 'PATCH', data: { restrictions: webKey.restrictions }
         });
         console.log('[OrgCreated] Step 2 DONE — API key referrer:', pattern);
       } else {
         console.log('[OrgCreated] Step 2 SKIP — referrer exists:', pattern);
       }
-    } else {
-      console.log('[OrgCreated] Step 2 SKIP — no browser-restricted API key found');
     }
   } catch (e) { console.error('[OrgCreated] Step 2 FAIL:', e.message); }
 
   // ── Step 3: OAuth client origins + redirect URIs ──
   try {
-    // Google Auth Platform API — update OAuth client
     const oauthName = `projects/${PROJECT_NUMBER}/brands/-/oauthClients/${OAUTH_CLIENT_ID}`;
     const oauthUrl = `https://oauthplatform.googleapis.com/v1/${oauthName}`;
-    const oauthRes = await client.request({ url: oauthUrl });
+    const oauthRes = await gcpClient.request({ url: oauthUrl });
     const clientData = oauthRes.data;
     const origins = clientData.allowedJavascriptOrigins || [];
     const redirects = clientData.allowedRedirectUris || [];
@@ -193,20 +248,26 @@ exports.wcOrgCreated = onDocumentCreated('organizations/{orgId}', async (event) 
     if (!origins.includes(origin)) { origins.push(origin); changed = true; }
     if (!redirects.includes(redirect)) { redirects.push(redirect); changed = true; }
     if (changed) {
-      await client.request({
+      await gcpClient.request({
         url: oauthUrl + '?updateMask=allowedJavascriptOrigins,allowedRedirectUris',
-        method: 'PATCH',
-        data: { allowedJavascriptOrigins: origins, allowedRedirectUris: redirects }
+        method: 'PATCH', data: { allowedJavascriptOrigins: origins, allowedRedirectUris: redirects }
       });
       console.log('[OrgCreated] Step 3 DONE — OAuth origin:', origin);
     } else {
       console.log('[OrgCreated] Step 3 SKIP — OAuth already configured');
     }
   } catch (e) {
-    // OAuth Platform API may not be enabled — log for manual fallback
     console.error('[OrgCreated] Step 3 FAIL:', e.message);
-    console.log('[OrgCreated] Manual action needed — add', origin, 'to OAuth client origins');
+    console.log('[OrgCreated] Manual: add', origin, 'to OAuth client JS origins +', origin + '/__/auth/handler', 'to redirects');
   }
+
+  // ── Write provisioning status to org doc ──
+  try {
+    await getFirestore().collection('organizations').doc(event.params.orgId).update({
+      provisionedAt: new Date().toISOString(),
+      provisioningResults: results
+    });
+  } catch (_) {}
 
   return null;
 });
