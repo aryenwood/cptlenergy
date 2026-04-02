@@ -118,44 +118,97 @@ exports.wcInviteRedeemed = onDocumentUpdated('invites/{code}', async (event) => 
   return null;
 });
 
-// ── Org Created: Auto-whitelist Firebase Auth domain ─────────────────────────
-// When a new org is created with a customDomain, add it to Firebase Auth authorized domains
+// ── Org Created: Full domain provisioning ────────────────────────────────────
+// When a new org is created with a customDomain, automatically:
+//   1. Add to Firebase Auth authorized domains (Identity Toolkit API)
+//   2. Add to API key website restrictions (API Keys API)
+//   3. Add to OAuth client origins + redirects (Google Auth Platform API)
+const PROJECT_NUMBER = '932560435629';
+const OAUTH_CLIENT_ID = '932560435629-p4r35knsn4cul61sk94qqjn7qau34al3.apps.googleusercontent.com';
+
 exports.wcOrgCreated = onDocumentCreated('organizations/{orgId}', async (event) => {
   const data = event.data.data();
   const domain = data.customDomain;
   if (!domain) return null;
 
-  try {
-    // Use Google Identity Toolkit REST API to add authorized domain
-    const { GoogleAuth } = require('google-auth-library');
-    const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/firebase'] });
-    const client = await auth.getClient();
-    const projectId = 'wc-app-alpha';
+  const { GoogleAuth } = require('google-auth-library');
+  const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/firebase'] });
+  const client = await auth.getClient();
+  const projectId = 'wc-app-alpha';
+  const origin = 'https://' + domain;
 
-    // Get current config
+  // ── Step 1: Firebase Auth authorized domains ──
+  try {
     const configUrl = `https://identitytoolkit.googleapis.com/admin/v2/projects/${projectId}/config`;
     const configRes = await client.request({ url: configUrl });
     const currentDomains = configRes.data.authorizedDomains || [];
-
-    if (currentDomains.includes(domain)) {
-      console.log('[OrgCreated] Domain already authorized:', domain);
-      return null;
+    if (!currentDomains.includes(domain)) {
+      currentDomains.push(domain);
+      await client.request({ url: configUrl + '?updateMask=authorizedDomains', method: 'PATCH', data: { authorizedDomains: currentDomains } });
+      console.log('[OrgCreated] Step 1 DONE — Auth domain:', domain);
+    } else {
+      console.log('[OrgCreated] Step 1 SKIP — already authorized:', domain);
     }
+  } catch (e) { console.error('[OrgCreated] Step 1 FAIL:', e.message); }
 
-    // Add new domain
-    currentDomains.push(domain);
-    await client.request({
-      url: configUrl + '?updateMask=authorizedDomains',
-      method: 'PATCH',
-      data: { authorizedDomains: currentDomains }
-    });
+  // ── Step 2: API key website restrictions ──
+  try {
+    // List all keys, find the Browser key
+    const listUrl = `https://apikeys.googleapis.com/v2/projects/${projectId}/locations/global/keys`;
+    const listRes = await client.request({ url: listUrl });
+    const keys = listRes.data.keys || [];
+    // Find key with browser restrictions (the web API key)
+    const webKey = keys.find(k => k.restrictions && k.restrictions.browserKeyRestrictions);
+    if (webKey) {
+      const referrers = webKey.restrictions.browserKeyRestrictions.allowedReferrers || [];
+      const pattern = origin + '/*';
+      if (!referrers.includes(pattern)) {
+        referrers.push(pattern);
+        webKey.restrictions.browserKeyRestrictions.allowedReferrers = referrers;
+        await client.request({
+          url: `https://apikeys.googleapis.com/v2/${webKey.name}?updateMask=restrictions.browserKeyRestrictions`,
+          method: 'PATCH',
+          data: { restrictions: webKey.restrictions }
+        });
+        console.log('[OrgCreated] Step 2 DONE — API key referrer:', pattern);
+      } else {
+        console.log('[OrgCreated] Step 2 SKIP — referrer exists:', pattern);
+      }
+    } else {
+      console.log('[OrgCreated] Step 2 SKIP — no browser-restricted API key found');
+    }
+  } catch (e) { console.error('[OrgCreated] Step 2 FAIL:', e.message); }
 
-    console.log('[OrgCreated] Domain authorized for Firebase Auth:', domain);
-    return null;
+  // ── Step 3: OAuth client origins + redirect URIs ──
+  try {
+    // Google Auth Platform API — update OAuth client
+    const oauthName = `projects/${PROJECT_NUMBER}/brands/-/oauthClients/${OAUTH_CLIENT_ID}`;
+    const oauthUrl = `https://oauthplatform.googleapis.com/v1/${oauthName}`;
+    const oauthRes = await client.request({ url: oauthUrl });
+    const clientData = oauthRes.data;
+    const origins = clientData.allowedJavascriptOrigins || [];
+    const redirects = clientData.allowedRedirectUris || [];
+    const redirect = origin + '/__/auth/handler';
+    let changed = false;
+    if (!origins.includes(origin)) { origins.push(origin); changed = true; }
+    if (!redirects.includes(redirect)) { redirects.push(redirect); changed = true; }
+    if (changed) {
+      await client.request({
+        url: oauthUrl + '?updateMask=allowedJavascriptOrigins,allowedRedirectUris',
+        method: 'PATCH',
+        data: { allowedJavascriptOrigins: origins, allowedRedirectUris: redirects }
+      });
+      console.log('[OrgCreated] Step 3 DONE — OAuth origin:', origin);
+    } else {
+      console.log('[OrgCreated] Step 3 SKIP — OAuth already configured');
+    }
   } catch (e) {
-    console.error('[OrgCreated] Failed to authorize domain:', domain, e.message);
-    return null;
+    // OAuth Platform API may not be enabled — log for manual fallback
+    console.error('[OrgCreated] Step 3 FAIL:', e.message);
+    console.log('[OrgCreated] Manual action needed — add', origin, 'to OAuth client origins');
   }
+
+  return null;
 });
 
 // ── AI Brain Trainer (Claude API proxy) ──────────────────────────────────────
