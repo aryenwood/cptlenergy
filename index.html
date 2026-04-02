@@ -4485,16 +4485,29 @@
       overflow: hidden;
     }
     #splash.splash--hidden { opacity: 0; pointer-events: none; }
-    /* Boot ring — line morphs to circle via CSS animation (no JS needed) */
+    /* Boot ring — line morphs to circle, color set by JS from org brand */
     #splash-ring {
       position: absolute; top: 50%; left: 50%;
       width: 160px; height: 160px;
       transform: translate(-50%, -50%) scaleY(0.01);
-      border: 1.5px solid rgba(20,143,152,0.6);
+      border: 2px solid var(--splash-color, rgba(20,143,152,0.7));
       border-radius: 50%;
-      box-shadow: 0 0 20px rgba(20,143,152,0.2), inset 0 0 15px rgba(20,143,152,0.05);
+      box-shadow: 0 0 30px var(--splash-glow, rgba(20,143,152,0.3)),
+                  0 0 60px var(--splash-glow-dim, rgba(20,143,152,0.1)),
+                  inset 0 0 20px var(--splash-glow-dim, rgba(20,143,152,0.08));
       pointer-events: none; z-index: 1;
       opacity: 0;
+    }
+    /* Ambient radial glow behind logo — breathes life into the black */
+    #splash-ambient {
+      position: absolute; top: 50%; left: 50%;
+      width: 300px; height: 300px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle,
+        var(--splash-glow-dim, rgba(20,143,152,0.08)) 0%,
+        transparent 70%);
+      opacity: 0; z-index: 0;
     }
     #splash-logo-wrap {
       position: relative; z-index: 2;
@@ -4514,17 +4527,18 @@
       position: absolute; left: -15px; right: -15px;
       height: 2px; top: 0;
       background: linear-gradient(90deg,
-        transparent 0%, rgba(20,143,152,0.3) 15%,
+        transparent 0%, var(--splash-glow-dim, rgba(20,143,152,0.3)) 15%,
         rgba(255,255,255,0.9) 42%, #fff 50%, rgba(255,255,255,0.9) 58%,
-        rgba(20,143,152,0.3) 85%, transparent 100%);
-      box-shadow: 0 0 8px rgba(255,255,255,0.5), 0 0 25px rgba(20,143,152,0.4);
+        var(--splash-glow-dim, rgba(20,143,152,0.3)) 85%, transparent 100%);
+      box-shadow: 0 0 12px rgba(255,255,255,0.6), 0 0 35px var(--splash-glow, rgba(20,143,152,0.5));
       opacity: 0; z-index: 3; pointer-events: none;
     }
     #splash-org-name {
-      font-family: var(--font-display); font-size: 13px; font-weight: 700;
-      color: rgba(255,255,255,0.8); letter-spacing: 0.12em; text-transform: uppercase;
-      text-align: center; opacity: 0; margin-top: 22px;
-      min-height: 18px;
+      font-family: var(--font-display); font-size: 15px; font-weight: 800;
+      color: #fff; letter-spacing: 0.18em; text-transform: uppercase;
+      text-align: center; opacity: 0; margin-top: 28px;
+      min-height: 20px;
+      text-shadow: 0 0 20px var(--splash-glow, rgba(20,143,152,0.3));
     }
   /* ── Business Card Modal ─────────────────────────────────────────────── */
   #bcard-overlay {
@@ -8216,6 +8230,7 @@
 
 <!-- ── Splash screen — System Boot ── -->
 <div id="splash">
+  <div id="splash-ambient"></div>
   <div id="splash-ring"></div>
   <div id="splash-logo-wrap">
     <div id="splash-logo-stack">
@@ -14827,15 +14842,33 @@ function _dismissSplash() {
     var ring    = document.getElementById('splash-ring');
     var laser   = document.getElementById('splash-laser');
     var stack   = document.getElementById('splash-logo-stack');
+    var ambient = document.getElementById('splash-ambient');
+    var splashEl = document.getElementById('splash');
     var hasOrg  = !!orgLogoUrl;
+
+    // Apply org brand color to all splash effects via CSS custom properties
+    var c = orgColor || '#148f98';
+    if (c && splashEl) {
+      // Parse hex to rgb for rgba() usage
+      var _h = c.replace('#','');
+      if (_h.length === 3) _h = _h[0]+_h[0]+_h[1]+_h[1]+_h[2]+_h[2];
+      var _r = parseInt(_h.slice(0,2),16), _g = parseInt(_h.slice(2,4),16), _b = parseInt(_h.slice(4,6),16);
+      splashEl.style.setProperty('--splash-color', 'rgba('+_r+','+_g+','+_b+',0.7)');
+      splashEl.style.setProperty('--splash-glow', 'rgba('+_r+','+_g+','+_b+',0.35)');
+      splashEl.style.setProperty('--splash-glow-dim', 'rgba('+_r+','+_g+','+_b+',0.12)');
+    }
 
     // Preload org logo so it's cached for the laser sweep
     if (hasOrg && orgLogo) orgLogo.src = orgLogoUrl;
 
-    // ── Beat 1 (0ms): Boot line — horizontal slit of teal light ──
+    // ── Beat 1 (0ms): Boot line + ambient glow ──
     if (ring) {
       ring.style.transition = 'opacity 0.15s ease-out';
       ring.style.opacity = '1';
+    }
+    if (ambient) {
+      ambient.style.transition = 'opacity 1.2s ease-out';
+      ambient.style.opacity = '1';
     }
 
     // ── Beat 2 (200ms): Line morphs into ring ──
@@ -14855,11 +14888,11 @@ function _dismissSplash() {
       if (ring) {
         ring.style.transition = 'transform 0.25s ease-out, box-shadow 0.25s ease-out';
         ring.style.transform = 'translate(-50%, -50%) scale(1.08)';
-        ring.style.boxShadow = '0 0 30px rgba(20,143,152,0.35), inset 0 0 20px rgba(20,143,152,0.1)';
+        ring.style.boxShadow = '0 0 40px var(--splash-glow, rgba(20,143,152,0.35)), 0 0 80px var(--splash-glow-dim, rgba(20,143,152,0.15)), inset 0 0 25px var(--splash-glow-dim, rgba(20,143,152,0.1))';
         setTimeout(function() {
           ring.style.transition = 'transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out';
           ring.style.transform = 'translate(-50%, -50%) scale(1)';
-          ring.style.boxShadow = '0 0 20px rgba(20,143,152,0.2), inset 0 0 15px rgba(20,143,152,0.05)';
+          ring.style.boxShadow = '0 0 30px var(--splash-glow, rgba(20,143,152,0.3)), 0 0 60px var(--splash-glow-dim, rgba(20,143,152,0.1)), inset 0 0 20px var(--splash-glow-dim, rgba(20,143,152,0.08))';
         }, 250);
       }
     }, 650);
