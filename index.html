@@ -14798,14 +14798,7 @@ var _appInitDone = false;
 var _splashDismissed = false;
 var _splashFallbackTimer = null;
 var _onSplashDismiss = null;
-var _pulseRunning = false; // prevent early dismiss while pulse is active
-// Hard safety: if splash is STILL showing after 5s, force dismiss no matter what
-setTimeout(function() {
-  if (!_splashDismissed) { _pulseRunning = false; _dismissSplash(); }
-}, 5000);
 function _dismissSplash() {
-  // If the pulse sequence is running, defer — revealOrg will call dismiss when done
-  if (_pulseRunning) return;
   if (_splashDismissed) return;
   _splashDismissed = true;
   if (_splashFallbackTimer) { clearTimeout(_splashFallbackTimer); _splashFallbackTimer = null; }
@@ -14825,7 +14818,6 @@ function _dismissSplash() {
 (function() {
   function _revealOrg(orgName, orgLogoUrl, orgColor) {
     if (_splashDismissed) return;
-    _pulseRunning = true;
     console.log('[Splash] revealOrg called:', orgName, orgLogoUrl ? 'has logo' : 'no logo');
 
     var wcLogo  = document.getElementById('splash-logo');
@@ -14921,7 +14913,6 @@ function _dismissSplash() {
 
       // ── Phase 7 (3.5s): Dismiss ──
       setTimeout(function() {
-        _pulseRunning = false;
         _dismissSplash();
       }, 3500);
 
@@ -14947,7 +14938,6 @@ function _dismissSplash() {
         }
       }, 1800);
       setTimeout(function() {
-        _pulseRunning = false;
         _dismissSplash();
       }, 2400);
     }
@@ -14955,7 +14945,7 @@ function _dismissSplash() {
 
   window.wcSplash = {
     init: function() {},
-    revealOrg: function(n,u,c) { try { _revealOrg(n,u,c); } catch(e) { console.error('[Splash] revealOrg crashed:', e); _pulseRunning = false; _dismissSplash(); } },
+    revealOrg: function(n,u,c) { try { _revealOrg(n,u,c); } catch(e) { console.error('[Splash] revealOrg crashed:', e); _dismissSplash(); } },
     dismiss: _dismissSplash,
   };
 })();
@@ -15025,8 +15015,7 @@ function _initApp() {
   // 3.5s if no org (fast dismiss for master domain / first-run).
   const splash = document.getElementById('splash');
   if (splash) {
-    var _hasCachedOrg = !!localStorage.getItem('wc_org_id');
-    _splashFallbackTimer = setTimeout(_dismissSplash, _hasCachedOrg ? 6000 : 3500);
+    _splashFallbackTimer = setTimeout(_dismissSplash, 4000);
   }
 
   // Init CRM event listeners (must run after DOM is ready)
