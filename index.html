@@ -12673,6 +12673,8 @@ function applyOrgBranding(orgId, org) {
       var _orgIdForBrand = localStorage.getItem('wc_org_id');
       console.log('[Branding] user.uid:', user.uid, '| wc_org_id:', _orgIdForBrand);
       if (_orgIdForBrand) {
+        // Lock splash — prevent early dismiss while we load org branding for revealOrg
+        _pulseRunning = true;
         if (navigator.onLine) {
           console.log('[Branding] Loading org ' + _orgIdForBrand + '...');
           fbDb.collection('organizations').doc(_orgIdForBrand).get()
@@ -12706,18 +12708,18 @@ function applyOrgBranding(orgId, org) {
                 }
               } else {
                 console.warn('[Branding] No doc at organizations/' + _orgIdForBrand + ' — check Firestore');
-                _dismissSplash();
+                _pulseRunning = false; _dismissSplash();
               }
               // revealOrg handles its own dismiss — only dismiss here if revealOrg was NOT called
             })
             .catch(function(e) {
               console.warn('[Branding] Load failed:', e.code, e.message);
-              _dismissSplash();
+              _pulseRunning = false; _dismissSplash();
             });
         } else {
           // Offline — use cached branding already in localStorage
           console.log('[Branding] Offline — using cached branding for org', _orgIdForBrand);
-          _dismissSplash();
+          _pulseRunning = false; _dismissSplash();
         }
       } else if (!_orgIdForBrand) {
         if (_urlOrgId && navigator.onLine) {
@@ -14964,10 +14966,13 @@ function _initApp() {
   else if (qAction === 'book') { activateTab('dashboard'); setTimeout(() => openBookingSheet(), 400); }
 
   // Dismiss splash — always wait for branding/auth to resolve.
-  // onAuthStateChanged calls _dismissSplash() after branding resolves; 4500ms safety fallback.
+  // onAuthStateChanged calls _dismissSplash() after branding resolves.
+  // Fallback: 6s if org exists (need time for Firestore + revealOrg animation),
+  // 3.5s if no org (fast dismiss for master domain / first-run).
   const splash = document.getElementById('splash');
   if (splash) {
-    _splashFallbackTimer = setTimeout(_dismissSplash, 3500);
+    var _hasCachedOrg = !!localStorage.getItem('wc_org_id');
+    _splashFallbackTimer = setTimeout(_dismissSplash, _hasCachedOrg ? 6000 : 3500);
   }
 
   // Init CRM event listeners (must run after DOM is ready)
