@@ -4476,7 +4476,7 @@
     }
     .btn-submit:active { transform: scale(0.97); box-shadow: 0 0 12px rgba(20,143,152,0.14); }
 
-    /* ── Splash screen — The Pulse ────────────────────────────────────── */
+    /* ── Splash screen — System Boot ─────────────────────────────────── */
     #splash {
       position: fixed; inset: 0; z-index: var(--z-splash);
       background: #000;
@@ -4485,42 +4485,45 @@
       overflow: hidden;
     }
     #splash.splash--hidden { opacity: 0; pointer-events: none; }
+    /* Boot ring — starts as horizontal line, morphs to circle */
+    #splash-ring {
+      position: absolute; top: 50%; left: 50%;
+      width: 160px; height: 160px;
+      transform: translate(-50%, -50%) scaleY(0.01);
+      border: 1.5px solid rgba(20,143,152,0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(20,143,152,0.2), inset 0 0 15px rgba(20,143,152,0.05);
+      opacity: 0; pointer-events: none; z-index: 1;
+    }
     #splash-logo-wrap {
       position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center;
     }
     #splash-logo-stack {
       position: relative; width: 100px; height: 100px;
+      overflow: hidden;
     }
     #splash-logo, #splash-org-logo {
       position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
-    #splash-logo { opacity: 1; }
-    #splash-org-logo { opacity: 0; transform: scale(0.96); }
+    #splash-logo { opacity: 0; }
+    #splash-org-logo { opacity: 0; clip-path: inset(100% 0 0 0); }
+    /* Laser line — sweeps top to bottom during logo swap */
+    #splash-laser {
+      position: absolute; left: -15px; right: -15px;
+      height: 2px; top: 0;
+      background: linear-gradient(90deg,
+        transparent 0%, rgba(20,143,152,0.3) 15%,
+        rgba(255,255,255,0.9) 42%, #fff 50%, rgba(255,255,255,0.9) 58%,
+        rgba(20,143,152,0.3) 85%, transparent 100%);
+      box-shadow: 0 0 8px rgba(255,255,255,0.5), 0 0 25px rgba(20,143,152,0.4);
+      opacity: 0; z-index: 3; pointer-events: none;
+    }
     #splash-org-name {
-      font-family: var(--font-display); font-size: 14px; font-weight: 700;
-      color: rgba(255,255,255,0.85); letter-spacing: 0.14em; text-transform: uppercase;
-      text-align: center; opacity: 0; margin-top: 20px;
-      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-      transform: translateY(6px);
-    }
-    /* Sonar pulse ring — injected by JS */
-    #splash-pulse {
-      position: absolute; top: 50%; left: 50%;
-      width: 0; height: 0; border-radius: 50%;
-      transform: translate(-50%, -50%);
-      border: 1.5px solid rgba(20,143,152,0.6);
-      box-shadow: 0 0 20px rgba(20,143,152,0.15), inset 0 0 20px rgba(20,143,152,0.05);
-      pointer-events: none; z-index: 1; opacity: 0;
-    }
-    /* Subtle ambient glow behind logo — appears after pulse */
-    #splash-glow {
-      position: absolute; width: 200px; height: 200px;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      border-radius: 50%; pointer-events: none;
-      background: radial-gradient(circle, rgba(20,143,152,0.12) 0%, transparent 70%);
-      opacity: 0; transition: opacity 0.8s ease-out;
+      font-family: var(--font-display); font-size: 13px; font-weight: 700;
+      color: rgba(255,255,255,0.8); letter-spacing: 0.12em; text-transform: uppercase;
+      text-align: center; opacity: 0; margin-top: 22px;
+      min-height: 18px;
     }
   /* ── Business Card Modal ─────────────────────────────────────────────── */
   #bcard-overlay {
@@ -8210,14 +8213,14 @@
 <div id="orb-br" aria-hidden="true"></div>
 <div id="orb-center" aria-hidden="true"></div>
 
-<!-- ── Splash screen — The Pulse ── -->
+<!-- ── Splash screen — System Boot ── -->
 <div id="splash">
-  <div id="splash-glow"></div>
-  <div id="splash-pulse"></div>
+  <div id="splash-ring"></div>
   <div id="splash-logo-wrap">
     <div id="splash-logo-stack">
       <img id="splash-logo" src="W.png" alt="WC App" />
       <img id="splash-org-logo" src="" alt="" />
+      <div id="splash-laser"></div>
     </div>
     <div id="splash-org-name"></div>
   </div>
@@ -14807,93 +14810,154 @@ function _dismissSplash() {
   }, 460);
 }
 
-// ── wcSplash API — The Pulse ─────────────────────────────────────────────────
+// ── wcSplash API — System Boot ────────────────────────────────────────────────
 (function() {
   function _revealOrg(orgName, orgLogoUrl, orgColor) {
     if (_splashDismissed) return;
-    _pulseRunning = true; // lock — we own the dismiss now
+    _pulseRunning = true;
+
     var wcLogo  = document.getElementById('splash-logo');
     var orgLogo = document.getElementById('splash-org-logo');
     var nameEl  = document.getElementById('splash-org-name');
-    var glow    = document.getElementById('splash-glow');
-    var pulse   = document.getElementById('splash-pulse');
+    var ring    = document.getElementById('splash-ring');
+    var laser   = document.getElementById('splash-laser');
+    var stack   = document.getElementById('splash-logo-stack');
+    var hasOrg  = !!orgLogoUrl;
 
-    // Preload org logo immediately so it's ready for crossfade
-    if (orgLogoUrl && orgLogo) orgLogo.src = orgLogoUrl;
+    // Preload org logo
+    if (hasOrg && orgLogo) orgLogo.src = orgLogoUrl;
 
-    // ── Phase 1 (200ms): WC logo fades in gently on black ──
+    // ── Phase 1 (300ms): Boot line appears — horizontal slit of light ──
+    setTimeout(function() {
+      if (ring) {
+        ring.style.transition = 'opacity 0.15s ease-out';
+        ring.style.opacity = '1';
+      }
+    }, 300);
+
+    // ── Phase 2 (500ms): Line morphs into ring ──
+    setTimeout(function() {
+      if (ring) {
+        ring.style.transition = 'transform 0.6s cubic-bezier(0.16,1,0.3,1)';
+        ring.style.transform = 'translate(-50%, -50%) scaleY(1)';
+      }
+    }, 500);
+
+    // ── Phase 3 (950ms): WC logo fades in, ring pulses once ──
     setTimeout(function() {
       if (wcLogo) {
-        wcLogo.style.transition = 'opacity 0.8s ease-out';
+        wcLogo.style.transition = 'opacity 0.4s ease-out';
         wcLogo.style.opacity = '1';
       }
-      // Soft glow behind logo
-      if (glow) {
-        glow.style.transition = 'opacity 1s ease-out';
-        glow.style.opacity = '1';
+      // Ring confirmation pulse
+      if (ring) {
+        ring.style.transition = 'transform 0.25s ease-out, box-shadow 0.25s ease-out';
+        ring.style.transform = 'translate(-50%, -50%) scale(1.08)';
+        ring.style.boxShadow = '0 0 30px rgba(20,143,152,0.35), inset 0 0 20px rgba(20,143,152,0.1)';
+        setTimeout(function() {
+          ring.style.transition = 'transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out';
+          ring.style.transform = 'translate(-50%, -50%) scale(1)';
+          ring.style.boxShadow = '0 0 20px rgba(20,143,152,0.2), inset 0 0 15px rgba(20,143,152,0.05)';
+        }, 250);
       }
-      // Sonar pulse — one ring expands and fades, AFTER logo is visible
-      setTimeout(function() {
-        if (pulse) {
-          pulse.style.transition = 'width 0.5s cubic-bezier(0.16,1,0.3,1), height 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease-out';
-          pulse.style.width = '260px';
-          pulse.style.height = '260px';
-          pulse.style.opacity = '1';
-          setTimeout(function() {
-            pulse.style.transition = 'opacity 0.4s ease-out';
-            pulse.style.opacity = '0';
-          }, 350);
-        }
-      }, 400);
-    }, 200);
+    }, 950);
 
-    // ── Phase 2 (200-1800ms): WC logo holds. Stillness. ──
-
-    // ── Phase 3 (1800ms): Crossfade — WC out, org in ──
-    var hasOrg = !!orgLogoUrl;
+    // ── Phase 4 (1.6s): LASER SWEEP — the Dr. Evil moment ──
     if (hasOrg) {
       setTimeout(function() {
-        if (wcLogo) {
-          wcLogo.style.transition = 'opacity 0.5s ease-in, transform 0.5s ease-in';
-          wcLogo.style.opacity = '0';
-          wcLogo.style.transform = 'scale(0.95)';
-        }
-        setTimeout(function() {
-          if (orgLogo) {
-            orgLogo.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-            orgLogo.style.opacity = '1';
-            orgLogo.style.transform = 'scale(1)';
-          }
-        }, 200);
-      }, 1800);
+        if (!laser || !orgLogo || !wcLogo || !stack) return;
 
-      // ── Phase 4 (2.6s): Org name ──
+        var H = stack.offsetHeight || 100;
+        var duration = 600;
+        var start = null;
+
+        orgLogo.style.opacity = '1';
+        laser.style.opacity = '1';
+
+        function sweep(timestamp) {
+          if (!start) start = timestamp;
+          var elapsed = timestamp - start;
+          var progress = Math.min(1, elapsed / duration);
+          // Ease-in-out quad
+          var eased = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+          // Move laser line
+          laser.style.top = (eased * H) + 'px';
+          // Reveal org logo from top (clip bottom away)
+          orgLogo.style.clipPath = 'inset(0 0 ' + ((1 - eased) * 100).toFixed(1) + '% 0)';
+          // Hide WC logo from top (clip top away)
+          wcLogo.style.clipPath = 'inset(' + (eased * 100).toFixed(1) + '% 0 0 0)';
+
+          if (progress < 1) {
+            requestAnimationFrame(sweep);
+          } else {
+            // Laser fades out
+            laser.style.transition = 'opacity 0.25s ease-out';
+            laser.style.opacity = '0';
+            // Clean up WC
+            wcLogo.style.opacity = '0';
+          }
+        }
+        requestAnimationFrame(sweep);
+      }, 1600);
+
+      // ── Phase 5 (2.35s): Ring expands outward and vanishes ──
+      setTimeout(function() {
+        if (ring) {
+          ring.style.transition = 'transform 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease-out';
+          ring.style.transform = 'translate(-50%, -50%) scale(2.8)';
+          ring.style.opacity = '0';
+        }
+      }, 2350);
+
+      // ── Phase 6 (2.6s): Org name types in — system readout ──
       setTimeout(function() {
         if (nameEl && orgName) {
-          nameEl.textContent = orgName;
           nameEl.style.opacity = '1';
-          nameEl.style.transform = 'translateY(0)';
+          var text = orgName.toUpperCase();
+          var i = 0;
+          nameEl.textContent = '';
+          function typeChar() {
+            nameEl.textContent = text.substring(0, ++i);
+            if (i < text.length) setTimeout(typeChar, 30);
+          }
+          typeChar();
         }
       }, 2600);
 
-      // ── Phase 5 (3.4s): Dismiss ──
+      // ── Phase 7 (3.5s): Dismiss ──
       setTimeout(function() {
         _pulseRunning = false;
         _dismissSplash();
-      }, 3400);
+      }, 3500);
+
     } else {
-      // No org logo — just show WC, then dismiss
+      // No org logo — hold WC, show name, dismiss
       setTimeout(function() {
         if (nameEl && orgName) {
-          nameEl.textContent = orgName;
           nameEl.style.opacity = '1';
-          nameEl.style.transform = 'translateY(0)';
+          var text = orgName.toUpperCase();
+          var i = 0;
+          nameEl.textContent = '';
+          function typeChar() {
+            nameEl.textContent = text.substring(0, ++i);
+            if (i < text.length) setTimeout(typeChar, 30);
+          }
+          typeChar();
         }
-      }, 1400);
+      }, 1600);
+      setTimeout(function() {
+        if (ring) {
+          ring.style.transition = 'opacity 0.5s ease-out';
+          ring.style.opacity = '0';
+        }
+      }, 1800);
       setTimeout(function() {
         _pulseRunning = false;
         _dismissSplash();
-      }, 2200);
+      }, 2400);
     }
   }
 
