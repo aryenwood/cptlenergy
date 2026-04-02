@@ -12695,7 +12695,7 @@ function applyOrgBranding(orgId, org) {
                 }));
                 console.log('[Branding] Applied:', (org.companyName || org.name || '—'), '| logo:', (org.logoUrl || 'none'));
                 // Trigger org reveal overlay on cinematic splash
-                if (window.wcSplash && typeof window.wcSplash.revealOrg === 'function') {
+                if (!_splashDismissed && window.wcSplash && typeof window.wcSplash.revealOrg === 'function') {
                   window.wcSplash.revealOrg(
                     org.companyName || org.name || '',
                     org.logoUrl || '',
@@ -14992,6 +14992,17 @@ function _initApp() {
     document.title = _cachedCompany;
     const _brandImg = document.getElementById('header-brand-img');
     if (_brandImg) _brandImg.alt = _cachedCompany;
+  }
+
+  // Fire splash revealOrg immediately from cached data — don't wait for Firestore
+  if (window.wcSplash && typeof window.wcSplash.revealOrg === 'function') {
+    const _cachedOrgLogo = _cachedAdmin.logoUrl || _cachedAdmin.customLogo || '';
+    const _cachedOrgName = _cachedAdmin.companyName || _cachedAdmin.orgName || '';
+    const _cachedOrgColor = _cachedAdmin.themePrimary || '';
+    if (_cachedOrgName || _cachedOrgLogo) {
+      console.log('[Splash] Firing revealOrg from cache:', _cachedOrgName, _cachedOrgLogo ? 'has logo' : 'no logo');
+      window.wcSplash.revealOrg(_cachedOrgName, _cachedOrgLogo, _cachedOrgColor);
+    }
   }
 
   // Role UI applied after auth now — see onAuthStateChanged in Firebase block
