@@ -4485,6 +4485,11 @@
       overflow: hidden;
     }
     #splash.splash--hidden { opacity: 0; pointer-events: none; }
+    #splash-particles {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 1; pointer-events: none;
+    }
     /* Logo wrap — everything anchors to this */
     #splash-logo-wrap {
       position: relative; z-index: 2;
@@ -8277,6 +8282,7 @@
 
 <!-- ── Splash screen — System Boot ── -->
 <div id="splash">
+  <canvas id="splash-particles"></canvas>
   <div id="splash-logo-wrap">
     <div id="splash-logo-stack">
       <div id="splash-ambient"></div>
@@ -14926,7 +14932,106 @@ function _dismissSplash() {
       splashEl.style.setProperty('--splash-glow-dim', 'rgba('+_r+','+_g+','+_b+',0.12)');
     }
 
-    // Preload org logo so it's cached for the laser sweep
+    // ── Particle engine — ambient float + burst explosion ──
+    var _pCanvas = document.getElementById('splash-particles');
+    var _pCtx = null, _pRAF = null;
+    var _ambientP = [], _burstP = [];
+    var _pW = window.innerWidth, _pH = window.innerHeight;
+    if (_pCanvas) {
+      var _dpr = window.devicePixelRatio || 1;
+      _pCanvas.width = _pW * _dpr; _pCanvas.height = _pH * _dpr;
+      _pCanvas.style.width = _pW + 'px'; _pCanvas.style.height = _pH + 'px';
+      _pCtx = _pCanvas.getContext('2d');
+      _pCtx.scale(_dpr, _dpr);
+      for (var _pi = 0; _pi < 30; _pi++) {
+        _ambientP.push({
+          x: Math.random() * _pW, y: Math.random() * _pH,
+          vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+          r: Math.random() * 1.8 + 0.4,
+          a: Math.random() * 0.2 + 0.05,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+      function _drawP() {
+        if (!_pCtx) return;
+        _pCtx.clearRect(0, 0, _pW, _pH);
+        // Ambient particles — gentle drift with pulsing alpha
+        for (var i = 0; i < _ambientP.length; i++) {
+          var ap = _ambientP[i];
+          ap.x += ap.vx; ap.y += ap.vy; ap.phase += 0.015;
+          if (ap.x < -5) ap.x = _pW + 5; if (ap.x > _pW + 5) ap.x = -5;
+          if (ap.y < -5) ap.y = _pH + 5; if (ap.y > _pH + 5) ap.y = -5;
+          var al = ap.a * (0.5 + 0.5 * Math.sin(ap.phase));
+          _pCtx.beginPath(); _pCtx.arc(ap.x, ap.y, ap.r, 0, Math.PI * 2);
+          _pCtx.fillStyle = 'rgba('+_r+','+_g+','+_b+','+al.toFixed(3)+')';
+          _pCtx.fill();
+        }
+        // Burst particles — fast outward with decay
+        for (var j = _burstP.length - 1; j >= 0; j--) {
+          var bp = _burstP[j];
+          bp.x += bp.vx; bp.y += bp.vy;
+          bp.vx *= 0.96; bp.vy *= 0.96;
+          bp.life -= bp.decay;
+          if (bp.life <= 0) { _burstP.splice(j, 1); continue; }
+          var br = bp.r * bp.life;
+          _pCtx.beginPath(); _pCtx.arc(bp.x, bp.y, br, 0, Math.PI * 2);
+          _pCtx.fillStyle = 'rgba('+_r+','+_g+','+_b+','+(bp.a * bp.life).toFixed(3)+')';
+          _pCtx.fill();
+          // Soft glow halo
+          _pCtx.beginPath(); _pCtx.arc(bp.x, bp.y, br * 3, 0, Math.PI * 2);
+          _pCtx.fillStyle = 'rgba('+_r+','+_g+','+_b+','+(bp.a * bp.life * 0.12).toFixed(3)+')';
+          _pCtx.fill();
+        }
+        _pRAF = requestAnimationFrame(_drawP);
+      }
+      _drawP();
+    }
+    function _triggerBurst() {
+      var cx = _pW / 2, cy = _pH / 2;
+      for (var i = 0; i < 50; i++) {
+        var ang = (Math.PI * 2 * i) / 50 + (Math.random() - 0.5) * 0.4;
+        var spd = 1.5 + Math.random() * 5;
+        _burstP.push({
+          x: cx, y: cy,
+          vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+          r: Math.random() * 2.5 + 0.8,
+          a: 0.6 + Math.random() * 0.4,
+          life: 1, decay: 0.008 + Math.random() * 0.012
+        });
+      }
+    }
+    function _stopParticles() {
+      if (_pRAF) cancelAnimationFrame(_pRAF);
+      if (_pCtx) _pCtx.clearRect(0, 0, _pW, _pH);
+      _pCtx = null;
+    }
+
+    // ── Enhanced audio — bass hit + crystal shimmer for brand reveal ──
+    function _bassReveal() {
+      try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // Bass thud
+        var o1 = ctx.createOscillator(), g1 = ctx.createGain();
+        o1.connect(g1); g1.connect(ctx.destination);
+        o1.type = 'sine';
+        o1.frequency.setValueAtTime(80, ctx.currentTime);
+        o1.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 0.25);
+        g1.gain.setValueAtTime(0.12, ctx.currentTime);
+        g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.35);
+        // Crystal shimmer overtone
+        var o2 = ctx.createOscillator(), g2 = ctx.createGain();
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.type = 'sine';
+        o2.frequency.setValueAtTime(1200, ctx.currentTime + 0.03);
+        o2.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.3);
+        g2.gain.setValueAtTime(0.035, ctx.currentTime + 0.03);
+        g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+        o2.start(ctx.currentTime + 0.03); o2.stop(ctx.currentTime + 0.45);
+      } catch(_) {}
+    }
+
+    // Preload org logo so it's cached for the cube-fold
     if (hasOrg && orgLogo) orgLogo.src = orgLogoUrl;
 
     // ── Beat 1 (0ms): Boot line + ambient glow ──
@@ -15021,13 +15126,20 @@ function _dismissSplash() {
             }, 200);
           }
 
-          // Second sonic ping — brand revelation
-          _ping();
+          // Particle burst + bass reveal — brand transformation
+          _triggerBurst();
+          _bassReveal();
 
-          // Org logo unfolds from the other side of the cube
+          // Org logo unfolds from the other side — spring overshoot
           orgLogo.style.opacity = '1';
           orgLogo.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
-          orgLogo.style.transform = 'rotateY(0deg) scale(1)';
+          orgLogo.style.transform = 'rotateY(0deg) scale(1.08)';
+          // Spring settle + brand glow halo
+          setTimeout(function() {
+            orgLogo.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.6s ease-out';
+            orgLogo.style.transform = 'rotateY(0deg) scale(1)';
+            orgLogo.style.filter = 'drop-shadow(0 0 25px rgba('+_r+','+_g+','+_b+',0.5))';
+          }, 350);
 
           // Ring + ambient expand back with renewed energy
           if (ring) {
@@ -15059,19 +15171,30 @@ function _dismissSplash() {
         }
       }, 3200);
 
-      // ── Beat 6 (3.5s): Org name typewriter ──
+      // ── Beat 6 (3.5s): Org name typewriter — blur to sharp ──
       setTimeout(function() {
         if (nameEl && orgName) {
+          nameEl.style.filter = 'blur(6px)';
           nameEl.style.opacity = '1';
           var text = orgName.toUpperCase();
           var i = 0; nameEl.textContent = '';
-          function t() { nameEl.textContent = text.substring(0, ++i); if (i < text.length) setTimeout(t, 30); }
+          function t() {
+            nameEl.textContent = text.substring(0, ++i);
+            if (i < text.length) setTimeout(t, 30);
+            else {
+              // Resolve to crisp after typewriter finishes
+              nameEl.style.transition = 'filter 0.6s ease-out, text-shadow 0.6s ease-out';
+              nameEl.style.filter = 'blur(0)';
+              nameEl.style.textShadow = '0 0 30px rgba('+_r+','+_g+','+_b+',0.5), 0 0 60px rgba('+_r+','+_g+','+_b+',0.2)';
+            }
+          }
           t();
         }
       }, 3500);
 
       // ── Beat 7 (4.6s): Bloom dismiss — glow expands to fill screen ──
       setTimeout(function() {
+        _stopParticles();
         if (bloom) {
           bloom.style.width = '200vmax';
           bloom.style.height = '200vmax';
@@ -15095,6 +15218,7 @@ function _dismissSplash() {
         if (ring) { ring.style.transition = 'opacity 0.5s'; ring.style.opacity = '0'; }
       }, 2000);
       setTimeout(function() {
+        _stopParticles();
         if (bloom) {
           bloom.style.width = '200vmax';
           bloom.style.height = '200vmax';
