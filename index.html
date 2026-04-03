@@ -12555,10 +12555,12 @@ function applyOrgBranding(orgId, org) {
     'wc-app-alpha.web.app'
   ];
   if (masterDomains.indexOf(hostname) > -1) {
-    // Master domain — fire splash with WC App's own branding
-    if (window.wcSplash && typeof window.wcSplash.revealOrg === 'function') {
-      window.wcSplash.revealOrg('Wood Consulting', 'W.png', '#148f98');
-    }
+    // Master domain — fire splash with WC App's own branding (defer until wcSplash exists)
+    window.addEventListener('load', function() {
+      if (window.wcSplash && typeof window.wcSplash.revealOrg === 'function') {
+        window.wcSplash.revealOrg('Wood Consulting', 'W.png', '#148f98');
+      }
+    });
     return;
   }
 
