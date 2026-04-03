@@ -12554,7 +12554,13 @@ function applyOrgBranding(orgId, org) {
     'wc-app-alpha.firebaseapp.com',
     'wc-app-alpha.web.app'
   ];
-  if (masterDomains.indexOf(hostname) > -1) return; // master domain — default WC App branding
+  if (masterDomains.indexOf(hostname) > -1) {
+    // Master domain — fire splash with WC App's own branding
+    if (window.wcSplash && typeof window.wcSplash.revealOrg === 'function') {
+      window.wcSplash.revealOrg('Wood Consulting', 'W.png', '#148f98');
+    }
+    return;
+  }
 
   firebase.firestore()
     .collection('organizations')
