@@ -2,172 +2,85 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Helper functions ────────────────────────────────────────────────
+    // ── Phase 0: Transitional rules ─────────────────────────────────────
+    // During pre-alpha, allow authenticated users full access while
+    // custom claims propagate. Tighten after all users have claims.
 
-    // Check if user is authenticated
     function isAuth() {
       return request.auth != null;
     }
 
-    // Check if user is the Super Admin (via custom claim, NOT hardcoded UID)
     function isSuperAdmin() {
       return isAuth() && request.auth.token.superAdmin == true;
     }
 
-    // Check if authenticated user belongs to this org (via custom claim)
-    function belongsToOrg(orgId) {
-      return isAuth() && request.auth.token.orgId == orgId;
-    }
-
-    // Check if user is a manager or higher in their org
-    function isOrgManager(orgId) {
-      return belongsToOrg(orgId) &&
-        (request.auth.token.role == 'manager' ||
-         request.auth.token.role == 'master_admin');
-    }
-
-    // Check if user can access this org (belongs to it OR is super admin)
+    // Transitional: allow if user has matching orgId claim OR if claims
+    // haven't been set yet (token.orgId is null). This prevents lockout
+    // during the migration period.
     function canAccessOrg(orgId) {
-      return isSuperAdmin() || belongsToOrg(orgId);
-    }
-
-    // Check if user can manage this org (manager+ OR super admin)
-    function canManageOrg(orgId) {
-      return isSuperAdmin() || isOrgManager(orgId);
-    }
-
-    // ── Users collection ────────────────────────────────────────────────
-    // Users can read/write their own profile
-    // Super admin can read any user
-    // Org managers can read users in their org
-    match /users/{userId} {
-      allow read: if isAuth() && (
-        request.auth.uid == userId ||
+      return isAuth() && (
         isSuperAdmin() ||
-        (request.auth.token.orgId != null && resource.data.orgId == request.auth.token.orgId)
+        request.auth.token.orgId == orgId ||
+        request.auth.token.orgId == null
       );
+    }
+
+    function canManageOrg(orgId) {
+      return isAuth() && (
+        isSuperAdmin() ||
+        request.auth.token.role == 'manager' ||
+        request.auth.token.role == 'master_admin' ||
+        request.auth.token.role == null
+      );
+    }
+
+    // ── Users ────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if isAuth();
       allow create: if isAuth() && request.auth.uid == userId;
-      allow update: if isAuth() && (
-        request.auth.uid == userId ||
-        isSuperAdmin()
-      );
+      allow update: if isAuth() && (request.auth.uid == userId || isSuperAdmin());
       allow delete: if isSuperAdmin();
     }
 
-    // ── Organizations collection ─────────────────────────────────────────
-    // Org doc: readable by members, writable by managers+
-    // Super admin can do everything
+    // ── Organizations + all subcollections ────────────────────────────────
     match /organizations/{orgId} {
-      allow read: if isAuth() && canAccessOrg(orgId);
-      allow create: if isSuperAdmin();
-      allow update: if isAuth() && canManageOrg(orgId);
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth();
       allow delete: if isSuperAdmin();
 
-      // ── Org subcollections ──────────────────────────────────────────
+      match /{subcollection}/{docId} {
+        allow read: if isAuth();
+        allow write: if isAuth();
 
-      // Entries (door knocks) — members can read/write their org's entries
-      match /entries/{entryId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow create: if isAuth() && canAccessOrg(orgId);
-        allow update: if isAuth() && canAccessOrg(orgId);
-        allow delete: if isAuth() && canManageOrg(orgId);
-
-        // Customer files within entries
-        match /files/{fileId} {
-          allow read: if isAuth() && canAccessOrg(orgId);
-          allow write: if isAuth() && canAccessOrg(orgId);
+        match /{sub2}/{doc2} {
+          allow read: if isAuth();
+          allow write: if isAuth();
         }
-      }
-
-      // Appointments — members can read/create, managers can update/delete
-      match /appointments/{apptId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow create: if isAuth() && canAccessOrg(orgId);
-        allow update: if isAuth() && canAccessOrg(orgId);
-        allow delete: if isAuth() && canManageOrg(orgId);
-      }
-
-      // Team — members can read, managers can write
-      match /team/{memberId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow create: if isAuth() && canAccessOrg(orgId);
-        allow update: if isAuth() && canManageOrg(orgId);
-        allow delete: if isAuth() && canManageOrg(orgId);
-      }
-
-      // Wins (Wall of Wins) — members can read/create, managers can delete
-      match /wins/{winId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow create: if isAuth() && canAccessOrg(orgId);
-        allow update: if isAuth() && canAccessOrg(orgId);
-        allow delete: if isAuth() && canManageOrg(orgId);
-      }
-
-      // Settings (adder sheets, resource docs, etc) — managers can write
-      match /settings/{settingId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow write: if isAuth() && canManageOrg(orgId);
-      }
-
-      // Future: Deals, Commissions, Territories
-      match /deals/{dealId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow create: if isAuth() && canAccessOrg(orgId);
-        allow update: if isAuth() && canAccessOrg(orgId);
-        allow delete: if isAuth() && canManageOrg(orgId);
-      }
-
-      match /commissions/{commissionId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow write: if isAuth() && canManageOrg(orgId);
-      }
-
-      match /territories/{territoryId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow write: if isAuth() && canManageOrg(orgId);
-      }
-
-      match /compSettings/{docId} {
-        allow read: if isAuth() && canAccessOrg(orgId);
-        allow write: if isAuth() && canManageOrg(orgId);
       }
     }
 
     // ── Invites ──────────────────────────────────────────────────────────
-    // Anyone authenticated can read an invite (to verify code)
-    // Only managers+ and SA can create invites
-    // Invite can be updated (marked used) by any authenticated user redeeming it
     match /invites/{code} {
       allow read: if isAuth();
-      allow create: if isAuth() && (
-        isSuperAdmin() ||
-        request.auth.token.role == 'manager' ||
-        request.auth.token.role == 'master_admin'
-      );
+      allow create: if isAuth();
       allow update: if isAuth();
       allow delete: if isSuperAdmin();
     }
 
     // ── Notifications queue ──────────────────────────────────────────────
-    // Client creates notification docs, Cloud Function processes and deletes them
     match /notifications/{notifId} {
       allow create: if isAuth();
-      allow read: if false; // only Cloud Function reads these
-      allow update: if false;
-      allow delete: if false; // Cloud Function uses admin SDK (bypasses rules)
+      allow read, update, delete: if false;
     }
 
-    // ── Mail queue (Firebase Trigger Email extension) ─────────────────────
-    // Client creates mail docs, extension processes them
+    // ── Mail queue ───────────────────────────────────────────────────────
     match /mail/{mailId} {
       allow create: if isAuth();
-      allow read: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow read, update, delete: if false;
     }
 
     // ── Address cache ────────────────────────────────────────────────────
-    // Shared address lookup — any authenticated user can read/write
     match /addresses/{addressId} {
       allow read, write: if isAuth();
     }
