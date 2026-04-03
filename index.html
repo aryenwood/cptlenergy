@@ -12072,9 +12072,10 @@ const fbStorage = firebase.storage();
 const fbMsg     = firebase.messaging();
 
 // ── Super Admin ───────────────────────────────────────────────────────────
-const SUPER_ADMIN_UID = 'yyyDjhfDgDSQIxJEq9xRd5dLbw42';
+// SA UID removed from client — checked via Firebase Auth custom claims
+var _isSuperAdminCached = false;
 function isSuperAdmin() {
-  return !!(fbAuth.currentUser && fbAuth.currentUser.uid === SUPER_ADMIN_UID);
+  return _isSuperAdminCached;
 }
 
 // Last-generated invite context — set in _saGenMasterAdminInvite, read by share button
@@ -12593,10 +12594,17 @@ function applyOrgBranding(orgId, org) {
   }
 
   // Auth state — show login or app
-  fbAuth.onAuthStateChanged(function(user) {
+  fbAuth.onAuthStateChanged(async function(user) {
     if (user) {
-      // 0. Super admin: stamp role FIRST before any other logic can run
-      if (user.uid === SUPER_ADMIN_UID) {
+      // 0. Super admin: check ID token claims first, fall back to cached role
+      // getIdTokenResult() reads claims synchronously from cached token (no network call)
+      try {
+        var _tokenResult = await user.getIdTokenResult();
+        if (_tokenResult.claims.superAdmin) _isSuperAdminCached = true;
+      } catch(_) {}
+      // Also check localStorage as fallback for first load before claims are set
+      if (!_isSuperAdminCached && localStorage.getItem('wc_user_role') === 'super_admin') _isSuperAdminCached = true;
+      if (_isSuperAdminCached) {
         try { localStorage.setItem('wc_user_role', 'super_admin'); } catch(_) {}
         try { localStorage.removeItem('wc_impersonate_role'); } catch(_) {} // never let impersonation override SA
       }
@@ -12610,6 +12618,7 @@ function applyOrgBranding(orgId, org) {
       try {
         firebase.functions().httpsCallable('wcSetClaims')({}).then(function(result) {
           console.log('[Claims] Refreshed:', result.data);
+          if (result.data && result.data.superAdmin) _isSuperAdminCached = true;
           // Force token refresh so Firestore rules see new claims immediately
           user.getIdToken(true).catch(function() {});
         }).catch(function(e) { console.warn('[Claims] Refresh failed:', e.message); });
@@ -12676,7 +12685,7 @@ function applyOrgBranding(orgId, org) {
       }
 
       // 6a. Super admin: always grant role + show platform admin menu item
-      if (user.uid === SUPER_ADMIN_UID) {
+      if (_isSuperAdminCached) {
         localStorage.setItem('wc_user_role', 'super_admin');
         // SA on master domains has no domain-based org — pull orgId from user doc
         var _saCurrentOrg = localStorage.getItem('wc_org_id');
@@ -12706,15 +12715,15 @@ function applyOrgBranding(orgId, org) {
       }
       var _saItemEl = document.getElementById('pdd-super-admin');
       var _saDivEl  = document.getElementById('pdd-super-admin-divider');
-      if (_saItemEl) _saItemEl.style.display = user.uid === SUPER_ADMIN_UID ? '' : 'none';
-      if (_saDivEl)  _saDivEl.style.display  = user.uid === SUPER_ADMIN_UID ? '' : 'none';
+      if (_saItemEl) _saItemEl.style.display = _isSuperAdminCached ? '' : 'none';
+      if (_saDivEl)  _saDivEl.style.display  = _isSuperAdminCached ? '' : 'none';
 
       // 6b. First-time user: apply pending invite (pre-auth) or show role setup
       if (!localStorage.getItem('wc_user_role')) {
         if (_pendingInvite) {
           var pi = _pendingInvite;
           _pendingInvite = null;
-          if (user.uid !== SUPER_ADMIN_UID) localStorage.setItem('wc_user_role', pi.role);
+          if (!_isSuperAdminCached) localStorage.setItem('wc_user_role', pi.role);
           if (pi.orgId) {
             localStorage.setItem('wc_org_id', pi.orgId);
             console.log('[Invite] wc_org_id set:', pi.orgId, '(role:', pi.role + ')');
@@ -12752,7 +12761,7 @@ function applyOrgBranding(orgId, org) {
         } else if (_urlOrgId) {
           // No invite code but opened via ?org= link — auto-join org as canvasser
           var _joinName = user.displayName || localStorage.getItem('wc_user_name') || '';
-          if (user.uid !== SUPER_ADMIN_UID) localStorage.setItem('wc_user_role', 'canvasser');
+          if (!_isSuperAdminCached) localStorage.setItem('wc_user_role', 'canvasser');
           localStorage.setItem('wc_org_id', _urlOrgId);
           console.log('[OrgUrl] wc_org_id set from ?org= param:', _urlOrgId);
           fbDb.collection('organizations').doc(_urlOrgId)
@@ -13432,7 +13441,7 @@ if (!localStorage.getItem('wc_device_id')) {
 
 // ── Identity helpers — supports impersonation (F10) ───────────────────────
 function getActiveRole() {
-  if (window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID) return 'super_admin';
+  if (_isSuperAdminCached) return 'super_admin';
   return localStorage.getItem('wc_impersonate_role') || localStorage.getItem('wc_user_role') || 'canvasser';
 }
 function getActiveName() {
@@ -14664,7 +14673,7 @@ async function _saCreateOrg() {
       notificationEmail: notifyEmail,
       customDomain,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      createdBy: SUPER_ADMIN_UID
+      createdBy: fbAuth.currentUser ? fbAuth.currentUser.uid : ''
     });
     // Pre-fill invite section and scroll to it
     const invOrgId   = document.getElementById('sa-invite-org-id');
@@ -14721,7 +14730,7 @@ async function _saGenMasterAdminInvite() {
   try {
     await fbDb.collection('invites').doc(code).set({
       code, orgId, orgName, role: 'master_admin',
-      createdBy: SUPER_ADMIN_UID,
+      createdBy: fbAuth.currentUser ? fbAuth.currentUser.uid : '',
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       expiresAt: firebase.firestore.Timestamp.fromDate(expiresAt),
       used: false, usedBy: null
@@ -20984,7 +20993,7 @@ function applyRoleUI() {
 
 // ── First-Run Modal ─────────────────────────────────────────────────────────
 function showFirstRunModal() {
-  if (window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID) return;
+  if (_isSuperAdminCached) return;
   const overlay = document.getElementById('role-setup-overlay');
   if (!overlay) return;
   overlay.classList.add('open');
@@ -21036,7 +21045,7 @@ document.getElementById('role-setup-go').addEventListener('click', () => {
     if (nameInput) { nameInput.focus(); nameInput.style.borderColor = '#ef4444'; setTimeout(() => nameInput.style.borderColor = '', 1500); }
     return;
   }
-  if (!(window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID)) localStorage.setItem('wc_user_role', _selectedRole);
+  if (!(_isSuperAdminCached)) localStorage.setItem('wc_user_role', _selectedRole);
   localStorage.setItem('wc_user_name', name);
   // Also save name into wc_admin.repName so business card picks it up
   try {
@@ -21162,7 +21171,7 @@ function renderPINDots() {
   }
 }
 
-function handlePINKey(key) {
+async function handlePINKey(key) {
   const err = document.getElementById('pin-error');
   if (key === 'del') {
     _pinBuffer = _pinBuffer.slice(0, -1);
@@ -21183,9 +21192,20 @@ function handlePINKey(key) {
   _pinBuffer = '';
   setTimeout(() => renderPINDots(), 80);
 
+  // Hash PIN using SHA-256 for secure comparison
+  async function _hashPin(pin) {
+    var data = new TextEncoder().encode(pin + '_wc_salt_2026');
+    var hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   if (_pinMode === 'verify') {
     const stored = localStorage.getItem('wc_master_pin');
-    if (entered === stored) {
+    const hashed = await _hashPin(entered);
+    // Support both legacy plaintext PINs and new hashed PINs
+    if (hashed === stored || (stored && stored.length <= 6 && entered === stored)) {
+      // Migrate plaintext PIN to hashed on successful verify
+      if (stored && stored.length <= 6) localStorage.setItem('wc_master_pin', hashed);
       hidePINOverlay();
       openMasterAdmin();
     } else {
@@ -21201,7 +21221,8 @@ function handlePINKey(key) {
       setTimeout(() => renderPINDots(), 80);
     } else {
       if (entered === _pinFirst) {
-        localStorage.setItem('wc_master_pin', entered);
+        var _hashedNew = await _hashPin(entered);
+        localStorage.setItem('wc_master_pin', _hashedNew);
         hidePINOverlay();
         if (_pinMode === 'create') openMasterAdmin();
         // If 'change', just close
@@ -21604,7 +21625,7 @@ function _exitMasterAdmin() {
   // v82: delay role restore until after the 350ms slide-out transition completes
   // — prevents white flash caused by DOM updates while sheet is still animating
   setTimeout(() => {
-    localStorage.setItem('wc_user_role', (window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID) ? 'super_admin' : (_prevRole || 'canvasser'));
+    localStorage.setItem('wc_user_role', (_isSuperAdminCached) ? 'super_admin' : (_prevRole || 'canvasser'));
     applyRoleUI();
   }, 380);
 }
@@ -22588,7 +22609,7 @@ function saveAdminSettings() {
   const newName = s.repName;
   if (newName) localStorage.setItem('wc_user_name', newName);
   const roleEl = document.getElementById('admin-role-select');
-  if (roleEl && roleEl.value && !(window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID)) localStorage.setItem('wc_user_role', roleEl.value);
+  if (roleEl && roleEl.value && !(_isSuperAdminCached)) localStorage.setItem('wc_user_role', roleEl.value);
   applyRoleUI();
 
   // Save font size
@@ -25438,7 +25459,7 @@ function _lookupInvitePreAuth(code) {
 
     if (action === 'skip') {
       // Set minimal local state so the app renders without hitting auth
-      try { if (!(window.fbAuth && window.fbAuth.currentUser && window.fbAuth.currentUser.uid === SUPER_ADMIN_UID)) localStorage.setItem('wc_user_role', 'canvasser'); } catch(_) {}
+      try { if (!(_isSuperAdminCached)) localStorage.setItem('wc_user_role', 'canvasser'); } catch(_) {}
       try { localStorage.setItem('wc_onboarding_done', '1'); } catch(_) {}
       var gate = document.getElementById('invite-gate-screen');
       var login = document.getElementById('login-screen');
