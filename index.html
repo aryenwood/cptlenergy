@@ -15236,7 +15236,60 @@ function _dismissSplash() {
       }
       _drawP();
     }
-    // _triggerSpeedLines and _triggerAnimeEffects removed — pulse rings inlined in Beat 5
+    function _triggerSpeedLines() {
+      var _waveCount = 0;
+      var _waveId = setInterval(function() {
+        _waveCount++;
+        if (_waveCount > 8) { clearInterval(_waveId); return; }
+        for (var i = 0; i < 12; i++) {
+          var angle = Math.random() * Math.PI * 2;
+          _speedLines.push({
+            angle: angle, startR: 80 + Math.random() * 40,
+            len: 0, speed: 3 + Math.random() * 6,
+            w: 0.5 + Math.random() * 1.5, life: 1,
+            decay: 0.015 + Math.random() * 0.01,
+            col: 'rgb('+_dr+','+_dg+','+_db+')'
+          });
+        }
+      }, 200);
+      _activeIntervals.push(_waveId);
+    }
+    function _triggerAnimeEffects() {
+      // Sparkles — 4-pointed twinkling stars
+      var _spkWave = 0;
+      var _spkId = setInterval(function() {
+        _spkWave++;
+        if (_spkWave > 16) { clearInterval(_spkId); return; }
+        for (var si = 0; si < 2; si++) {
+          var dist = 70 + Math.random() * 130;
+          var ang = Math.random() * Math.PI * 2;
+          _sparkles.push({
+            x: _eCx + Math.cos(ang) * dist,
+            y: _eCy + Math.sin(ang) * dist,
+            size: 4 + Math.random() * 8,
+            rot: Math.random() * Math.PI,
+            phase: Math.random() * Math.PI * 2,
+            life: 1, decay: 0.008 + Math.random() * 0.006,
+            col: Math.random() > 0.3 ? '#fff' : 'rgb('+_dr+','+_dg+','+_db+')'
+          });
+        }
+      }, 200);
+      _activeIntervals.push(_spkId);
+
+      // Orbital arc swooshes — 4 orbits
+      var radii = [95, 125, 155, 185];
+      var dirs = [1, -1, 1.2, -0.9];
+      for (var oi = 0; oi < 4; oi++) {
+        _orbits.push({
+          r: radii[oi],
+          angle: (Math.PI * 2 / 4) * oi,
+          speed: (0.035 + Math.random() * 0.02) * dirs[oi],
+          w: 2 + Math.random() * 1.5, life: 1,
+          decay: 0.003 + oi * 0.0005,
+          col: oi % 2 === 0 ? 'rgba(255,255,255,0.8)' : 'rgba('+_dr+','+_dg+','+_db+',1)'
+        });
+      }
+    }
     function _triggerGlint() {
       _glintAlpha = 1;
       var _gFade = setInterval(function() {
@@ -15537,32 +15590,36 @@ function _dismissSplash() {
         }, 1500);
       }, 1900);
 
-      // ── Beat 5 (3.8s): HERO SHOWCASE — anime impact ──
+      // ── Beat 5 (3.8s): HERO SHOWCASE — full anime + Gundam ──
       setTimeout(function() {
-        // Anime impact flash — full white cut frame
+        // Naruto impact flash — white cut frame
         _impactFlash = 0.7;
 
-        // Cross-glint lens flare
+        // Gundam lens flare
         _triggerGlint();
 
-        // Micro screen shake — impact
+        // Gundam screen shake
         if (splashEl) {
           var _shk = 0;
           var _shkId = setInterval(function() {
             _shk++;
-            if (_shk > 4) { splashEl.style.transform = ''; clearInterval(_shkId); return; }
-            var dx = (Math.random() - 0.5) * 3;
-            var dy = (Math.random() - 0.5) * 3;
+            if (_shk > 5) { splashEl.style.transform = ''; clearInterval(_shkId); return; }
+            var dx = (Math.random() - 0.5) * 4;
+            var dy = (Math.random() - 0.5) * 4;
             splashEl.style.transform = 'translate('+dx+'px,'+dy+'px)';
           }, 40);
           _activeIntervals.push(_shkId);
         }
 
-        // Pulse rings only — signature effect
+        // Full particle effects — speed lines + sparkles + orbital arcs
+        _triggerSpeedLines();
+        _triggerAnimeEffects();
+
+        // Pulse rings
         var _ringWave = 0;
         var _ringId = setInterval(function() {
           _ringWave++;
-          if (_ringWave > 5) { clearInterval(_ringId); return; }
+          if (_ringWave > 6) { clearInterval(_ringId); return; }
           _pulseRings.push({
             radius: 40,
             speed: 2.5 + Math.random() * 1.5,
@@ -15571,19 +15628,19 @@ function _dismissSplash() {
             w: 2.5 + Math.random() * 1.5,
             col: _isLight ? 'rgba('+_dr+','+_dg+','+_db+',1)' : 'rgba('+Math.min(255,_r+40)+','+Math.min(255,_g+40)+','+Math.min(255,_b+40)+',1)'
           });
-        }, 600);
+        }, 500);
         _activeIntervals.push(_ringId);
 
-        // Ring power-breathes during the hold
+        // Gundam ring power-breathe
         if (ring) {
           var _heroBreathe = 0;
           var _heroId = setInterval(function() {
             _heroBreathe++;
             if (!ring || _heroBreathe > 25) { clearInterval(_heroId); return; }
-            var s = 1 + Math.sin(_heroBreathe * 0.35) * 0.02;
+            var s = 1 + Math.sin(_heroBreathe * 0.35) * 0.025;
             ring.style.transition = 'transform 0.2s ease-in-out';
             ring.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
-            ring.style.boxShadow = '0 0 ' + (40 + Math.sin(_heroBreathe * 0.35) * 12) + 'px var(--splash-glow, rgba(20,143,152,0.35)), 0 0 ' + (80 + Math.sin(_heroBreathe * 0.35) * 20) + 'px var(--splash-glow-dim, rgba(20,143,152,0.12))';
+            ring.style.boxShadow = '0 0 ' + (40 + Math.sin(_heroBreathe * 0.35) * 15) + 'px var(--splash-glow, rgba(20,143,152,0.4)), 0 0 ' + (80 + Math.sin(_heroBreathe * 0.35) * 25) + 'px var(--splash-glow-dim, rgba(20,143,152,0.15))';
           }, 140);
           _activeIntervals.push(_heroId);
         }
