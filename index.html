@@ -14939,6 +14939,9 @@ function _dismissSplash() {
     var _fragments = [], _fragStart = 0, _fragActive = false;
     var _speedLines = [];
     var _glintAlpha = 0;
+    var _pulseRings = [];
+    var _sparkles = [];
+    var _orbits = [];
     var _pW = window.innerWidth, _pH = window.innerHeight;
     if (_pCanvas) {
       var _dpr = window.devicePixelRatio || 1;
@@ -15066,6 +15069,74 @@ function _dismissSplash() {
           _pCtx.fillRect(gx - 1, gy - 80, 2, 160);
           _pCtx.restore();
         }
+        // Concentric pulse rings — sonar emanation
+        var cx = _pW / 2, cy = _pH / 2;
+        for (var pr = _pulseRings.length - 1; pr >= 0; pr--) {
+          var rn = _pulseRings[pr];
+          rn.radius += rn.speed;
+          rn.alpha -= rn.decay;
+          if (rn.alpha <= 0) { _pulseRings.splice(pr, 1); continue; }
+          _pCtx.save();
+          _pCtx.globalAlpha = rn.alpha;
+          _pCtx.strokeStyle = rn.col;
+          _pCtx.lineWidth = rn.w * rn.alpha;
+          _pCtx.shadowBlur = 8;
+          _pCtx.shadowColor = rn.col;
+          _pCtx.beginPath();
+          _pCtx.arc(cx, cy, rn.radius, 0, Math.PI * 2);
+          _pCtx.stroke();
+          _pCtx.restore();
+        }
+        // Anime sparkles — 4-pointed twinkling stars
+        for (var sp = _sparkles.length - 1; sp >= 0; sp--) {
+          var sk = _sparkles[sp];
+          sk.phase += 0.08;
+          sk.life -= sk.decay;
+          if (sk.life <= 0) { _sparkles.splice(sp, 1); continue; }
+          var sa = sk.life * (0.5 + 0.5 * Math.sin(sk.phase));
+          var ssz = sk.size * (0.6 + 0.4 * Math.sin(sk.phase * 1.3));
+          _pCtx.save();
+          _pCtx.translate(sk.x, sk.y);
+          _pCtx.rotate(sk.rot);
+          _pCtx.globalAlpha = sa;
+          _pCtx.fillStyle = '#fff';
+          _pCtx.shadowBlur = ssz * 3;
+          _pCtx.shadowColor = sk.col;
+          _pCtx.beginPath();
+          for (var si = 0; si < 4; si++) {
+            var a1 = (Math.PI / 2) * si - Math.PI / 4;
+            var a2 = a1 + Math.PI / 8;
+            _pCtx.lineTo(Math.cos(a1) * ssz, Math.sin(a1) * ssz);
+            _pCtx.lineTo(Math.cos(a2) * ssz * 0.2, Math.sin(a2) * ssz * 0.2);
+          }
+          _pCtx.closePath();
+          _pCtx.fill();
+          _pCtx.restore();
+        }
+        // Orbital arc swooshes
+        for (var ob = _orbits.length - 1; ob >= 0; ob--) {
+          var orb = _orbits[ob];
+          orb.angle += orb.speed;
+          orb.life -= orb.decay;
+          if (orb.life <= 0) { _orbits.splice(ob, 1); continue; }
+          _pCtx.save();
+          _pCtx.globalAlpha = orb.life * 0.6;
+          var arcLen = 0.8 + orb.life * 0.5;
+          var grad = _pCtx.createLinearGradient(
+            cx + Math.cos(orb.angle) * orb.r, cy + Math.sin(orb.angle) * orb.r,
+            cx + Math.cos(orb.angle - arcLen) * orb.r, cy + Math.sin(orb.angle - arcLen) * orb.r
+          );
+          grad.addColorStop(0, orb.col);
+          grad.addColorStop(1, 'transparent');
+          _pCtx.strokeStyle = grad;
+          _pCtx.lineWidth = orb.w;
+          _pCtx.shadowBlur = 6;
+          _pCtx.shadowColor = orb.col;
+          _pCtx.beginPath();
+          _pCtx.arc(cx, cy, orb.r, orb.angle - arcLen, orb.angle);
+          _pCtx.stroke();
+          _pCtx.restore();
+        }
         _pRAF = requestAnimationFrame(_drawP);
       }
       _drawP();
@@ -15090,6 +15161,57 @@ function _dismissSplash() {
           });
         }
       }, 200);
+    }
+    function _triggerAnimeEffects() {
+      // Pulse rings — fire every 500ms
+      var _ringWave = 0;
+      var _ringId = setInterval(function() {
+        _ringWave++;
+        if (_ringWave > 6) { clearInterval(_ringId); return; }
+        _pulseRings.push({
+          radius: 50,
+          speed: 2.5 + Math.random() * 1.5,
+          alpha: 0.5,
+          decay: 0.006,
+          w: 2,
+          col: 'rgba('+_r+','+_g+','+_b+',1)'
+        });
+      }, 500);
+
+      // Sparkles — burst then scatter
+      var _spkWave = 0;
+      var _spkId = setInterval(function() {
+        _spkWave++;
+        if (_spkWave > 12) { clearInterval(_spkId); return; }
+        var dist = 80 + Math.random() * 100;
+        var ang = Math.random() * Math.PI * 2;
+        var bright = Math.random() > 0.5;
+        _sparkles.push({
+          x: _pW / 2 + Math.cos(ang) * dist,
+          y: _pH / 2 + Math.sin(ang) * dist,
+          size: 3 + Math.random() * 6,
+          rot: Math.random() * Math.PI,
+          phase: Math.random() * Math.PI * 2,
+          life: 1,
+          decay: 0.01 + Math.random() * 0.008,
+          col: bright ? '#fff' : 'rgb('+_r+','+_g+','+_b+')'
+        });
+      }, 250);
+
+      // Orbital arc swooshes — 3 arcs at different radii, spinning different directions
+      var radii = [100, 135, 170];
+      var dirs = [1, -1, 1];
+      for (var oi = 0; oi < 3; oi++) {
+        _orbits.push({
+          r: radii[oi],
+          angle: Math.random() * Math.PI * 2,
+          speed: (0.025 + Math.random() * 0.015) * dirs[oi],
+          w: 1.5 + Math.random(),
+          life: 1,
+          decay: 0.004 + oi * 0.001,
+          col: 'rgba('+_r+','+_g+','+_b+',1)'
+        });
+      }
     }
     function _triggerGlint() {
       _glintAlpha = 1;
@@ -15236,7 +15358,7 @@ function _dismissSplash() {
         setTimeout(function() {
           if (splashEl) {
             splashEl.style.transition = 'background 1.2s ease-out';
-            splashEl.style.background = 'linear-gradient(160deg, rgba('+_r+','+_g+','+_b+',0.25) 0%, rgba('+_r+','+_g+','+_b+',0.1) 35%, #0a0a0a 75%)';
+            splashEl.style.background = 'linear-gradient(180deg, #0a0a0a 0%, #0a0a0a 50%, rgba('+_r+','+_g+','+_b+',0.12) 78%, rgba('+_r+','+_g+','+_b+',0.22) 100%)';
           }
           _bassReveal();
         }, 840);
@@ -15288,6 +15410,9 @@ function _dismissSplash() {
       setTimeout(function() {
         // Cross-glint lens flare on the logo
         _triggerGlint();
+
+        // Anime effects — pulse rings, sparkles, orbital arcs
+        _triggerAnimeEffects();
 
         // Micro screen shake — impact tremor
         if (splashEl) {
