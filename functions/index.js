@@ -379,3 +379,231 @@ exports.wcAiChat = onCall({
   const reply = response.content[0]?.text || '';
   return { reply };
 });
+
+// ── Commission Calculator ────────────────────────────────────────────────────
+// Triggers when a deal doc is created or updated in organizations/{orgId}/deals/{dealId}
+// Calculates commissions for canvasser, closer, and manager override
+// Writes results to organizations/{orgId}/commissions/{commissionId}
+
+exports.wcCalcCommission = onDocumentCreated('organizations/{orgId}/deals/{dealId}', async (event) => {
+  const deal = event.data.data();
+  const orgId = event.params.orgId;
+  const dealId = event.params.dealId;
+  const db = getFirestore();
+
+  if (!deal || !deal.systemSizeKw || !deal.ppw) {
+    console.log('[Commission] Skipping deal', dealId, '— missing systemSizeKw or ppw');
+    return null;
+  }
+
+  // Load org compensation settings
+  let compSettings = { apptSplitPct: 50, overridePerWatt: 0.10 };
+  try {
+    const compDoc = await db.collection('organizations').doc(orgId).collection('compSettings').doc('default').get();
+    if (compDoc.exists) compSettings = Object.assign(compSettings, compDoc.data());
+  } catch (_) {}
+
+  const systemWatts = deal.systemSizeKw * 1000;
+  const totalDealValue = systemWatts * deal.ppw;
+
+  // Closer commission: PPW * system size
+  const closerCommission = totalDealValue;
+
+  // Canvasser commission: split of deal value (if canvasser set the appointment)
+  const apptSplitPct = compSettings.apptSplitPct || 50;
+  const canvasserCommission = deal.canvasserUid ? (totalDealValue * (apptSplitPct / 100)) : 0;
+
+  // Manager override: per watt
+  const overridePerWatt = compSettings.overridePerWatt || 0;
+  const managerOverride = systemWatts * overridePerWatt;
+
+  const batch = db.batch();
+
+  // Write closer commission
+  if (deal.closerUid) {
+    const closerRef = db.collection('organizations').doc(orgId).collection('commissions').doc();
+    batch.set(closerRef, {
+      dealId, orgId,
+      repUid: deal.closerUid,
+      repName: deal.closerName || '',
+      role: 'closer',
+      amount: closerCommission,
+      ppw: deal.ppw,
+      systemSizeKw: deal.systemSizeKw,
+      systemWatts,
+      customerName: deal.customerName || '',
+      address: deal.address || '',
+      status: 'earned',  // earned → paid → clawed
+      dealStatus: deal.status || 'signed',
+      createdAt: new Date().toISOString()
+    });
+  }
+
+  // Write canvasser commission (if different from closer)
+  if (deal.canvasserUid && deal.canvasserUid !== deal.closerUid) {
+    const canvasserRef = db.collection('organizations').doc(orgId).collection('commissions').doc();
+    batch.set(canvasserRef, {
+      dealId, orgId,
+      repUid: deal.canvasserUid,
+      repName: deal.canvasserName || '',
+      role: 'canvasser',
+      amount: canvasserCommission,
+      splitPct: apptSplitPct,
+      systemSizeKw: deal.systemSizeKw,
+      customerName: deal.customerName || '',
+      address: deal.address || '',
+      status: 'earned',
+      dealStatus: deal.status || 'signed',
+      createdAt: new Date().toISOString()
+    });
+  }
+
+  // Write manager override (find all managers in org)
+  if (overridePerWatt > 0) {
+    try {
+      const teamSnap = await db.collection('organizations').doc(orgId).collection('team').get();
+      teamSnap.forEach(doc => {
+        const member = doc.data();
+        if (member.role === 'manager' || member.role === 'master_admin') {
+          const mgrRef = db.collection('organizations').doc(orgId).collection('commissions').doc();
+          batch.set(mgrRef, {
+            dealId, orgId,
+            repUid: member.repUid || doc.id,
+            repName: member.name || '',
+            role: 'override',
+            amount: managerOverride,
+            overridePerWatt,
+            systemSizeKw: deal.systemSizeKw,
+            customerName: deal.customerName || '',
+            address: deal.address || '',
+            status: 'earned',
+            dealStatus: deal.status || 'signed',
+            createdAt: new Date().toISOString()
+          });
+        }
+      });
+    } catch (_) {}
+  }
+
+  // Update deal with calculated values
+  batch.update(event.data.ref, {
+    closerCommission,
+    canvasserCommission,
+    managerOverride,
+    totalDealValue,
+    commissionsCalculated: true
+  });
+
+  await batch.commit();
+  console.log('[Commission] Deal', dealId, ':', deal.systemSizeKw, 'kW @', deal.ppw, '/W =',
+    '$' + totalDealValue.toFixed(2), '| closer:', '$' + closerCommission.toFixed(2),
+    '| canvasser:', '$' + canvasserCommission.toFixed(2), '| override:', '$' + managerOverride.toFixed(2));
+
+  return null;
+});
+
+// ── Deal Status Updated: handle clawbacks ─────────────────────────────────────
+exports.wcDealUpdated = onDocumentUpdated('organizations/{orgId}/deals/{dealId}', async (event) => {
+  const before = event.data.before.data();
+  const after = event.data.after.data();
+  const orgId = event.params.orgId;
+  const dealId = event.params.dealId;
+
+  // Only act on status changes
+  if (before.status === after.status) return null;
+
+  const db = getFirestore();
+
+  // Deal cancelled + commissions were already paid → clawback
+  if (after.status === 'cancelled' && before.status !== 'cancelled') {
+    const commSnap = await db.collection('organizations').doc(orgId)
+      .collection('commissions').where('dealId', '==', dealId).get();
+
+    const batch = db.batch();
+    commSnap.forEach(doc => {
+      const comm = doc.data();
+      if (comm.status === 'paid') {
+        batch.update(doc.ref, { status: 'clawed', clawedAt: new Date().toISOString() });
+      } else if (comm.status === 'earned') {
+        batch.update(doc.ref, { status: 'cancelled', cancelledAt: new Date().toISOString() });
+      }
+    });
+    await batch.commit();
+    console.log('[Commission] Clawback processed for deal', dealId);
+  }
+
+  // Deal installed → lock commissions (no future clawback possible)
+  if (after.status === 'installed' && before.status !== 'installed') {
+    const commSnap = await db.collection('organizations').doc(orgId)
+      .collection('commissions').where('dealId', '==', dealId).get();
+
+    const batch = db.batch();
+    commSnap.forEach(doc => {
+      if (doc.data().status === 'earned') {
+        batch.update(doc.ref, { status: 'locked', lockedAt: new Date().toISOString() });
+      }
+    });
+    await batch.commit();
+    console.log('[Commission] Commissions locked (installed) for deal', dealId);
+  }
+
+  return null;
+});
+
+// ── Get My Commissions (callable) ────────────────────────────────────────────
+// Reps call this to get their commission summary
+exports.wcGetCommissions = onCall({ cors: true }, async (request) => {
+  if (!request.auth) throw new Error('Authentication required');
+
+  const uid = request.auth.uid;
+  const orgId = request.auth.token.orgId;
+  if (!orgId) throw new Error('No org assigned');
+
+  const db = getFirestore();
+  const { period } = request.data || {};
+
+  // Build date filter
+  let startDate = null;
+  const now = new Date();
+  if (period === 'week') {
+    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+  } else if (period === 'month') {
+    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  } else if (period === 'year') {
+    startDate = new Date(now.getFullYear(), 0, 1);
+  }
+  // Default: all time (no filter)
+
+  let query = db.collection('organizations').doc(orgId)
+    .collection('commissions')
+    .where('repUid', '==', uid)
+    .orderBy('createdAt', 'desc')
+    .limit(200);
+
+  const snap = await query.get();
+  const commissions = [];
+  let totalEarned = 0, totalPaid = 0, totalClawed = 0, totalPending = 0;
+
+  snap.forEach(doc => {
+    const c = doc.data();
+    // Apply date filter client-side (Firestore can't filter string dates + other where)
+    if (startDate && new Date(c.createdAt) < startDate) return;
+    commissions.push({ id: doc.id, ...c });
+    if (c.status === 'earned' || c.status === 'locked') totalPending += c.amount;
+    if (c.status === 'paid') totalPaid += c.amount;
+    if (c.status === 'clawed') totalClawed += c.amount;
+  });
+
+  totalEarned = totalPending + totalPaid;
+
+  return {
+    commissions,
+    summary: {
+      totalEarned: Math.round(totalEarned * 100) / 100,
+      totalPaid: Math.round(totalPaid * 100) / 100,
+      totalPending: Math.round(totalPending * 100) / 100,
+      totalClawed: Math.round(totalClawed * 100) / 100,
+      dealCount: commissions.length
+    }
+  };
+});

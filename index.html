@@ -3690,6 +3690,46 @@
       0%, 100% { border-left-color: #f59e0b; }
       50% { border-left-color: rgba(245,158,11,0.3); }
     }
+    /* ── Commission Card ── */
+    #dash-commission-card {
+      background: var(--g1);
+      border: 1px solid var(--g-border);
+      border-radius: var(--r-md);
+      margin-bottom: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    #dash-commission-card:active { background: var(--g2); }
+    .comm-period-tab {
+      padding: 6px 14px; border-radius: 50px; border: 1px solid var(--g-border);
+      background: var(--g1); color: var(--text-2); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    .comm-period-tab.active { background: var(--teal); color: var(--on-primary, #fff); border-color: var(--teal); }
+    .comm-summary-card {
+      background: var(--g1); border: 1px solid var(--g-border); border-radius: 14px;
+      padding: 14px 16px; text-align: center;
+    }
+    .comm-summary-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--text-3); text-transform: uppercase; }
+    .comm-summary-value { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); margin-top: 4px; }
+    .comm-deal-row {
+      display: flex; align-items: center; gap: 12px; padding: 12px 0;
+      border-bottom: 1px solid var(--g-border);
+    }
+    .comm-deal-row:last-child { border-bottom: none; }
+    .comm-deal-amount { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #22c55e; white-space: nowrap; }
+    .comm-deal-amount--clawed { color: #ef4444; text-decoration: line-through; }
+    .comm-deal-status {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 8px;
+      border-radius: 50px; text-transform: uppercase;
+    }
+    .comm-deal-status--earned { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .comm-deal-status--paid { background: rgba(59,130,246,0.12); color: #3b82f6; }
+    .comm-deal-status--locked { background: rgba(34,197,94,0.18); color: #16a34a; }
+    .comm-deal-status--clawed { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .comm-deal-status--cancelled { background: rgba(107,114,128,0.12); color: #6b7280; }
+
     #mgr-needs-closer-card {
       display: none;
       background: rgba(245,158,11,0.08);
@@ -8467,6 +8507,43 @@
 
       <!-- Tier progress bar (populated by wc-app-patch-v1.js) -->
       <div id="dash-tier-progress" style="display:none;margin-top:6px"></div>
+
+      <!-- ── Commission Earnings Card ────────────────────────────────────── -->
+      <div id="dash-commission-card" style="display:none" onclick="_openCommissionDetail()">
+        <div style="display:flex;align-items:center;gap:14px;padding:16px 18px">
+          <div style="width:44px;height:44px;border-radius:14px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase">Earnings</div>
+            <div id="dash-commission-amount" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--text);line-height:1.1;margin-top:2px">$0.00</div>
+            <div id="dash-commission-sub" style="font-size:11px;color:var(--text-3);margin-top:2px">0 deals this month</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <!-- ── Commission Detail Sheet ──────────────────────────────────────── -->
+      <div id="commission-overlay" class="cust-detail-overlay" aria-hidden="true"></div>
+      <div id="commission-sheet" class="cust-detail-sheet" role="dialog" aria-label="Commission Details">
+        <div class="cust-d-topbar">
+          <button class="cust-d-back" id="commission-close" aria-label="Close"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <div class="cust-d-topbar-title">Commission Tracker</div>
+        </div>
+        <div class="cust-detail-inner" id="commission-inner" style="padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch">
+          <!-- Summary cards -->
+          <div id="commission-summary" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px"></div>
+          <!-- Period tabs -->
+          <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+            <button class="comm-period-tab active" data-period="month">This Month</button>
+            <button class="comm-period-tab" data-period="week">This Week</button>
+            <button class="comm-period-tab" data-period="year">This Year</button>
+            <button class="comm-period-tab" data-period="all">All Time</button>
+          </div>
+          <!-- Deal list -->
+          <div id="commission-list"></div>
+        </div>
+      </div>
 
       <!-- ── Manager Control Center: Needs Closer ─────────────────────────── -->
       <div id="mgr-needs-closer-card" onclick="_openPendingAssignments()">
@@ -27520,6 +27597,120 @@ document.addEventListener('DOMContentLoaded', function() {
     try { renderDashboard && renderDashboard(); } catch(_) {}
   });
 });
+
+// ── Commission Tracker UI ────────────────────────────────────────────────
+var _commissionData = null;
+var _commissionPeriod = 'month';
+
+function _loadCommissions(period) {
+  _commissionPeriod = period || 'month';
+  if (typeof firebase === 'undefined' || !firebase.functions) return;
+  firebase.functions().httpsCallable('wcGetCommissions')({ period: _commissionPeriod })
+    .then(function(result) {
+      _commissionData = result.data;
+      _renderCommissionCard();
+      _renderCommissionDetail();
+    })
+    .catch(function(e) { console.warn('[Commission] Load failed:', e.message); });
+}
+
+function _renderCommissionCard() {
+  var card = document.getElementById('dash-commission-card');
+  if (!card || !_commissionData) return;
+  var s = _commissionData.summary;
+  card.style.display = '';
+  var amountEl = document.getElementById('dash-commission-amount');
+  var subEl = document.getElementById('dash-commission-sub');
+  if (amountEl) amountEl.textContent = '$' + (s.totalEarned || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (subEl) subEl.textContent = s.dealCount + ' deal' + (s.dealCount !== 1 ? 's' : '') + ' this ' + (_commissionPeriod === 'all' ? 'period' : _commissionPeriod);
+}
+
+function _renderCommissionDetail() {
+  if (!_commissionData) return;
+  var s = _commissionData.summary;
+  var commissions = _commissionData.commissions || [];
+
+  // Summary cards
+  var summaryEl = document.getElementById('commission-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML =
+      '<div class="comm-summary-card"><div class="comm-summary-label">Earned</div><div class="comm-summary-value" style="color:#22c55e">$' + (s.totalEarned || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) + '</div></div>' +
+      '<div class="comm-summary-card"><div class="comm-summary-label">Pending</div><div class="comm-summary-value" style="color:#f59e0b">$' + (s.totalPending || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) + '</div></div>' +
+      '<div class="comm-summary-card"><div class="comm-summary-label">Paid</div><div class="comm-summary-value" style="color:#3b82f6">$' + (s.totalPaid || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) + '</div></div>' +
+      '<div class="comm-summary-card"><div class="comm-summary-label">Clawback</div><div class="comm-summary-value" style="color:#ef4444">$' + (s.totalClawed || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) + '</div></div>';
+  }
+
+  // Deal list
+  var listEl = document.getElementById('commission-list');
+  if (!listEl) return;
+  if (!commissions.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text-3)"><div style="font-size:32px;margin-bottom:8px">💰</div><div style="font-size:14px;font-weight:600">No commissions yet</div><div style="font-size:12px;margin-top:4px">Close deals to see earnings here</div></div>';
+    return;
+  }
+  var html = '';
+  commissions.forEach(function(c) {
+    var statusCls = 'comm-deal-status--' + (c.status || 'earned');
+    var amountCls = c.status === 'clawed' ? 'comm-deal-amount--clawed' : '';
+    var roleLabel = c.role === 'closer' ? 'Close' : c.role === 'canvasser' ? 'Appt Set' : c.role === 'override' ? 'Override' : c.role;
+    var date = c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    html += '<div class="comm-deal-row">' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:13px;font-weight:600;color:var(--text)">' + (c.customerName || c.address || 'Deal') + '</div>' +
+        '<div style="font-size:11px;color:var(--text-3);margin-top:2px">' + roleLabel + ' · ' + (c.systemSizeKw || 0) + ' kW · ' + date + '</div>' +
+      '</div>' +
+      '<div style="text-align:right">' +
+        '<div class="comm-deal-amount ' + amountCls + '">$' + (c.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) + '</div>' +
+        '<span class="comm-deal-status ' + statusCls + '">' + (c.status || 'earned') + '</span>' +
+      '</div>' +
+    '</div>';
+  });
+  listEl.innerHTML = html;
+}
+
+function _openCommissionDetail() {
+  var overlay = document.getElementById('commission-overlay');
+  var sheet = document.getElementById('commission-sheet');
+  if (overlay) { overlay.classList.add('cust-overlay--open'); overlay.setAttribute('aria-hidden', 'false'); }
+  if (sheet) sheet.classList.add('cust-sheet--open');
+  lockBodyScroll();
+  _loadCommissions(_commissionPeriod);
+}
+
+function _closeCommissionDetail() {
+  var overlay = document.getElementById('commission-overlay');
+  var sheet = document.getElementById('commission-sheet');
+  if (overlay) { overlay.classList.remove('cust-overlay--open'); overlay.setAttribute('aria-hidden', 'true'); }
+  if (sheet) sheet.classList.remove('cust-sheet--open');
+  unlockBodyScroll();
+}
+
+// Wire commission sheet close
+document.getElementById('commission-close').addEventListener('click', _closeCommissionDetail);
+document.getElementById('commission-overlay').addEventListener('click', _closeCommissionDetail);
+
+// Wire period tabs
+document.querySelectorAll('.comm-period-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.comm-period-tab').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    _loadCommissions(tab.dataset.period);
+  });
+});
+
+// Load commissions on dashboard render (called from renderDashboard)
+var _origRenderDashboard = window.renderDashboard;
+if (typeof _origRenderDashboard === 'function') {
+  window.renderDashboard = function() {
+    _origRenderDashboard.apply(this, arguments);
+    // Load commissions after dashboard renders (debounced)
+    if (!window._commLoadTimer) {
+      window._commLoadTimer = setTimeout(function() {
+        window._commLoadTimer = null;
+        _loadCommissions(_commissionPeriod);
+      }, 500);
+    }
+  };
+}
 
 // ── F4: SW-backed Push Notifications ─────────────────────────────────────
 var REMINDER_WINDOWS_SW = [
