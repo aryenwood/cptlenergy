@@ -15802,8 +15802,23 @@ function _initApp() {
   // 3.5s if no org (fast dismiss for master domain / first-run).
   const splash = document.getElementById('splash');
   if (splash) {
-    _splashFallbackTimer = setTimeout(_dismissSplash, 10000);
+    _splashFallbackTimer = setTimeout(function() { _pulseRunning = false; _dismissSplash(); }, 4000);
   }
+
+  // Nuclear fallback: if app is still invisible after 5s, force show everything
+  setTimeout(function() {
+    var _appEl = document.getElementById('app');
+    var _splEl = document.getElementById('splash');
+    var _loginEl = document.getElementById('login-screen');
+    if (_appEl && _appEl.style.display === 'none' && _loginEl && !_loginEl.classList.contains('hidden')) {
+      // Not logged in — show login screen, kill splash
+      _pulseRunning = false; _dismissSplash();
+    } else if (_appEl && _appEl.style.display === 'none') {
+      // Logged in but app hidden — force show
+      _appEl.style.display = '';
+      _pulseRunning = false; _dismissSplash();
+    }
+  }, 5000);
 
   // Init CRM event listeners (must run after DOM is ready)
   _initCrmListeners();
