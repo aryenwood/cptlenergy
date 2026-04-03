@@ -4497,7 +4497,7 @@
     }
     /* Logo stack — everything anchors here */
     #splash-logo-stack {
-      position: relative; width: 140px; height: 140px;
+      position: relative; width: 200px; height: 200px;
       overflow: visible;
       perspective: 1000px;
       transform-style: preserve-3d;
@@ -4506,7 +4506,7 @@
     #splash-ring {
       position: absolute;
       top: 50%; left: 50%;
-      width: 200px; height: 200px;
+      width: 240px; height: 240px;
       transform: translate(-50%, -50%) scaleY(0.01);
       border: 2px solid var(--splash-color, rgba(20,143,152,0.7));
       border-radius: 50%;
@@ -4539,10 +4539,10 @@
       will-change: transform, opacity;
     }
     #splash-wc img {
-      width: 120px; height: 120px;
+      width: 180px; height: 180px;
       object-fit: contain;
       border-radius: 50%;
-      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 4px 24px rgba(0,0,0,0.6));
     }
     /* Org logo */
     #splash-org-logo {
@@ -15140,11 +15140,12 @@ function _dismissSplash() {
         wcLogo.style.transform = 'scale(0) rotateZ(45deg)';
         wcLogo.style.opacity = '0';
 
-        // Ring compresses during explosion
+        // Ring EXPLODES outward with the shatter — containment field breaking
         if (ring) {
-          ring.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out';
-          ring.style.transform = 'translate(-50%, -50%) scale(0.2)';
-          ring.style.opacity = '0.2';
+          ring.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, border-width 0.3s';
+          ring.style.transform = 'translate(-50%, -50%) scale(5)';
+          ring.style.opacity = '0';
+          ring.style.borderWidth = '0.5px';
         }
         if (ambient) {
           ambient.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s';
@@ -15163,38 +15164,40 @@ function _dismissSplash() {
 
         // Org logo assembles from converged fragments (~1500ms)
         setTimeout(function() {
-          orgLogo.style.opacity = '1';
-          orgLogo.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out';
-          orgLogo.style.transform = 'rotateY(0deg) scale(1.08)';
-
-          // Ring returns with brand energy
-          if (ring) {
-            ring.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, box-shadow 0.6s';
-            ring.style.transform = 'translate(-50%, -50%) scale(1.12)';
-            ring.style.opacity = '1';
-            ring.style.boxShadow = '0 0 50px var(--splash-glow, rgba(20,143,152,0.4)), 0 0 100px var(--splash-glow-dim, rgba(20,143,152,0.15))';
-          }
-          if (ambient) {
-            ambient.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out';
-            ambient.style.transform = 'translate(-50%, -50%) scale(1.4)';
-            ambient.style.opacity = '1';
-          }
-
           // Flash at assembly point
           if (laser) {
             laser.style.transition = 'none';
             laser.style.width = '0'; laser.style.height = '0'; laser.style.opacity = '1';
             laser.offsetWidth;
-            laser.style.transition = 'width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease-out 0.15s';
-            laser.style.width = '300px'; laser.style.height = '300px';
+            laser.style.transition = 'width 0.45s cubic-bezier(0.16,1,0.3,1), height 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease-out 0.2s';
+            laser.style.width = '350px'; laser.style.height = '350px';
             laser.style.opacity = '0';
           }
 
-          // Spring settle + brand glow halo
+          // Org logo appears — spring overshoot
+          orgLogo.style.opacity = '1';
+          orgLogo.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out';
+          orgLogo.style.transform = 'rotateY(0deg) scale(1.1)';
+
+          // Ring reforms TIGHT around org logo — containment field rebuilds
+          if (ring) {
+            ring.style.borderWidth = '2px';
+            ring.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, box-shadow 0.6s, border-width 0.3s';
+            ring.style.transform = 'translate(-50%, -50%) scale(1.05)';
+            ring.style.opacity = '1';
+            ring.style.boxShadow = '0 0 50px var(--splash-glow, rgba(20,143,152,0.4)), 0 0 100px var(--splash-glow-dim, rgba(20,143,152,0.15))';
+          }
+          if (ambient) {
+            ambient.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out';
+            ambient.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            ambient.style.opacity = '1';
+          }
+
+          // Spring settle into hero pose
           setTimeout(function() {
-            orgLogo.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.6s ease-out';
+            orgLogo.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.8s ease-out';
             orgLogo.style.transform = 'rotateY(0deg) scale(1)';
-            orgLogo.style.filter = 'drop-shadow(0 0 25px rgba('+_r+','+_g+','+_b+',0.5))';
+            orgLogo.style.filter = 'drop-shadow(0 0 30px rgba('+_r+','+_g+','+_b+',0.6))';
             if (ring) {
               ring.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s';
               ring.style.transform = 'translate(-50%, -50%) scale(1)';
@@ -15203,16 +15206,24 @@ function _dismissSplash() {
         }, 1500);
       }, 1900);
 
-      // ── Beat 5 (4.1s): Ring expands and vanishes ──
+      // ── Beat 5 (3.8s): HERO SHOWCASE — Gundam arrival hold ──
+      // Org logo is assembled. Now it HOLDS. Ring breathes with power.
       setTimeout(function() {
         if (ring) {
-          ring.style.transition = 'transform 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease-out';
-          ring.style.transform = 'translate(-50%, -50%) scale(3.5)';
-          ring.style.opacity = '0';
+          // Power breathe — ring subtly pulses while the org logo commands the screen
+          var _heroBreathe = 0;
+          var _heroId = setInterval(function() {
+            _heroBreathe++;
+            if (!ring || _heroBreathe > 20) { clearInterval(_heroId); return; }
+            var s = 1 + Math.sin(_heroBreathe * 0.35) * 0.025;
+            ring.style.transition = 'transform 0.2s ease-in-out';
+            ring.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+            ring.style.boxShadow = '0 0 ' + (40 + Math.sin(_heroBreathe * 0.35) * 15) + 'px var(--splash-glow, rgba(20,143,152,0.4)), 0 0 ' + (80 + Math.sin(_heroBreathe * 0.35) * 25) + 'px var(--splash-glow-dim, rgba(20,143,152,0.15))';
+          }, 140);
         }
-      }, 4100);
+      }, 3800);
 
-      // ── Beat 6 (4.4s): Org name typewriter — blur to sharp ──
+      // ── Beat 6 (4.5s): Org name typewriter — blur to sharp ──
       setTimeout(function() {
         if (nameEl && orgName) {
           nameEl.style.filter = 'blur(6px)';
@@ -15230,9 +15241,18 @@ function _dismissSplash() {
           }
           t();
         }
-      }, 4400);
+      }, 4500);
 
-      // ── Beat 7 (5.5s): Bloom dismiss ──
+      // ── Beat 7 (7s): Ring expands and vanishes ──
+      setTimeout(function() {
+        if (ring) {
+          ring.style.transition = 'transform 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease-out';
+          ring.style.transform = 'translate(-50%, -50%) scale(3.5)';
+          ring.style.opacity = '0';
+        }
+      }, 7000);
+
+      // ── Beat 8 (7.5s): Bloom dismiss ──
       setTimeout(function() {
         _stopParticles();
         if (bloom) {
@@ -15241,7 +15261,7 @@ function _dismissSplash() {
           bloom.style.opacity = '1';
         }
         setTimeout(_dismissSplash, 600);
-      }, 5500);
+      }, 7500);
 
     } else {
       // No org logo — show name, dismiss
