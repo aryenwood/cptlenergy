@@ -4481,7 +4481,7 @@
       position: fixed; inset: 0; z-index: var(--z-splash);
       background: #000;
       display: flex; align-items: center; justify-content: center;
-      transition: opacity 0.5s ease-out;
+      transition: opacity 1s ease-out;
       overflow: hidden;
     }
     #splash.splash--hidden { opacity: 0; pointer-events: none; }
@@ -14883,7 +14883,7 @@ function _dismissSplash() {
   setTimeout(function() {
     _sp.style.display = 'none';
     if (typeof _onSplashDismiss === 'function') { var _cb = _onSplashDismiss; _onSplashDismiss = null; _cb(); }
-  }, 460);
+  }, 1050);
 }
 
 // ── wcSplash API — System Boot ────────────────────────────────────────────────
@@ -15243,25 +15243,22 @@ function _dismissSplash() {
         }
       }, 4500);
 
-      // ── Beat 7 (7s): Ring expands and vanishes ──
-      setTimeout(function() {
-        if (ring) {
-          ring.style.transition = 'transform 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease-out';
-          ring.style.transform = 'translate(-50%, -50%) scale(3.5)';
-          ring.style.opacity = '0';
-        }
-      }, 7000);
-
-      // ── Beat 8 (7.5s): Bloom dismiss ──
+      // ── Beat 7 (8s): Clean fade-out — no bloom vignette drowning the logo ──
       setTimeout(function() {
         _stopParticles();
-        if (bloom) {
-          bloom.style.width = '200vmax';
-          bloom.style.height = '200vmax';
-          bloom.style.opacity = '1';
+        // Ring gently fades
+        if (ring) {
+          ring.style.transition = 'transform 0.8s cubic-bezier(0.16,1,0.3,1), opacity 0.8s ease-out';
+          ring.style.transform = 'translate(-50%, -50%) scale(2)';
+          ring.style.opacity = '0';
         }
-        setTimeout(_dismissSplash, 600);
-      }, 7500);
+        if (ambient) {
+          ambient.style.transition = 'opacity 0.8s ease-out';
+          ambient.style.opacity = '0';
+        }
+        // Whole splash fades cleanly — logo stays visible until the very end
+        setTimeout(_dismissSplash, 900);
+      }, 8000);
 
     } else {
       // No org logo — show name, dismiss
