@@ -10537,6 +10537,33 @@
         <div id="lb-show-rate-rows"></div>
       </div>
 
+      <!-- ── Commission Earnings Section ────────────────────────────────── -->
+      <div id="lb-commission-section" style="padding:0 16px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text)">Earnings</span>
+          </div>
+          <button onclick="_openCommissionDetail()" style="background:none;border:none;color:var(--teal);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">View All →</button>
+        </div>
+        <!-- Animated earnings summary -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+          <div class="comm-summary-card">
+            <div class="comm-summary-label">Pipeline</div>
+            <div class="comm-summary-value" id="lb-comm-pipeline" style="color:#f59e0b">$0</div>
+          </div>
+          <div class="comm-summary-card">
+            <div class="comm-summary-label">Earned</div>
+            <div class="comm-summary-value" id="lb-comm-earned" style="color:#22c55e">$0</div>
+          </div>
+        </div>
+        <!-- Earnings bar chart (canvas) -->
+        <div style="background:var(--g1);border:1px solid var(--g-border);border-radius:14px;padding:16px;position:relative;overflow:hidden">
+          <div style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px">Monthly Earnings</div>
+          <canvas id="lb-commission-chart" width="340" height="140" style="width:100%;height:140px"></canvas>
+        </div>
+      </div>
+
       <!-- v72: Momentum / Trend panel -->
       <div id="lb-momentum-panel" style="display:none"></div>
 
@@ -27731,6 +27758,119 @@ document.querySelectorAll('.comm-period-tab').forEach(function(tab) {
 });
 
 // Load commissions on dashboard render (called from renderDashboard)
+// ── Commission Chart: animated bar chart on leaderboard ──────────────────
+function _renderCommissionChart() {
+  var canvas = document.getElementById('lb-commission-chart');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 140 * dpr;
+  ctx.scale(dpr, dpr);
+  var w = canvas.offsetWidth, h = 140;
+
+  var comms = _commissionData ? _commissionData.commissions || [] : [];
+
+  // Build monthly totals for last 6 months
+  var now = new Date();
+  var months = [];
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ month: d.getMonth(), year: d.getFullYear(), label: d.toLocaleDateString('en-US', { month: 'short' }), total: 0 });
+  }
+  comms.forEach(function(c) {
+    if (!c.createdAt) return;
+    var cd = new Date(c.createdAt);
+    months.forEach(function(m) {
+      if (cd.getMonth() === m.month && cd.getFullYear() === m.year) m.total += c.amount || 0;
+    });
+  });
+
+  var maxVal = Math.max.apply(null, months.map(function(m) { return m.total; })) || 1;
+  var barW = (w - 40) / months.length - 8;
+  var barGap = 8;
+  var chartH = h - 30;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(128,128,128,0.1)';
+  ctx.lineWidth = 1;
+  for (var g = 0; g < 4; g++) {
+    var gy = chartH - (chartH * (g / 3));
+    ctx.beginPath(); ctx.moveTo(30, gy); ctx.lineTo(w, gy); ctx.stroke();
+  }
+
+  // Bars with animation
+  months.forEach(function(m, idx) {
+    var x = 35 + idx * (barW + barGap);
+    var barH = (m.total / maxVal) * (chartH - 10);
+    if (barH < 2 && m.total > 0) barH = 2;
+
+    // Gradient bar
+    var grad = ctx.createLinearGradient(x, chartH - barH, x, chartH);
+    grad.addColorStop(0, m.total > 0 ? '#22c55e' : 'rgba(128,128,128,0.15)');
+    grad.addColorStop(1, m.total > 0 ? 'rgba(34,197,94,0.3)' : 'rgba(128,128,128,0.05)');
+    ctx.fillStyle = grad;
+
+    // Rounded top
+    var radius = Math.min(4, barW / 2);
+    ctx.beginPath();
+    ctx.moveTo(x, chartH);
+    ctx.lineTo(x, chartH - barH + radius);
+    ctx.arcTo(x, chartH - barH, x + radius, chartH - barH, radius);
+    ctx.arcTo(x + barW, chartH - barH, x + barW, chartH - barH + radius, radius);
+    ctx.lineTo(x + barW, chartH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Month label
+    ctx.fillStyle = 'rgba(128,128,128,0.5)';
+    ctx.font = '500 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(m.label, x + barW / 2, h - 4);
+
+    // Value label on top of bar
+    if (m.total > 0) {
+      ctx.fillStyle = '#22c55e';
+      ctx.font = '700 10px sans-serif';
+      ctx.fillText('$' + Math.round(m.total / 1000) + 'k', x + barW / 2, chartH - barH - 6);
+    }
+  });
+
+  // Y-axis labels
+  ctx.fillStyle = 'rgba(128,128,128,0.4)';
+  ctx.font = '500 9px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('$0', 26, chartH);
+  ctx.fillText('$' + Math.round(maxVal / 1000) + 'k', 26, 12);
+}
+
+function _updateLBCommission() {
+  if (!_commissionData) return;
+  var comms = _commissionData.commissions || [];
+  var pipeline = 0, earned = 0;
+  comms.forEach(function(c) {
+    if (c.status === 'earned') pipeline += c.amount;
+    if (c.status === 'locked' || c.status === 'paid') earned += c.amount;
+  });
+  var fmt = function(n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+  var pEl = document.getElementById('lb-comm-pipeline');
+  var eEl = document.getElementById('lb-comm-earned');
+  if (pEl) pEl.textContent = fmt(pipeline);
+  if (eEl) eEl.textContent = fmt(earned);
+  _renderCommissionChart();
+}
+
+// Hook into leaderboard render
+var _origRenderLeaderboard = window.renderLeaderboard;
+if (typeof _origRenderLeaderboard === 'function') {
+  window.renderLeaderboard = function() {
+    _origRenderLeaderboard.apply(this, arguments);
+    _updateLBCommission();
+  };
+}
+
 var _origRenderDashboard = window.renderDashboard;
 if (typeof _origRenderDashboard === 'function') {
   window.renderDashboard = function() {
