@@ -14932,10 +14932,11 @@ function _dismissSplash() {
       splashEl.style.setProperty('--splash-glow-dim', 'rgba('+_r+','+_g+','+_b+',0.12)');
     }
 
-    // ── Particle engine — ambient float + burst explosion ──
+    // ── Particle engine — ambient + geometric shatter/converge ──
     var _pCanvas = document.getElementById('splash-particles');
     var _pCtx = null, _pRAF = null;
-    var _ambientP = [], _burstP = [];
+    var _ambientP = [];
+    var _fragments = [], _fragStart = 0, _fragActive = false;
     var _pW = window.innerWidth, _pH = window.innerHeight;
     if (_pCanvas) {
       var _dpr = window.devicePixelRatio || 1;
@@ -14952,10 +14953,27 @@ function _dismissSplash() {
           phase: Math.random() * Math.PI * 2
         });
       }
+      // Draw a geometric shape on canvas
+      function _drawShape(x, y, sz, rot, shape, col, al) {
+        _pCtx.save();
+        _pCtx.translate(x, y);
+        _pCtx.rotate(rot);
+        _pCtx.globalAlpha = Math.max(0, Math.min(1, al));
+        _pCtx.fillStyle = col;
+        _pCtx.shadowBlur = sz * 2.5;
+        _pCtx.shadowColor = col;
+        _pCtx.beginPath();
+        if (shape === 0) { _pCtx.arc(0, 0, sz, 0, Math.PI*2); }
+        else if (shape === 1) { _pCtx.rect(-sz*0.75, -sz*0.75, sz*1.5, sz*1.5); }
+        else if (shape === 2) { _pCtx.moveTo(0,-sz*1.1); _pCtx.lineTo(sz*0.75,0); _pCtx.lineTo(0,sz*1.1); _pCtx.lineTo(-sz*0.75,0); _pCtx.closePath(); }
+        else { _pCtx.moveTo(0,-sz); _pCtx.lineTo(sz*0.85,sz*0.6); _pCtx.lineTo(-sz*0.85,sz*0.6); _pCtx.closePath(); }
+        _pCtx.fill();
+        _pCtx.restore();
+      }
       function _drawP() {
         if (!_pCtx) return;
         _pCtx.clearRect(0, 0, _pW, _pH);
-        // Ambient particles — gentle drift with pulsing alpha
+        // Ambient particles
         for (var i = 0; i < _ambientP.length; i++) {
           var ap = _ambientP[i];
           ap.x += ap.vx; ap.y += ap.vy; ap.phase += 0.015;
@@ -14966,39 +14984,69 @@ function _dismissSplash() {
           _pCtx.fillStyle = 'rgba('+_r+','+_g+','+_b+','+al.toFixed(3)+')';
           _pCtx.fill();
         }
-        // Burst particles — fast outward with decay
-        for (var j = _burstP.length - 1; j >= 0; j--) {
-          var bp = _burstP[j];
-          bp.x += bp.vx; bp.y += bp.vy;
-          bp.vx *= 0.96; bp.vy *= 0.96;
-          bp.life -= bp.decay;
-          if (bp.life <= 0) { _burstP.splice(j, 1); continue; }
-          var br = bp.r * bp.life;
-          _pCtx.beginPath(); _pCtx.arc(bp.x, bp.y, br, 0, Math.PI * 2);
-          _pCtx.fillStyle = 'rgba('+_r+','+_g+','+_b+','+(bp.a * bp.life).toFixed(3)+')';
-          _pCtx.fill();
-          // Soft glow halo
-          _pCtx.beginPath(); _pCtx.arc(bp.x, bp.y, br * 3, 0, Math.PI * 2);
-          _pCtx.fillStyle = 'rgba('+_r+','+_g+','+_b+','+(bp.a * bp.life * 0.12).toFixed(3)+')';
-          _pCtx.fill();
+        // Geometric fragments — shatter/converge animation
+        if (_fragActive && _fragments.length > 0) {
+          var elapsed = performance.now() - _fragStart;
+          var p = Math.min(1, elapsed / 2000); // 2s total
+          var cx = _pW / 2, cy = _pH / 2;
+          for (var k = 0; k < _fragments.length; k++) {
+            var f = _fragments[k];
+            f.rotation += f.rotSpeed;
+            var fx, fy, fa;
+            if (p < 0.42) {
+              // EXPLODE: center → peak (ease-out cubic)
+              var ep = 1 - Math.pow(1 - p / 0.42, 3);
+              fx = cx + (f.peakX - cx) * ep;
+              fy = cy + (f.peakY - cy) * ep;
+              fa = f.alpha;
+            } else if (p < 0.85) {
+              // CONVERGE: peak → center (ease-in quad)
+              var cp = Math.pow((p - 0.42) / 0.43, 2.2);
+              fx = f.peakX + (cx - f.peakX) * cp;
+              fy = f.peakY + (cy - f.peakY) * cp;
+              fa = f.alpha;
+            } else {
+              // SETTLE: at center, fade out
+              fx = cx; fy = cy;
+              fa = f.alpha * (1 - (p - 0.85) / 0.15);
+            }
+            var szMult = p < 0.42 ? (0.5 + 0.5 * Math.sin(p / 0.42 * Math.PI)) : Math.max(0.3, 1 - (p - 0.42) * 0.6);
+            _drawShape(fx, fy, f.size * szMult, f.rotation, f.shape, f.col, fa);
+          }
+          if (p >= 1) { _fragActive = false; _fragments = []; }
         }
         _pRAF = requestAnimationFrame(_drawP);
       }
       _drawP();
     }
-    function _triggerBurst() {
+    // Trigger the shatter explosion → convergence
+    function _triggerShatter() {
       var cx = _pW / 2, cy = _pH / 2;
-      for (var i = 0; i < 50; i++) {
-        var ang = (Math.PI * 2 * i) / 50 + (Math.random() - 0.5) * 0.4;
-        var spd = 1.5 + Math.random() * 5;
-        _burstP.push({
-          x: cx, y: cy,
-          vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-          r: Math.random() * 2.5 + 0.8,
-          a: 0.6 + Math.random() * 0.4,
-          life: 1, decay: 0.008 + Math.random() * 0.012
+      var maxDist = Math.min(_pW, _pH) * 0.38;
+      _fragments = [];
+      for (var i = 0; i < 45; i++) {
+        var angle = (Math.PI * 2 * i / 45) + (Math.random() - 0.5) * 0.5;
+        var dist = 60 + Math.random() * maxDist;
+        // Color variations: warm, neutral, cool shifts from org color
+        var cr = _r, cg = _g, cb = _b;
+        var variant = i % 5;
+        if (variant === 0) { cr = Math.min(255, cr + 50); cb = Math.max(0, cb - 30); } // warm
+        if (variant === 1) { cb = Math.min(255, cb + 50); cr = Math.max(0, cr - 30); } // cool
+        if (variant === 2) { cr = Math.min(255, cr + 30); cg = Math.min(255, cg + 30); } // bright
+        if (variant === 3) { cr = Math.min(255, Math.round(cr * 0.6 + 255 * 0.4)); cg = Math.min(255, Math.round(cg * 0.6 + 255 * 0.4)); cb = Math.min(255, Math.round(cb * 0.6 + 255 * 0.4)); } // light
+        _fragments.push({
+          peakX: cx + Math.cos(angle) * dist,
+          peakY: cy + Math.sin(angle) * dist,
+          shape: Math.floor(Math.random() * 4),
+          size: 3 + Math.random() * 8,
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.1,
+          col: 'rgb('+cr+','+cg+','+cb+')',
+          alpha: 0.5 + Math.random() * 0.5
         });
       }
+      _fragStart = performance.now();
+      _fragActive = true;
     }
     function _stopParticles() {
       if (_pRAF) cancelAnimationFrame(_pRAF);
@@ -15079,99 +15127,92 @@ function _dismissSplash() {
       }
     }, 900);
 
-    // ── Beat 4 (1900ms): 3D CUBE-FOLD TRANSFORM ──
+    // ── Beat 4 (1900ms): GEOMETRIC SHATTER → CONVERGE ──
     if (hasOrg) {
       setTimeout(function() {
         if (!orgLogo || !wcLogo || !stack) { _dismissSplash(); return; }
 
-        // Phase 1 — WC logo collapses: rotates away on Y axis with scale compression
-        wcLogo.style.transition = 'transform 0.55s cubic-bezier(0.55, 0, 0.2, 1)';
-        wcLogo.style.transform = 'rotateY(90deg) scale(0.7)';
+        // Launch geometric fragment shatter
+        _triggerShatter();
 
-        // Ring + ambient compress inward — energy contracting
+        // WC logo collapses and vanishes during explosion
+        wcLogo.style.transition = 'transform 0.4s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.3s ease-out 0.1s';
+        wcLogo.style.transform = 'scale(0) rotateZ(45deg)';
+        wcLogo.style.opacity = '0';
+
+        // Ring compresses during explosion
         if (ring) {
-          ring.style.transition = 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.55s ease-out';
-          ring.style.transform = 'translate(-50%, -50%) scale(0.5)';
-          ring.style.boxShadow = '0 0 60px var(--splash-glow, rgba(20,143,152,0.5)), 0 0 120px var(--splash-glow-dim, rgba(20,143,152,0.2)), inset 0 0 40px var(--splash-glow-dim, rgba(20,143,152,0.15))';
+          ring.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out';
+          ring.style.transform = 'translate(-50%, -50%) scale(0.2)';
+          ring.style.opacity = '0.2';
         }
         if (ambient) {
-          ambient.style.transition = 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s';
-          ambient.style.transform = 'translate(-50%, -50%) scale(0.3)';
-          ambient.style.opacity = '0.5';
+          ambient.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s';
+          ambient.style.transform = 'translate(-50%, -50%) scale(0.2)';
+          ambient.style.opacity = '0';
         }
 
-        // Phase 2 (550ms) — midpoint flash + org logo reforms from the fold
+        // Background transitions to org brand color during convergence (~840ms)
         setTimeout(function() {
-          wcLogo.style.transition = 'opacity 0.1s';
-          wcLogo.style.opacity = '0';
+          if (splashEl) {
+            splashEl.style.transition = 'background 1.2s ease-out';
+            splashEl.style.background = 'linear-gradient(160deg, rgba('+_r+','+_g+','+_b+',0.25) 0%, rgba('+_r+','+_g+','+_b+',0.1) 35%, #0a0a0a 75%)';
+          }
+          _bassReveal();
+        }, 840);
 
-          // Energy burst flash at the transformation point
+        // Org logo assembles from converged fragments (~1500ms)
+        setTimeout(function() {
+          orgLogo.style.opacity = '1';
+          orgLogo.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out';
+          orgLogo.style.transform = 'rotateY(0deg) scale(1.08)';
+
+          // Ring returns with brand energy
+          if (ring) {
+            ring.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, box-shadow 0.6s';
+            ring.style.transform = 'translate(-50%, -50%) scale(1.12)';
+            ring.style.opacity = '1';
+            ring.style.boxShadow = '0 0 50px var(--splash-glow, rgba(20,143,152,0.4)), 0 0 100px var(--splash-glow-dim, rgba(20,143,152,0.15))';
+          }
+          if (ambient) {
+            ambient.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out';
+            ambient.style.transform = 'translate(-50%, -50%) scale(1.4)';
+            ambient.style.opacity = '1';
+          }
+
+          // Flash at assembly point
           if (laser) {
             laser.style.transition = 'none';
             laser.style.width = '0'; laser.style.height = '0'; laser.style.opacity = '1';
-            // Force reflow then expand
             laser.offsetWidth;
             laser.style.transition = 'width 0.4s cubic-bezier(0.16,1,0.3,1), height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease-out 0.15s';
-            laser.style.width = '280px'; laser.style.height = '280px';
+            laser.style.width = '300px'; laser.style.height = '300px';
             laser.style.opacity = '0';
           }
 
-          // Screen flash → settle into org-branded background
-          if (splashEl) {
-            splashEl.style.transition = 'background 0.15s ease-out';
-            splashEl.style.background = 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.12) 0%, rgba('+_r+','+_g+','+_b+',0.08) 40%, #000 70%)';
-            setTimeout(function() {
-              splashEl.style.transition = 'background 0.8s ease-out';
-              splashEl.style.background = 'radial-gradient(circle at 50% 50%, rgba('+_r+','+_g+','+_b+',0.18) 0%, rgba('+_r+','+_g+','+_b+',0.06) 35%, #0a0a0a 70%)';
-            }, 200);
-          }
-
-          // Particle burst + bass reveal — brand transformation
-          _triggerBurst();
-          _bassReveal();
-
-          // Org logo unfolds from the other side — spring overshoot
-          orgLogo.style.opacity = '1';
-          orgLogo.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
-          orgLogo.style.transform = 'rotateY(0deg) scale(1.08)';
           // Spring settle + brand glow halo
           setTimeout(function() {
             orgLogo.style.transition = 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.6s ease-out';
             orgLogo.style.transform = 'rotateY(0deg) scale(1)';
             orgLogo.style.filter = 'drop-shadow(0 0 25px rgba('+_r+','+_g+','+_b+',0.5))';
-          }, 350);
-
-          // Ring + ambient expand back with renewed energy
-          if (ring) {
-            ring.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.7s ease-out';
-            ring.style.transform = 'translate(-50%, -50%) scale(1.12)';
-            ring.style.boxShadow = '0 0 45px var(--splash-glow, rgba(20,143,152,0.35)), 0 0 90px var(--splash-glow-dim, rgba(20,143,152,0.12)), inset 0 0 25px var(--splash-glow-dim, rgba(20,143,152,0.08))';
-            // Settle back
-            setTimeout(function() {
-              if (ring) {
-                ring.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s';
-                ring.style.transform = 'translate(-50%, -50%) scale(1)';
-              }
-            }, 350);
-          }
-          if (ambient) {
-            ambient.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out';
-            ambient.style.transform = 'translate(-50%, -50%) scale(1.3)';
-            ambient.style.opacity = '1';
-          }
-        }, 550);
+            if (ring) {
+              ring.style.transition = 'transform 0.5s ease-out, box-shadow 0.5s';
+              ring.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+          }, 400);
+        }, 1500);
       }, 1900);
 
-      // ── Beat 5 (3.2s): Ring expands and vanishes ──
+      // ── Beat 5 (4.1s): Ring expands and vanishes ──
       setTimeout(function() {
         if (ring) {
           ring.style.transition = 'transform 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease-out';
           ring.style.transform = 'translate(-50%, -50%) scale(3.5)';
           ring.style.opacity = '0';
         }
-      }, 3200);
+      }, 4100);
 
-      // ── Beat 6 (3.5s): Org name typewriter — blur to sharp ──
+      // ── Beat 6 (4.4s): Org name typewriter — blur to sharp ──
       setTimeout(function() {
         if (nameEl && orgName) {
           nameEl.style.filter = 'blur(6px)';
@@ -15182,7 +15223,6 @@ function _dismissSplash() {
             nameEl.textContent = text.substring(0, ++i);
             if (i < text.length) setTimeout(t, 30);
             else {
-              // Resolve to crisp after typewriter finishes
               nameEl.style.transition = 'filter 0.6s ease-out, text-shadow 0.6s ease-out';
               nameEl.style.filter = 'blur(0)';
               nameEl.style.textShadow = '0 0 30px rgba('+_r+','+_g+','+_b+',0.5), 0 0 60px rgba('+_r+','+_g+','+_b+',0.2)';
@@ -15190,9 +15230,9 @@ function _dismissSplash() {
           }
           t();
         }
-      }, 3500);
+      }, 4400);
 
-      // ── Beat 7 (4.6s): Bloom dismiss — glow expands to fill screen ──
+      // ── Beat 7 (5.5s): Bloom dismiss ──
       setTimeout(function() {
         _stopParticles();
         if (bloom) {
@@ -15201,7 +15241,7 @@ function _dismissSplash() {
           bloom.style.opacity = '1';
         }
         setTimeout(_dismissSplash, 600);
-      }, 4600);
+      }, 5500);
 
     } else {
       // No org logo — show name, dismiss
