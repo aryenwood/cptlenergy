@@ -14974,6 +14974,8 @@ function _dismissSplash() {
     var _pulseRings = [];
     var _sparkles = [];
     var _orbits = [];
+    var _sealCircles = [];
+    var _impactFlash = 0;
     var _pW = window.innerWidth, _pH = window.innerHeight;
     // Effects center = actual logo-stack center, not screen center
     var _eCx = _pW / 2, _eCy = _pH / 2;
@@ -15055,6 +15057,20 @@ function _dismissSplash() {
               fa = f.alpha * (1 - (p - 0.85) / 0.15);
             }
             var szMult = p < 0.42 ? (0.5 + 0.5 * Math.sin(p / 0.42 * Math.PI)) : Math.max(0.3, 1 - (p - 0.42) * 0.6);
+            // Chakra energy trail during convergence
+            if (p > 0.42 && p < 0.85 && f.prevX !== undefined) {
+              _pCtx.save();
+              _pCtx.globalAlpha = fa * 0.35;
+              _pCtx.strokeStyle = f.col;
+              _pCtx.lineWidth = f.size * szMult * 0.5;
+              _pCtx.lineCap = 'round';
+              _pCtx.beginPath();
+              _pCtx.moveTo(f.prevX, f.prevY);
+              _pCtx.lineTo(fx, fy);
+              _pCtx.stroke();
+              _pCtx.restore();
+            }
+            f.prevX = fx; f.prevY = fy;
             _drawShape(fx, fy, f.size * szMult, f.rotation, f.shape, f.col, fa);
           }
           if (p >= 1) { _fragActive = false; _fragments = []; }
@@ -15175,6 +15191,46 @@ function _dismissSplash() {
           _pCtx.arc(cx, cy, orb.r, orb.angle - arcLen, orb.angle);
           _pCtx.stroke();
           _pCtx.restore();
+        }
+        // Summoning seal circles — rotating dashed rings
+        for (var sc = _sealCircles.length - 1; sc >= 0; sc--) {
+          var seal = _sealCircles[sc];
+          seal.angle += seal.speed;
+          seal.life -= seal.decay;
+          if (seal.life <= 0) { _sealCircles.splice(sc, 1); continue; }
+          _pCtx.save();
+          _pCtx.translate(_eCx, _eCy);
+          _pCtx.rotate(seal.angle);
+          _pCtx.globalAlpha = seal.life * 0.5;
+          _pCtx.strokeStyle = seal.col;
+          _pCtx.lineWidth = 1;
+          _pCtx.setLineDash(seal.dash);
+          _pCtx.beginPath();
+          _pCtx.arc(0, 0, seal.r, 0, Math.PI * 2);
+          _pCtx.stroke();
+          // Inner tick marks like a jutsu seal
+          if (seal.ticks) {
+            _pCtx.setLineDash([]);
+            _pCtx.lineWidth = 1.5;
+            for (var ti = 0; ti < seal.ticks; ti++) {
+              var ta = (Math.PI * 2 / seal.ticks) * ti;
+              _pCtx.beginPath();
+              _pCtx.moveTo(Math.cos(ta) * (seal.r - 6), Math.sin(ta) * (seal.r - 6));
+              _pCtx.lineTo(Math.cos(ta) * (seal.r + 6), Math.sin(ta) * (seal.r + 6));
+              _pCtx.stroke();
+            }
+          }
+          _pCtx.restore();
+        }
+        // Impact flash — anime cut frame
+        if (_impactFlash > 0) {
+          _pCtx.save();
+          _pCtx.globalAlpha = _impactFlash;
+          _pCtx.fillStyle = '#fff';
+          _pCtx.fillRect(0, 0, _pW, _pH);
+          _pCtx.restore();
+          _impactFlash -= 0.08;
+          if (_impactFlash < 0) _impactFlash = 0;
         }
         _pRAF = requestAnimationFrame(_drawP);
       }
@@ -15399,6 +15455,13 @@ function _dismissSplash() {
         // Launch geometric fragment shatter
         _triggerShatter();
 
+        // Summoning seal circles appear during shatter
+        _sealCircles.push(
+          { r: 100, angle: 0, speed: 0.015, life: 1, decay: 0.004, col: 'rgba('+_r+','+_g+','+_b+',1)', dash: [4, 8], ticks: 8 },
+          { r: 140, angle: Math.PI/4, speed: -0.01, life: 1, decay: 0.005, col: 'rgba('+_r+','+_g+','+_b+',1)', dash: [2, 12], ticks: 12 },
+          { r: 170, angle: 0, speed: 0.008, life: 1, decay: 0.006, col: 'rgba(255,255,255,0.7)', dash: [6, 6], ticks: 0 }
+        );
+
         // WC logo collapses and vanishes during explosion
         wcLogo.style.transition = 'transform 0.4s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.3s ease-out 0.1s';
         wcLogo.style.transform = 'scale(0) rotateZ(45deg)';
@@ -15474,12 +15537,15 @@ function _dismissSplash() {
         }, 1500);
       }, 1900);
 
-      // ── Beat 5 (3.8s): HERO SHOWCASE — restrained power ──
+      // ── Beat 5 (3.8s): HERO SHOWCASE — anime impact ──
       setTimeout(function() {
+        // Anime impact flash — full white cut frame
+        _impactFlash = 0.7;
+
         // Cross-glint lens flare
         _triggerGlint();
 
-        // Micro screen shake — single impact
+        // Micro screen shake — impact
         if (splashEl) {
           var _shk = 0;
           var _shkId = setInterval(function() {
