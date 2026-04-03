@@ -8509,7 +8509,7 @@
       <div id="dash-tier-progress" style="display:none;margin-top:6px"></div>
 
       <!-- ── Commission Earnings Card ────────────────────────────────────── -->
-      <div id="dash-commission-card" style="display:none" onclick="_openCommissionDetail()">
+      <div id="dash-commission-card" onclick="_openCommissionDetail()">
         <div style="display:flex;align-items:center;gap:14px;padding:16px 18px">
           <div style="width:44px;height:44px;border-radius:14px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -27616,9 +27616,8 @@ function _loadCommissions(period) {
 
 function _renderCommissionCard() {
   var card = document.getElementById('dash-commission-card');
-  if (!card || !_commissionData) return;
-  var s = _commissionData.summary;
-  card.style.display = '';
+  if (!card) return;
+  var s = _commissionData ? _commissionData.summary : { totalEarned: 0, dealCount: 0 };
   var amountEl = document.getElementById('dash-commission-amount');
   var subEl = document.getElementById('dash-commission-sub');
   if (amountEl) amountEl.textContent = '$' + (s.totalEarned || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
